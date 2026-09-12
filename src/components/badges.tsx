@@ -1,4 +1,5 @@
 import {
+  CORES_ALTERACAO,
   CORES_APROVACAO,
   CORES_CADASTRO,
   CORES_ESTOQUE,
@@ -12,6 +13,7 @@ import {
   statusFeminino,
   type StatusCadastro,
 } from "@/lib/estrutura-mock";
+import type { TipoAlteracao } from "@/lib/historico-mock";
 import type {
   SituacaoAprovacao,
   SituacaoFase,
@@ -95,6 +97,16 @@ export function BadgeCadastro({
     <span className={`${base} ${cor.cracha}`}>
       <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />
       {feminino ? statusFeminino(valor) : valor}
+    </span>
+  );
+}
+
+export function BadgeAlteracao({ valor }: { valor: TipoAlteracao }) {
+  const cor = CORES_ALTERACAO[valor];
+  return (
+    <span className={`${base} ${cor.cracha}`}>
+      <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />
+      {valor}
     </span>
   );
 }

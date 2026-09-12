@@ -147,3 +147,18 @@ Próximo passo:
 - **Decisões:** nenhuma nova. Os nomes dos coordenadores seguem os níveis já registrados em DEC-008; códigos (R01, A01, P01, IG001) são apenas de exemplo.
 - **Pendências:** nenhuma nova. Seguem abertas PEN-002 (atribuições de cada cargo) e PEN-011 (escopo de visibilidade por usuário); os campos oficiais de cada cadastro também continuam a definir.
 - **Próximo passo:** aguardar definição do responsável; nada foi ligado ao banco de dados.
+
+## Entrada 010
+- **Data:** 2026-09-12
+- **Etapa:** Interface — Histórico de Desenvolvimento (linha do tempo de versões)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - `/historico` passou a apresentar uma linha do tempo de versões do sistema: versão, data, título da atualização, tipo da alteração e resumo das mudanças (com os itens de cada versão).
+  - Cinco tipos com cores distintas: Nova funcionalidade (verde), Melhoria (azul), Correção (âmbar), Segurança (vermelho) e Regra de negócio (violeta), definidos em `src/lib/cores.ts` e exibidos como legenda no topo da tela.
+  - Cartão de resumo com a versão mais recente, a data e a quantidade de versões.
+  - Dados demonstrativos (nove versões fictícias, de 0.9.0 a 1.2.0) em `src/lib/historico-mock.ts`.
+  - **Preservado:** o documento real deste histórico (`docs/10-HISTORICO-DESENVOLVIMENTO.md`) continua sendo exibido na mesma página, agora dentro de uma seção recolhível ao final, com o mesmo renderizador de Markdown de antes. A tela avisa que as versões da linha do tempo são fictícias e que o registro real é o documento.
+  - O item "Histórico de Desenvolvimento" já existia no menu lateral; nenhuma outra tela foi alterada.
+- **Decisões:** nenhuma nova. A numeração de versões da linha do tempo é fictícia e não corresponde à versão real do projeto (`package.json`).
+- **Pendências:** nenhuma nova.
+- **Próximo passo:** aguardar definição do responsável.

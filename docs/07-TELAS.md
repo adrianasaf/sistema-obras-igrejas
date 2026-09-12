@@ -38,7 +38,7 @@
 | Polos | `/polos` | Interface: lista, cadastro, visualização e edição |
 | Igrejas | `/igrejas` | Interface: lista, cadastro, visualização e edição |
 | Estoque | `/estoque` | Interface: materiais, saldos e botões Entrada/Saída/Novo material (não movimentam) |
-| Histórico de Desenvolvimento | `/historico` | Funcional (lê `docs/10-...`) |
+| Histórico de Desenvolvimento | `/historico` | Interface: linha do tempo de versões (demonstrativa) + documento real `docs/10-...` |
 
 ## Layout, identidade visual e navegação
 - Layout administrativo: menu lateral fixo (tablet/computador) ou sobreposto (celular) e barra superior com nome do sistema, usuário logado e opção de sair.

@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { ReactNode } from "react";
+import { BadgeAlteracao } from "@/components/badges";
+import { CORES_ALTERACAO } from "@/lib/cores";
+import {
+  TIPOS_ALTERACAO,
+  VERSOES,
+  formatarDataVersao,
+  type VersaoSistema,
+} from "@/lib/historico-mock";
 
 export const metadata: Metadata = { title: "Histórico de Desenvolvimento" };
 
@@ -13,6 +21,8 @@ const ARQUIVO = path.join(
 
 export default async function HistoricoPage() {
   const markdown = await readFile(ARQUIVO, "utf8");
+  const versoes = [...VERSOES].sort((a, b) => b.data.localeCompare(a.data));
+  const atual = versoes[0];
 
   return (
     <div className="space-y-6">
@@ -21,13 +31,115 @@ export default async function HistoricoPage() {
           Histórico de Desenvolvimento
         </h1>
         <p className="mt-1 text-sm text-muted">
-          Conteúdo de <code className="font-mono">docs/10-HISTORICO-DESENVOLVIMENTO.md</code>.
+          Linha do tempo das versões do sistema. Dados demonstrativos.
         </p>
       </div>
-      <article className="rounded-lg border border-border bg-surface p-5 sm:p-6">
-        {renderizarMarkdown(markdown)}
-      </article>
+
+      {/* Resumo e legenda dos tipos */}
+      <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs text-muted">Versão mais recente</p>
+          <p className="mt-1 font-mono text-2xl leading-none font-semibold text-brand">
+            {atual.versao}
+          </p>
+          <p className="mt-1 text-xs text-muted">
+            {formatarDataVersao(atual.data)} · {versoes.length} versões
+            registradas
+          </p>
+        </div>
+        <ul className="flex flex-wrap gap-2">
+          {TIPOS_ALTERACAO.map((tipo) => (
+            <li key={tipo}>
+              <BadgeAlteracao valor={tipo} />
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Linha do tempo */}
+      <ol className="space-y-0">
+        {versoes.map((v, i) => (
+          <ItemVersao
+            key={v.versao}
+            versao={v}
+            ultimo={i === versoes.length - 1}
+          />
+        ))}
+      </ol>
+
+      {/* Documento real do projeto, preservado */}
+      <details className="rounded-lg border border-border bg-surface">
+        <summary className="cursor-pointer px-5 py-4 text-sm font-medium text-brand">
+          Documento de histórico do projeto (docs/10-HISTORICO-DESENVOLVIMENTO.md)
+        </summary>
+        <article className="border-t border-border px-5 py-5 sm:px-6">
+          {renderizarMarkdown(markdown)}
+        </article>
+      </details>
+
+      <p className="text-xs text-muted">
+        As versões acima são fictícias e servem para demonstrar a interface. O
+        registro real do desenvolvimento é o documento do projeto.
+      </p>
     </div>
+  );
+}
+
+function ItemVersao({
+  versao,
+  ultimo,
+}: {
+  versao: VersaoSistema;
+  ultimo: boolean;
+}) {
+  const cor = CORES_ALTERACAO[versao.tipo];
+
+  return (
+    <li className="relative flex gap-4 pb-5 last:pb-0">
+      {!ultimo && (
+        <span
+          aria-hidden="true"
+          className="absolute top-6 left-[9px] h-full w-0.5 bg-border"
+        />
+      )}
+      <span
+        aria-hidden="true"
+        className={`relative mt-5 size-5 shrink-0 rounded-full border-2 border-surface ring-2 ring-border ${cor.ponto}`}
+      />
+
+      <div className="min-w-0 flex-1 overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="flex flex-col gap-3 border-b border-border p-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-md bg-background px-2 py-0.5 font-mono text-xs font-semibold text-brand">
+                {versao.versao}
+              </span>
+              <span className="text-xs text-muted">
+                {formatarDataVersao(versao.data)}
+              </span>
+            </div>
+            <h2 className="mt-2 font-semibold text-brand">{versao.titulo}</h2>
+          </div>
+          <div className="sm:shrink-0">
+            <BadgeAlteracao valor={versao.tipo} />
+          </div>
+        </div>
+
+        <div className="p-5">
+          <p className="text-sm leading-relaxed">{versao.resumo}</p>
+          <ul className="mt-3 space-y-1.5">
+            {versao.itens.map((item) => (
+              <li key={item} className="flex gap-2 text-sm text-muted">
+                <span aria-hidden="true" className={cor.texto}>
+                  •
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </li>
   );
 }
 

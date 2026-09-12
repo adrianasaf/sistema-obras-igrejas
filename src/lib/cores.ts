@@ -4,6 +4,7 @@
 
 import type { StatusMaterial } from "@/lib/estoque-mock";
 import type { StatusCadastro } from "@/lib/estrutura-mock";
+import type { TipoAlteracao } from "@/lib/historico-mock";
 import type {
   SituacaoAprovacao,
   SituacaoFase,
@@ -186,5 +187,40 @@ export const CORES_CADASTRO: Record<StatusCadastro, Paleta> = {
     ponto: "bg-slate-400",
     barra: "bg-slate-400",
     texto: "text-slate-600",
+  },
+};
+
+// Tipos de alteração da linha do tempo de versões (Histórico de
+// Desenvolvimento).
+export const CORES_ALTERACAO: Record<TipoAlteracao, Paleta> = {
+  "Nova funcionalidade": {
+    cracha: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    ponto: "bg-emerald-500",
+    barra: "bg-emerald-500",
+    texto: "text-emerald-700",
+  },
+  Melhoria: {
+    cracha: "border-blue-200 bg-blue-50 text-blue-700",
+    ponto: "bg-blue-500",
+    barra: "bg-blue-500",
+    texto: "text-blue-700",
+  },
+  Correção: {
+    cracha: "border-amber-200 bg-amber-50 text-amber-800",
+    ponto: "bg-amber-500",
+    barra: "bg-amber-500",
+    texto: "text-amber-700",
+  },
+  Segurança: {
+    cracha: "border-red-200 bg-red-50 text-red-700",
+    ponto: "bg-red-600",
+    barra: "bg-red-600",
+    texto: "text-red-700",
+  },
+  "Regra de negócio": {
+    cracha: "border-violet-200 bg-violet-50 text-violet-700",
+    ponto: "bg-violet-500",
+    barra: "bg-violet-500",
+    texto: "text-violet-700",
   },
 };
