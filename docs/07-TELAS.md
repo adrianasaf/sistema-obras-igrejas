@@ -37,6 +37,7 @@
 | Áreas | `/areas` | Interface: lista, cadastro, visualização e edição |
 | Polos | `/polos` | Interface: lista, cadastro, visualização e edição |
 | Igrejas | `/igrejas` | Interface: lista, cadastro, visualização e edição |
+| Usuários e perfis | `/usuarios` | Interface: lista, filtros, busca, cadastro/edição em modal e ativar/desativar (sem permissões reais) |
 | Estoque | `/estoque` | Interface: materiais, saldos e botões Entrada/Saída/Novo material (não movimentam) |
 | Histórico de Desenvolvimento | `/historico` | Interface: linha do tempo de versões (demonstrativa) + documento real `docs/10-...` |
 

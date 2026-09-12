@@ -26,6 +26,7 @@ const GRUPOS = [
   {
     titulo: null,
     itens: [
+      { href: "/usuarios", rotulo: "Usuários", icone: "◍" },
       { href: "/estoque", rotulo: "Estoque", icone: "☰" },
       { href: "/historico", rotulo: "Histórico de Desenvolvimento", icone: "◷" },
     ],

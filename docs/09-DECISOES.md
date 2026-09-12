@@ -87,3 +87,12 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Sequência e situações informadas pelo responsável do projeto.
 - **Impacto:** Atende parcialmente PEN-002 (nomes dos responsáveis) e PEN-004 (ordem dos níveis). Continuam **PENDENTES DE DEFINIÇÃO**: alçadas por valor ou prioridade, prazos, quem pode agir em cada nível, o que acontece após "Reprovado" ou "Correção solicitada" (PEN-005) e o significado da sigla COMBENS (PEN-021). Por ora, apenas interface: nenhuma regra é executada pelo sistema.
 - **Status:** Ativa
+
+## DEC-009
+- **Data:** 2026-09-12
+- **Título:** Perfis de acesso exibidos na tela de Usuários
+- **Contexto:** Criação da interface de Usuários e Perfis.
+- **Decisão:** A tela de Usuários trabalha com sete perfis, informados pelo responsável: **Administrador, Pastor Local, Coordenador de Polo, Coordenador de Área, Coordenador de Região, Responsável COMBENS e Presbitério**. Na interface, cada perfil é associado a um nível da estrutura: Pastor Local → Igreja; Coordenador de Polo → Polo; Coordenador de Área → Área; Coordenador de Região → Região; Administrador, Responsável COMBENS e Presbitério → abrangência geral (sem vínculo a um registro).
+- **Motivo:** Lista de perfis informada pelo responsável; a associação com o nível da estrutura é consequência direta do nome de cada perfil e serve para a interface exibir o vínculo correto.
+- **Impacto:** Apenas interface: **nenhuma permissão é aplicada** e não há relação com a autenticação (Clerk). Continuam **PENDENTES DE DEFINIÇÃO**: o que cada perfil pode ver e fazer (PEN-011), as atribuições de cada cargo (PEN-002), o papel do Responsável COMBENS (PEN-021) e se um usuário pode ter mais de um perfil ou mais de um vínculo (PEN-022). Observação de nomenclatura: DEC-008 registrou os níveis de aprovação como "Coordenador do Polo/da Área/da Região" e aqui os perfis foram informados como "Coordenador de Polo/de Área/de Região" — a forma oficial precisa ser confirmada (PEN-002).
+- **Status:** Ativa

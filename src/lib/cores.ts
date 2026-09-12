@@ -5,6 +5,7 @@
 import type { StatusMaterial } from "@/lib/estoque-mock";
 import type { StatusCadastro } from "@/lib/estrutura-mock";
 import type { TipoAlteracao } from "@/lib/historico-mock";
+import type { Perfil } from "@/lib/usuarios-mock";
 import type {
   SituacaoAprovacao,
   SituacaoFase,
@@ -222,5 +223,52 @@ export const CORES_ALTERACAO: Record<TipoAlteracao, Paleta> = {
     ponto: "bg-violet-500",
     barra: "bg-violet-500",
     texto: "text-violet-700",
+  },
+};
+
+// Perfis de acesso (tela Usuários). As permissões de cada perfil ainda não
+// estão definidas (PEN-011): a cor serve apenas para distinguir na interface.
+export const CORES_PERFIL: Record<Perfil, Paleta> = {
+  Administrador: {
+    cracha: "border-brand/30 bg-brand/10 text-brand",
+    ponto: "bg-brand",
+    barra: "bg-brand",
+    texto: "text-brand",
+  },
+  "Pastor Local": {
+    cracha: "border-sky-200 bg-sky-50 text-sky-700",
+    ponto: "bg-sky-500",
+    barra: "bg-sky-500",
+    texto: "text-sky-700",
+  },
+  "Coordenador de Polo": {
+    cracha: "border-teal-200 bg-teal-50 text-teal-700",
+    ponto: "bg-teal-500",
+    barra: "bg-teal-500",
+    texto: "text-teal-700",
+  },
+  "Coordenador de Área": {
+    cracha: "border-indigo-200 bg-indigo-50 text-indigo-700",
+    ponto: "bg-indigo-500",
+    barra: "bg-indigo-500",
+    texto: "text-indigo-700",
+  },
+  "Coordenador de Região": {
+    cracha: "border-violet-200 bg-violet-50 text-violet-700",
+    ponto: "bg-violet-500",
+    barra: "bg-violet-500",
+    texto: "text-violet-700",
+  },
+  "Responsável COMBENS": {
+    cracha: "border-amber-200 bg-amber-50 text-amber-800",
+    ponto: "bg-amber-500",
+    barra: "bg-amber-500",
+    texto: "text-amber-700",
+  },
+  Presbitério: {
+    cracha: "border-rose-200 bg-rose-50 text-rose-700",
+    ponto: "bg-rose-500",
+    barra: "bg-rose-500",
+    texto: "text-rose-700",
   },
 };

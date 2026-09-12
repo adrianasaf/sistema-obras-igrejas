@@ -5,6 +5,7 @@ import {
   CORES_ESTOQUE,
   CORES_FASE,
   CORES_ORCAMENTO,
+  CORES_PERFIL,
   CORES_PRIORIDADE,
   CORES_STATUS,
 } from "@/lib/cores";
@@ -14,6 +15,7 @@ import {
   type StatusCadastro,
 } from "@/lib/estrutura-mock";
 import type { TipoAlteracao } from "@/lib/historico-mock";
+import type { Perfil } from "@/lib/usuarios-mock";
 import type {
   SituacaoAprovacao,
   SituacaoFase,
@@ -103,6 +105,16 @@ export function BadgeCadastro({
 
 export function BadgeAlteracao({ valor }: { valor: TipoAlteracao }) {
   const cor = CORES_ALTERACAO[valor];
+  return (
+    <span className={`${base} ${cor.cracha}`}>
+      <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />
+      {valor}
+    </span>
+  );
+}
+
+export function BadgePerfil({ valor }: { valor: Perfil }) {
+  const cor = CORES_PERFIL[valor];
   return (
     <span className={`${base} ${cor.cracha}`}>
       <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />

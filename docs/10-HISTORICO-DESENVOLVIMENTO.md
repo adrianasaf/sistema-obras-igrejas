@@ -162,3 +162,19 @@ Próximo passo:
 - **Decisões:** nenhuma nova. A numeração de versões da linha do tempo é fictícia e não corresponde à versão real do projeto (`package.json`).
 - **Pendências:** nenhuma nova.
 - **Próximo passo:** aguardar definição do responsável.
+
+## Entrada 011
+- **Data:** 2026-09-12
+- **Etapa:** Interface — Usuários e perfis
+- **Versão:** 0.3.0
+- **Realizado:**
+  - Item **Usuários** adicionado ao menu lateral (terceiro grupo, antes de Estoque).
+  - `/usuarios`: lista com nome, e-mail, perfil, vínculo administrativo, status, último acesso e ações. Tabela em tablet/computador e cartões em celular.
+  - Filtros por perfil (sete perfis) e por status, busca por nome ou e-mail, contador de resultados e "Limpar filtros".
+  - Botão **Novo Usuário** e ação **Editar** abrem o mesmo modal de cadastro, com nome, e-mail, perfil, vínculo administrativo (o campo muda conforme o perfil: região, área, polo, igreja ou "abrangência geral") e status. Ao salvar, exibe aviso de que nada foi gravado.
+  - Ação **Ativar/Desativar** altera o status apenas na tela, com aviso de que a alteração não é gravada.
+  - Cores por perfil em `src/lib/cores.ts` e dados demonstrativos (13 usuários fictícios) em `src/lib/usuarios-mock.ts`, vinculados aos registros da estrutura administrativa.
+  - Nenhuma outra tela foi alterada: além dos arquivos novos, apenas o menu (`app-shell.tsx`) e os acréscimos em `badges.tsx` e `cores.ts`.
+- **Decisões:** DEC-009 (perfis informados pelo responsável e nível de estrutura associado a cada um, apenas para a interface).
+- **Pendências:** nova PEN-022 (mais de um perfil/vínculo por usuário e forma oficial dos nomes dos cargos). Seguem abertas PEN-002, PEN-011 e PEN-021. **Nenhuma permissão é aplicada** e não há relação com a autenticação do Clerk.
+- **Próximo passo:** aguardar definição do responsável.

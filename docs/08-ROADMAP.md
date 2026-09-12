@@ -10,7 +10,7 @@ O roadmap poderá ser refinado ao longo do projeto. Alterações relevantes deve
 - [x] Aplicação web (Next.js + TypeScript + Tailwind)
 - [x] Banco de dados — Neon PostgreSQL (conexão; sem tabelas ainda)
 - [x] Autenticação (login e senha) — Clerk
-- [ ] Usuários e perfis
+- [ ] Usuários e perfis (interface pronta; permissões e gravação pendentes)
 - [ ] Cadastro de Região, Área, Polo e Igreja (interface pronta; gravação em banco pendente)
 - [ ] Dashboard
 - [ ] Histórico de desenvolvimento (manutenção contínua)
