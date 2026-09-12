@@ -39,9 +39,13 @@
 | Igrejas | `/igrejas` | Interface: lista, cadastro, visualização e edição |
 | Usuários e perfis | `/usuarios` | Interface: lista, filtros, busca, cadastro/edição em modal e ativar/desativar (sem permissões reais) |
 | Estoque | `/estoque` | Interface: materiais, saldos e botões Entrada/Saída/Novo material (não movimentam) |
+| Configurações | `/configuracoes` | Interface: dados do sistema, preferências de interface e informações institucionais (nada é salvo) |
 | Histórico de Desenvolvimento | `/historico` | Interface: linha do tempo de versões (demonstrativa) + documento real `docs/10-...` |
 
 ## Layout, identidade visual e navegação
 - Layout administrativo: menu lateral fixo (tablet/computador) ou sobreposto (celular) e barra superior com nome do sistema, usuário logado e opção de sair.
-- Paleta institucional e cores de prioridade/status centralizadas em `src/lib/cores.ts`.
+- Paleta institucional e cores de prioridade/status centralizadas em `src/lib/cores.ts`; classes de botão, campo, cartão e título em `src/lib/ui.ts`.
+- Componentes comuns: cabeçalho de página (`cabecalho-pagina.tsx`), tabela e cartão de lista (`tabela.tsx`), busca e filtros (`filtros.tsx`), abas (`abas.tsx`) e crachás (`badges.tsx`).
+- Escalas de cor: prioridade vai de vermelho (Emergencial) a neutro (P3); status vai de azul-claro (Solicitada) a verde (Concluída). As duas escalas não compartilham cor, para poderem aparecer lado a lado.
+- Toda lista usa tabela a partir de tablet (`md`) e cartões em celular.
 - Identidade visual oficial (logotipo, cores da instituição): PENDENTE DE DEFINIÇÃO.

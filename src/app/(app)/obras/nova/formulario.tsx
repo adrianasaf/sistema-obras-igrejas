@@ -3,6 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PRIORIDADES, TIPOS_OBRA } from "@/lib/obras-mock";
+import {
+  botaoContorno,
+  botaoPrimario,
+  botaoSecundario,
+  cartao,
+  classeCampo,
+  classeRotulo,
+} from "@/lib/ui";
 
 // Lista demonstrativa. O cadastro real de igrejas virá com a estrutura
 // Região → Área → Polo → Igreja (Fase 1 do roadmap).
@@ -13,10 +21,6 @@ const IGREJAS_EXEMPLO = [
   "Igreja Exemplo Sertão",
   "Igreja Exemplo Vale",
 ];
-
-const campo =
-  "w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
-const rotulo = "block text-sm font-medium";
 
 type Preview = { nome: string; url: string };
 
@@ -43,7 +47,7 @@ export function FormularioSolicitacao() {
 
   return (
     <form
-      className="space-y-6 rounded-lg border border-border bg-surface p-5 sm:p-6"
+      className={`${cartao} space-y-6 p-5 sm:p-6`}
       onSubmit={(e) => {
         e.preventDefault();
         setAviso("envio");
@@ -51,10 +55,10 @@ export function FormularioSolicitacao() {
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <label htmlFor="igreja" className={rotulo}>
+          <label htmlFor="igreja" className={classeRotulo}>
             Igreja solicitante
           </label>
-          <select id="igreja" name="igreja" required className={`${campo} mt-1`} defaultValue="">
+          <select id="igreja" name="igreja" required className={`${classeCampo} mt-1`} defaultValue="">
             <option value="" disabled>
               Selecione a igreja
             </option>
@@ -67,10 +71,10 @@ export function FormularioSolicitacao() {
         </div>
 
         <div>
-          <label htmlFor="tipo" className={rotulo}>
+          <label htmlFor="tipo" className={classeRotulo}>
             Tipo da obra
           </label>
-          <select id="tipo" name="tipo" required className={`${campo} mt-1`} defaultValue="">
+          <select id="tipo" name="tipo" required className={`${classeCampo} mt-1`} defaultValue="">
             <option value="" disabled>
               Selecione o tipo
             </option>
@@ -83,10 +87,10 @@ export function FormularioSolicitacao() {
         </div>
 
         <div>
-          <label htmlFor="prioridade" className={rotulo}>
+          <label htmlFor="prioridade" className={classeRotulo}>
             Prioridade
           </label>
-          <select id="prioridade" name="prioridade" required className={`${campo} mt-1`} defaultValue="">
+          <select id="prioridade" name="prioridade" required className={`${classeCampo} mt-1`} defaultValue="">
             <option value="" disabled>
               Selecione a prioridade
             </option>
@@ -99,7 +103,7 @@ export function FormularioSolicitacao() {
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="titulo" className={rotulo}>
+          <label htmlFor="titulo" className={classeRotulo}>
             Título da necessidade
           </label>
           <input
@@ -109,12 +113,12 @@ export function FormularioSolicitacao() {
             required
             maxLength={120}
             placeholder="Ex.: Infiltração no telhado do templo"
-            className={`${campo} mt-1`}
+            className={`${classeCampo} mt-1`}
           />
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="descricao" className={rotulo}>
+          <label htmlFor="descricao" className={classeRotulo}>
             Descrição detalhada da necessidade
           </label>
           <textarea
@@ -123,12 +127,12 @@ export function FormularioSolicitacao() {
             required
             rows={6}
             placeholder="Descreva a situação atual, o que precisa ser feito e qualquer informação relevante."
-            className={`${campo} mt-1`}
+            className={`${classeCampo} mt-1`}
           />
         </div>
 
         <div>
-          <label htmlFor="valorMaterial" className={rotulo}>
+          <label htmlFor="valorMaterial" className={classeRotulo}>
             Valor estimado de material
           </label>
           <div className="relative mt-1">
@@ -143,14 +147,14 @@ export function FormularioSolicitacao() {
               step="0.01"
               inputMode="decimal"
               placeholder="0,00"
-              className={`${campo} pl-9`}
+              className={`${classeCampo} pl-9`}
             />
           </div>
           <p className="mt-1 text-xs text-muted">Estimativa da igreja, se houver.</p>
         </div>
 
         <div>
-          <label htmlFor="valorMaoDeObra" className={rotulo}>
+          <label htmlFor="valorMaoDeObra" className={classeRotulo}>
             Valor estimado de mão de obra
           </label>
           <div className="relative mt-1">
@@ -165,14 +169,14 @@ export function FormularioSolicitacao() {
               step="0.01"
               inputMode="decimal"
               placeholder="0,00"
-              className={`${campo} pl-9`}
+              className={`${classeCampo} pl-9`}
             />
           </div>
           <p className="mt-1 text-xs text-muted">Estimativa da igreja, se houver.</p>
         </div>
 
         <div className="sm:col-span-2">
-          <span className={rotulo}>Fotos da situação atual</span>
+          <span className={classeRotulo}>Fotos da situação atual</span>
           <label
             htmlFor="fotos"
             className="mt-1 flex cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-border bg-background px-4 py-8 text-center text-sm text-muted hover:border-brand"
@@ -235,20 +239,20 @@ export function FormularioSolicitacao() {
       <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
         <Link
           href="/obras"
-          className="inline-flex items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-background"
+          className={botaoSecundario}
         >
           Cancelar
         </Link>
         <button
           type="button"
           onClick={() => setAviso("rascunho")}
-          className="inline-flex items-center justify-center rounded-md border border-brand px-4 py-2 text-sm font-medium text-brand hover:bg-background"
+          className={botaoContorno}
         >
           Salvar rascunho
         </button>
         <button
           type="submit"
-          className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-strong"
+          className={botaoPrimario}
         >
           Enviar solicitação
         </button>

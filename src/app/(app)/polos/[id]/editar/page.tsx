@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import {
+  CabecalhoPagina,
+  LinkVoltar,
+} from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import { FormularioPolo } from "@/components/estrutura/formularios";
 import { buscarPolo } from "@/lib/estrutura-mock";
@@ -15,19 +18,12 @@ export default async function EditarPoloPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <Link
-          href={`/polos/${polo.id}`}
-          className="text-sm text-muted hover:text-brand"
-        >
-          ← Voltar para {polo.nome}
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-brand">
-          Editar Polo
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Formulário visual: as alterações não são gravadas.
-        </p>
+      <div className="space-y-3">
+        <LinkVoltar href={`/polos/${polo.id}`}>Voltar para {polo.nome}</LinkVoltar>
+        <CabecalhoPagina
+          titulo="Editar Polo"
+          descricao="Formulário visual: as alterações não são gravadas."
+        />
       </div>
       <FormularioPolo polo={polo} />
     </div>

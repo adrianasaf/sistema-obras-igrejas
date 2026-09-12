@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
+import {
+  botaoPrimario,
+  botaoSecundario,
+  cartao,
+  classeCampo,
+  classeRotulo,
+} from "@/lib/ui";
 
-export const classeCampo =
-  "w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus:border-brand focus:ring-2 focus:ring-brand/20 focus:outline-none";
+// Reexportado para os formulários que já importavam daqui.
+export { classeCampo };
 
 // Formulário visual de cadastro: nada é gravado. Os campos oficiais de cada
 // cadastro ainda não estão definidos (PEN-002, PEN-011).
@@ -21,7 +28,7 @@ export function FormularioCadastro({
 
   return (
     <form
-      className="space-y-6 rounded-lg border border-border bg-surface p-5 sm:p-6"
+      className={`${cartao} space-y-6 p-5 sm:p-6`}
       onSubmit={(e) => {
         e.preventDefault();
         setEnviado(true);
@@ -42,13 +49,13 @@ export function FormularioCadastro({
       <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
         <Link
           href={voltarHref}
-          className="inline-flex items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-background"
+          className={botaoSecundario}
         >
           Cancelar
         </Link>
         <button
           type="submit"
-          className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-strong"
+          className={botaoPrimario}
         >
           {rotuloSalvar}
         </button>
@@ -72,7 +79,7 @@ export function Campo({
 }) {
   return (
     <div className={largura === "inteira" ? "sm:col-span-2" : undefined}>
-      <label htmlFor={id} className="block text-sm font-medium">
+      <label htmlFor={id} className={classeRotulo}>
         {rotulo}
       </label>
       <div className="mt-1">{children}</div>

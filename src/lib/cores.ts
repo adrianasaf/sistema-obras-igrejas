@@ -1,4 +1,9 @@
 // Paleta única de prioridades e status das obras.
+//
+// Escala de prioridade (urgência decrescente): vermelho → laranja → âmbar →
+// neutro. Escala de status (andamento): azul-claro → azul → verde-azulado →
+// violeta → verde. As duas escalas não compartilham cor, para que prioridade e
+// status possam aparecer lado a lado sem confusão.
 // Toda a interface (crachás, cartões do dashboard, listas) usa estas classes,
 // para que a mesma prioridade tenha sempre a mesma cor em qualquer tela.
 
@@ -40,19 +45,19 @@ export const CORES_PRIORIDADE: Record<Prioridade, Paleta> = {
     texto: "text-amber-700",
   },
   "Prioridade 3": {
-    cracha: "border-sky-200 bg-sky-50 text-sky-700",
-    ponto: "bg-sky-500",
-    barra: "bg-sky-500",
-    texto: "text-sky-700",
+    cracha: "border-slate-200 bg-slate-50 text-slate-700",
+    ponto: "bg-slate-400",
+    barra: "bg-slate-400",
+    texto: "text-slate-700",
   },
 };
 
 export const CORES_STATUS: Record<StatusObra, Paleta> = {
   Solicitada: {
-    cracha: "border-slate-200 bg-slate-50 text-slate-700",
-    ponto: "bg-slate-400",
-    barra: "bg-slate-400",
-    texto: "text-slate-700",
+    cracha: "border-sky-200 bg-sky-50 text-sky-700",
+    ponto: "bg-sky-500",
+    barra: "bg-sky-500",
+    texto: "text-sky-700",
   },
   "Em análise": {
     cracha: "border-blue-200 bg-blue-50 text-blue-700",
@@ -61,10 +66,10 @@ export const CORES_STATUS: Record<StatusObra, Paleta> = {
     texto: "text-blue-700",
   },
   Aprovada: {
-    cracha: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    ponto: "bg-emerald-500",
-    barra: "bg-emerald-500",
-    texto: "text-emerald-700",
+    cracha: "border-teal-200 bg-teal-50 text-teal-700",
+    ponto: "bg-teal-500",
+    barra: "bg-teal-500",
+    texto: "text-teal-700",
   },
   "Em execução": {
     cracha: "border-violet-200 bg-violet-50 text-violet-700",

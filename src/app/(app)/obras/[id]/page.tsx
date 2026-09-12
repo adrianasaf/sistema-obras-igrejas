@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { LinkVoltar } from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Abas } from "@/components/abas";
@@ -12,6 +12,7 @@ import {
 import { GaleriaFotos } from "@/components/galeria-fotos";
 import { OrcamentosPainel } from "@/components/orcamentos-painel";
 import { CORES_APROVACAO, CORES_FASE } from "@/lib/cores";
+import { cartao, tituloSecao } from "@/lib/ui";
 import {
   type Aprovacao,
   type DetalheObra,
@@ -95,11 +96,9 @@ export default async function DetalheObraPage({
 function Cabecalho({ obra }: { obra: Obra }) {
   return (
     <div>
-      <Link href="/obras" className="text-sm text-muted hover:text-brand">
-        ← Voltar para Obras
-      </Link>
+      <LinkVoltar href="/obras">Voltar para Obras</LinkVoltar>
 
-      <div className="mt-3 overflow-hidden rounded-lg border border-border bg-surface">
+      <div className={`${cartao} mt-3 overflow-hidden`}>
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p className="text-sm font-medium text-muted">{obra.igreja}</p>
@@ -304,7 +303,7 @@ function Execucao({ fases }: { fases: DetalheObra["fases"] }) {
           return (
             <li
               key={f.rotulo}
-              className="flex overflow-hidden rounded-lg border border-border bg-surface"
+              className={`${cartao} flex overflow-hidden`}
             >
               <span aria-hidden="true" className={`w-1.5 shrink-0 ${cor.barra}`} />
               <div className="flex-1 p-5">
@@ -439,8 +438,8 @@ function Cartao({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-lg border border-border bg-surface p-5">
-      <h2 className="font-semibold text-brand">{titulo}</h2>
+    <section className={`${cartao} p-5`}>
+      <h2 className={tituloSecao}>{titulo}</h2>
       {descricao && <p className="mt-1 text-xs text-muted">{descricao}</p>}
       <div className="mt-4">{children}</div>
     </section>

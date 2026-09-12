@@ -12,6 +12,7 @@ import {
   statusFeminino,
 } from "@/lib/estrutura-mock";
 import { OBRAS, formatarData } from "@/lib/obras-mock";
+import { cartao, tituloSecao } from "@/lib/ui";
 
 export async function generateMetadata({
   params,
@@ -54,9 +55,9 @@ export default async function IgrejaPage({
         ]}
       />
 
-      <section className="overflow-hidden rounded-lg border border-border bg-surface">
+      <section className={`${cartao} overflow-hidden`}>
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-4">
-          <h2 className="font-semibold text-brand">Obras desta igreja</h2>
+          <h2 className={tituloSecao}>Obras desta igreja</h2>
           <span className="rounded-full bg-background px-2.5 py-0.5 text-xs font-medium text-muted tabular-nums">
             {obras.length}
           </span>

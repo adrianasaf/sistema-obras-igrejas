@@ -178,3 +178,21 @@ Próximo passo:
 - **Decisões:** DEC-009 (perfis informados pelo responsável e nível de estrutura associado a cada um, apenas para a interface).
 - **Pendências:** nova PEN-022 (mais de um perfil/vínculo por usuário e forma oficial dos nomes dos cargos). Seguem abertas PEN-002, PEN-011 e PEN-021. **Nenhuma permissão é aplicada** e não há relação com a autenticação do Clerk.
 - **Próximo passo:** aguardar definição do responsável.
+
+## Entrada 012
+- **Data:** 2026-09-12
+- **Etapa:** Revisão final da interface e tela de Configurações
+- **Versão:** 0.3.0
+- **Realizado:**
+  - **Padronização:** criado `src/lib/ui.ts` com as classes de botão (primário, secundário, contorno e ação), campo, rótulo, cartão e títulos, aplicadas em todas as telas — antes cada página repetia o mesmo estilo em texto.
+  - **Componentes comuns:** `cabecalho-pagina.tsx` (título, descrição, ação principal e link "voltar"), `tabela.tsx` (tabela padrão, cartão de lista para celular e estado vazio) e `filtros.tsx` (busca, pílulas de filtro e contador). As listas de Obras, Usuários, Estoque, Regiões, Áreas, Polos e Igrejas passaram a usar os mesmos componentes; o filtro que estava duplicado em Obras e Usuários virou um só.
+  - **Cores de prioridade e status revisadas:** a Prioridade 3 passou de azul para neutro e o status "Solicitada" assumiu o azul-claro; "Aprovada" passou para verde-azulado, para não se confundir com "Concluída". As duas escalas agora não compartilham cor, o que evita leitura ambígua quando prioridade e status aparecem na mesma linha.
+  - **Cabeçalhos e espaçamentos:** todas as páginas usam o mesmo cabeçalho, o mesmo espaçamento vertical (`space-y-6`) e o mesmo padrão de link "← Voltar". O Dashboard, que usava espaçamento maior, foi alinhado ao restante.
+  - **Menu:** grupos mantidos, com **Configurações** acrescentado ao final; a navegação passou a rolar sozinha quando a lista de itens não couber na altura da tela, sem empurrar a versão do rodapé.
+  - **Correções de detalhe:** botões que combinavam classes de borda conflitantes (Entrada/Saída do Estoque, Ativar/Desativar de Usuários, seleção de orçamento e "Editar" dos cadastros) foram refeitos sobre uma base sem cor, garantindo a borda correta; cartões de celular voltaram a mostrar os crachás de prioridade/status (Obras) e de perfil (Usuários); valores longos nos cartões passaram a quebrar linha em vez de estourar a largura.
+  - **Nova tela `/configuracoes`:** nome do sistema, descrição, versão atual, ambiente, autenticação e banco; preferências de interface (densidade das listas, itens por página, tela inicial, ordenação padrão e duas opções de exibição), todas apenas visuais e com aviso de que não são salvas; e informações institucionais, com os campos ainda não definidos marcados como **PENDENTE DE DEFINIÇÃO** (nome oficial da instituição, responsável pelo sistema e contato de suporte).
+  - **Usuários e perfis revisada** sem novas funcionalidades: mesmos componentes de lista, filtros e botões das outras telas, título do modal padronizado e foco inicial no primeiro campo (o que também faz o Esc fechar o modal).
+  - Nenhuma regra de negócio, fluxo, foto, banco, Clerk ou infraestrutura foi alterada; nenhuma tela foi refeita e nenhum módulo novo foi criado.
+- **Decisões:** nenhuma decisão institucional nova. A escala de cores descrita acima é convenção de interface e está documentada em `src/lib/cores.ts` e em `docs/07-TELAS.md`.
+- **Pendências:** nenhuma nova. As informações institucionais da tela de Configurações dependem de PEN-001 (nome oficial) e das definições do responsável.
+- **Próximo passo:** interface concluída nesta etapa; a evolução seguinte depende de definição do responsável (banco de dados e regras).

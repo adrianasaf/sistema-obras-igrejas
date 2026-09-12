@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import {
+  CabecalhoPagina,
+  LinkVoltar,
+} from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import { FormularioArea } from "@/components/estrutura/formularios";
 import { buscarArea } from "@/lib/estrutura-mock";
@@ -15,19 +18,12 @@ export default async function EditarAreaPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <Link
-          href={`/areas/${area.id}`}
-          className="text-sm text-muted hover:text-brand"
-        >
-          ← Voltar para {area.nome}
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-brand">
-          Editar Área
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Formulário visual: as alterações não são gravadas.
-        </p>
+      <div className="space-y-3">
+        <LinkVoltar href={`/areas/${area.id}`}>Voltar para {area.nome}</LinkVoltar>
+        <CabecalhoPagina
+          titulo="Editar Área"
+          descricao="Formulário visual: as alterações não são gravadas."
+        />
       </div>
       <FormularioArea area={area} />
     </div>

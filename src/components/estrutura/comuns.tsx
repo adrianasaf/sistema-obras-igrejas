@@ -1,34 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-
-export function CabecalhoLista({
-  titulo,
-  descricao,
-  novoHref,
-  novoRotulo,
-}: {
-  titulo: string;
-  descricao: string;
-  novoHref: string;
-  novoRotulo: string;
-}) {
-  return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-brand">
-          {titulo}
-        </h1>
-        <p className="mt-1 text-sm text-muted">{descricao}</p>
-      </div>
-      <Link
-        href={novoHref}
-        className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-strong"
-      >
-        {novoRotulo}
-      </Link>
-    </div>
-  );
-}
+import { botaoAcao, botaoAcaoBase, cartao, tituloSecao } from "@/lib/ui";
 
 export function AcoesRegistro({
   verHref,
@@ -39,80 +11,15 @@ export function AcoesRegistro({
   editarHref: string;
   nome: string;
 }) {
-  const botao =
-    "inline-flex items-center justify-center rounded-md border border-border px-3 py-1.5 text-xs font-medium whitespace-nowrap hover:bg-background";
   return (
     <div className="flex flex-wrap justify-end gap-2">
-      <Link href={verHref} className={`${botao} text-brand`}>
+      <Link href={verHref} className={`${botaoAcao} text-brand`}>
         Visualizar<span className="sr-only"> {nome}</span>
       </Link>
-      <Link href={editarHref} className={botao}>
+      <Link href={editarHref} className={botaoAcao}>
         Editar<span className="sr-only"> {nome}</span>
       </Link>
     </div>
-  );
-}
-
-export function Tabela({
-  colunas,
-  children,
-}: {
-  colunas: ReactNode[];
-  children: ReactNode;
-}) {
-  return (
-    <div className="hidden overflow-x-auto rounded-lg border border-border bg-surface md:block">
-      <table className="w-full text-sm">
-        <thead className="bg-background text-left text-xs tracking-wide text-muted uppercase">
-          <tr>
-            {colunas.map((c, i) => (
-              <th key={i} className="px-4 py-3 font-medium">
-                {c}
-              </th>
-            ))}
-            <th className="px-4 py-3 font-medium">
-              <span className="sr-only">Ações</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">{children}</tbody>
-      </table>
-    </div>
-  );
-}
-
-export function CartaoRegistro({
-  titulo,
-  subtitulo,
-  cracha,
-  dados,
-  acoes,
-}: {
-  titulo: string;
-  subtitulo?: string;
-  cracha: ReactNode;
-  dados: { rotulo: string; valor: string }[];
-  acoes: ReactNode;
-}) {
-  return (
-    <li className="rounded-lg border border-border bg-surface p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="font-medium text-brand">{titulo}</p>
-          {subtitulo && <p className="text-xs text-muted">{subtitulo}</p>}
-        </div>
-        {cracha}
-      </div>
-      <dl className="mt-3 grid grid-cols-2 gap-3 text-xs">
-        {dados.map((d) => (
-          <div key={d.rotulo}>
-            <dt className="text-muted">{d.rotulo}</dt>
-            <dd className="font-medium">{d.valor}</dd>
-          </div>
-        ))}
-      </dl>
-      <div className="mt-4">{acoes}</div>
-    </li>
   );
 }
 
@@ -147,7 +54,7 @@ export function CabecalhoDetalhe({
         ← {voltarRotulo}
       </Link>
 
-      <div className="mt-3 overflow-hidden rounded-lg border border-border bg-surface">
+      <div className={`${cartao} mt-3 overflow-hidden`}>
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             {subtitulo && (
@@ -161,7 +68,7 @@ export function CabecalhoDetalhe({
             {cracha}
             <Link
               href={editarHref}
-              className="inline-flex items-center justify-center rounded-md border border-brand px-3 py-1.5 text-sm font-medium text-brand hover:bg-background"
+              className={`${botaoAcaoBase} border border-brand text-brand hover:bg-background`}
             >
               Editar
             </Link>
@@ -195,10 +102,10 @@ export function ListaVinculada({
   vazio: string;
 }) {
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-surface">
+    <section className={`${cartao} overflow-hidden`}>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-4">
         <div>
-          <h2 className="font-semibold text-brand">{titulo}</h2>
+          <h2 className={tituloSecao}>{titulo}</h2>
           {descricao && <p className="text-xs text-muted">{descricao}</p>}
         </div>
         <span className="rounded-full bg-background px-2.5 py-0.5 text-xs font-medium text-muted tabular-nums">

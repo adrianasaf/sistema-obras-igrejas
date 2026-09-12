@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import {
+  CabecalhoPagina,
+  LinkVoltar,
+} from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import { FormularioIgreja } from "@/components/estrutura/formularios";
 import { buscarIgreja } from "@/lib/estrutura-mock";
@@ -15,19 +18,12 @@ export default async function EditarIgrejaPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <Link
-          href={`/igrejas/${igreja.id}`}
-          className="text-sm text-muted hover:text-brand"
-        >
-          ← Voltar para {igreja.nome}
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-brand">
-          Editar Igreja
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Formulário visual: as alterações não são gravadas.
-        </p>
+      <div className="space-y-3">
+        <LinkVoltar href={`/igrejas/${igreja.id}`}>Voltar para {igreja.nome}</LinkVoltar>
+        <CabecalhoPagina
+          titulo="Editar Igreja"
+          descricao="Formulário visual: as alterações não são gravadas."
+        />
       </div>
       <FormularioIgreja igreja={igreja} />
     </div>

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { BadgeCadastro } from "@/components/badges";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import {
   AcoesRegistro,
   AvisoDemonstrativo,
-  CabecalhoLista,
-  CartaoRegistro,
-  Tabela,
 } from "@/components/estrutura/comuns";
+import { CartaoLista, Tabela } from "@/components/tabela";
+import { botaoPrimario } from "@/lib/ui";
+import Link from "next/link";
 import { AREAS, buscarRegiao, polosDaArea } from "@/lib/estrutura-mock";
 
 export const metadata: Metadata = { title: "Áreas" };
@@ -16,14 +17,18 @@ export default function AreasPage() {
 
   return (
     <div className="space-y-6">
-      <CabecalhoLista
+      <CabecalhoPagina
         titulo="Áreas"
         descricao="Cada área pertence a uma região. Dados demonstrativos."
-        novoHref="/areas/nova"
-        novoRotulo="Nova Área"
+        acao={
+          <Link href="/areas/nova" className={botaoPrimario}>
+            Nova Área
+          </Link>
+        }
       />
 
       <Tabela
+        acoes
         colunas={["Código", "Nome", "Região vinculada", "Polos", "Status"]}
       >
         {areas.map((a) => (
@@ -51,7 +56,7 @@ export default function AreasPage() {
 
       <ul className="space-y-3 md:hidden">
         {areas.map((a) => (
-          <CartaoRegistro
+          <CartaoLista
             key={a.id}
             titulo={a.nome}
             subtitulo={`Código ${a.codigo}`}

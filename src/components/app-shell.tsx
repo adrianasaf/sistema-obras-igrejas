@@ -29,6 +29,7 @@ const GRUPOS = [
       { href: "/usuarios", rotulo: "Usuários", icone: "◍" },
       { href: "/estoque", rotulo: "Estoque", icone: "☰" },
       { href: "/historico", rotulo: "Histórico de Desenvolvimento", icone: "◷" },
+      { href: "/configuracoes", rotulo: "Configurações", icone: "⚙" },
     ],
   },
 ] as const;
@@ -58,7 +59,10 @@ export function AppShell({
   const [contaAberta, setContaAberta] = useState(false);
 
   const nav = (
-    <nav aria-label="Menu principal" className="flex flex-col gap-4 overflow-y-auto p-3">
+    <nav
+      aria-label="Menu principal"
+      className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-3"
+    >
       {GRUPOS.map((grupo, indice) => (
         <div key={grupo.titulo ?? `grupo-${indice}`} className="flex flex-col gap-1">
           {grupo.titulo && (

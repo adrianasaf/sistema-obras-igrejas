@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { botaoBase, botaoPrimario } from "@/lib/ui";
 
 // Botões visuais: nenhuma movimentação é registrada. As regras de estoque
 // (central ou por igreja/polo, quem lança entradas e saídas) estão
@@ -8,30 +9,27 @@ import { useState } from "react";
 export function AcoesEstoque() {
   const [acao, setAcao] = useState<string | null>(null);
 
-  const botao =
-    "inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors";
-
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => setAcao("Entrada")}
-          className={`${botao} border border-emerald-300 text-emerald-700 hover:bg-emerald-50`}
+          className={`${botaoBase} border border-emerald-300 text-emerald-700 hover:bg-emerald-50`}
         >
           + Entrada
         </button>
         <button
           type="button"
           onClick={() => setAcao("Saída")}
-          className={`${botao} border border-amber-300 text-amber-800 hover:bg-amber-50`}
+          className={`${botaoBase} border border-amber-300 text-amber-800 hover:bg-amber-50`}
         >
           − Saída
         </button>
         <button
           type="button"
           onClick={() => setAcao("Novo material")}
-          className={`${botao} bg-brand text-white hover:bg-brand-strong`}
+          className={botaoPrimario}
         >
           Novo material
         </button>

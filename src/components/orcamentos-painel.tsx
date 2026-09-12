@@ -8,6 +8,7 @@ import {
   type DetalheObra,
 } from "@/lib/obra-detalhe-mock";
 import { formatarData, formatarValor } from "@/lib/obras-mock";
+import { botaoBase, cartao, tituloSecao } from "@/lib/ui";
 
 type Selecao = Record<CategoriaOrcamento, number | null>;
 
@@ -43,9 +44,9 @@ export function OrcamentosPainel({
         {CATEGORIAS_ORCAMENTO.map((categoria) => (
           <section
             key={categoria}
-            className="rounded-lg border border-border bg-surface p-5"
+            className={`${cartao} p-5`}
           >
-            <h2 className="font-semibold text-brand">{categoria}</h2>
+            <h2 className={tituloSecao}>{categoria}</h2>
             <p className="mt-1 text-xs text-muted">
               Três orçamentos previstos. Quantidade mínima e quem aprova ainda
               não estão definidos.
@@ -106,7 +107,7 @@ export function OrcamentosPainel({
                           [categoria]: escolhido ? null : i,
                         }))
                       }
-                      className={`mt-4 w-full rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                      className={`${botaoBase} mt-4 w-full ${
                         indisponivel
                           ? "cursor-not-allowed border border-border text-muted"
                           : escolhido
@@ -129,8 +130,8 @@ export function OrcamentosPainel({
       </div>
 
       {/* Resumo dos valores */}
-      <section className="rounded-lg border border-border bg-surface p-5">
-        <h2 className="font-semibold text-brand">Resumo dos valores</h2>
+      <section className={`${cartao} p-5`}>
+        <h2 className={tituloSecao}>Resumo dos valores</h2>
         <p className="mt-1 text-xs text-muted">
           Calculado sobre os orçamentos selecionados nesta tela. A seleção é
           apenas visual e não é gravada.

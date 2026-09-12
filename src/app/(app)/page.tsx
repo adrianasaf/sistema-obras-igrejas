@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
+import { cartao, tituloSecao } from "@/lib/ui";
 import { BadgePrioridade, BadgeStatus } from "@/components/badges";
 import { CORES_PRIORIDADE, CORES_STATUS } from "@/lib/cores";
 import {
@@ -89,15 +91,11 @@ export default function Dashboard() {
     .sort(porData);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-brand">
-          Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Visão geral das obras das igrejas. Dados demonstrativos.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <CabecalhoPagina
+        titulo="Dashboard"
+        descricao="Visão geral das obras das igrejas. Dados demonstrativos."
+      />
 
       {/* Cartões de resumo */}
       <section aria-labelledby="resumo">
@@ -109,7 +107,7 @@ export default function Dashboard() {
             <li key={c.rotulo}>
               <Link
                 href={c.href}
-                className="flex h-full overflow-hidden rounded-lg border border-border bg-surface transition-shadow hover:shadow-md"
+                className={`${cartao} flex h-full overflow-hidden transition-shadow hover:shadow-md`}
               >
                 <span aria-hidden="true" className={`w-1.5 shrink-0 ${c.barra}`} />
                 <span className="flex min-w-0 flex-1 flex-col justify-between p-4">
@@ -220,10 +218,10 @@ function Painel({
   obras: Obra[];
 }) {
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-surface">
+    <section className={`${cartao} overflow-hidden`}>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-4">
         <div>
-          <h2 className="font-semibold text-brand">{titulo}</h2>
+          <h2 className={tituloSecao}>{titulo}</h2>
           <p className="text-xs text-muted">{descricao}</p>
         </div>
         <span className="rounded-full bg-background px-2.5 py-0.5 text-xs font-medium text-muted tabular-nums">

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { BadgeEstoque } from "@/components/badges";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
+import { CartaoLista, Tabela } from "@/components/tabela";
+import { cartao } from "@/lib/ui";
 import {
   MATERIAIS,
   formatarQuantidade,
@@ -21,17 +24,12 @@ export default function EstoquePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-brand">
-            Estoque
-          </h1>
-          <p className="mt-1 text-sm text-muted">
-            Materiais e saldos. Dados demonstrativos.
-          </p>
-        </div>
-        <AcoesEstoque />
-      </div>
+      <CabecalhoPagina
+        titulo="Estoque"
+        descricao="Materiais e saldos. Dados demonstrativos."
+      />
+
+      <AcoesEstoque />
 
       {/* Resumo */}
       <ul className="grid grid-cols-3 gap-3">
@@ -45,76 +43,48 @@ export default function EstoquePage() {
       </ul>
 
       {/* Tabela (tablet e computador) */}
-      <div className="hidden overflow-x-auto rounded-lg border border-border bg-surface md:block">
-        <table className="w-full text-sm">
-          <thead className="bg-background text-left text-xs tracking-wide text-muted uppercase">
-            <tr>
-              <th className="px-4 py-3 font-medium">Material</th>
-              <th className="px-4 py-3 font-medium">Categoria</th>
-              <th className="px-4 py-3 font-medium">Unidade</th>
-              <th className="px-4 py-3 text-right font-medium">
-                Quantidade atual
-              </th>
-              <th className="px-4 py-3 text-right font-medium">
-                Estoque mínimo
-              </th>
-              <th className="px-4 py-3 font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {materiais.map((m) => (
-              <tr key={m.id} className="hover:bg-background">
-                <td className="px-4 py-3 font-medium">{m.nome}</td>
-                <td className="px-4 py-3">{m.categoria}</td>
-                <td className="px-4 py-3">{m.unidade}</td>
-                <td className="px-4 py-3 text-right tabular-nums">
-                  {formatarQuantidade(m.quantidade)}
-                </td>
-                <td className="px-4 py-3 text-right tabular-nums text-muted">
-                  {formatarQuantidade(m.minimo)}
-                </td>
-                <td className="px-4 py-3">
-                  <BadgeEstoque valor={statusMaterial(m)} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Tabela
+        colunas={[
+          "Material",
+          "Categoria",
+          "Unidade",
+          { rotulo: "Quantidade atual", direita: true },
+          { rotulo: "Estoque mínimo", direita: true },
+          "Status",
+        ]}
+      >
+        {materiais.map((m) => (
+          <tr key={m.id} className="hover:bg-background">
+            <td className="px-4 py-3 font-medium">{m.nome}</td>
+            <td className="px-4 py-3">{m.categoria}</td>
+            <td className="px-4 py-3">{m.unidade}</td>
+            <td className="px-4 py-3 text-right tabular-nums">
+              {formatarQuantidade(m.quantidade)}
+            </td>
+            <td className="px-4 py-3 text-right tabular-nums text-muted">
+              {formatarQuantidade(m.minimo)}
+            </td>
+            <td className="px-4 py-3">
+              <BadgeEstoque valor={statusMaterial(m)} />
+            </td>
+          </tr>
+        ))}
+      </Tabela>
 
       {/* Cartões (celular) */}
       <ul className="space-y-3 md:hidden">
         {materiais.map((m) => (
-          <li
+          <CartaoLista
             key={m.id}
-            className="rounded-lg border border-border bg-surface p-4"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="font-medium">{m.nome}</p>
-                <p className="text-xs text-muted">{m.categoria}</p>
-              </div>
-              <BadgeEstoque valor={statusMaterial(m)} />
-            </div>
-            <dl className="mt-3 grid grid-cols-3 gap-3 text-xs">
-              <div>
-                <dt className="text-muted">Unidade</dt>
-                <dd className="font-medium">{m.unidade}</dd>
-              </div>
-              <div>
-                <dt className="text-muted">Atual</dt>
-                <dd className="font-medium tabular-nums">
-                  {formatarQuantidade(m.quantidade)}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted">Mínimo</dt>
-                <dd className="font-medium tabular-nums">
-                  {formatarQuantidade(m.minimo)}
-                </dd>
-              </div>
-            </dl>
-          </li>
+            titulo={m.nome}
+            subtitulo={m.categoria}
+            cracha={<BadgeEstoque valor={statusMaterial(m)} />}
+            dados={[
+              { rotulo: "Unidade", valor: m.unidade },
+              { rotulo: "Quantidade atual", valor: formatarQuantidade(m.quantidade) },
+              { rotulo: "Estoque mínimo", valor: formatarQuantidade(m.minimo) },
+            ]}
+          />
         ))}
       </ul>
 
@@ -136,7 +106,7 @@ function Resumo({
   cor?: string;
 }) {
   return (
-    <li className="rounded-lg border border-border bg-surface p-4">
+    <li className={`${cartao} p-4`}>
       <p className="truncate text-xs text-muted">{rotulo}</p>
       <p
         className={`mt-1 text-2xl leading-none font-semibold tabular-nums ${cor ?? "text-brand"}`}

@@ -3,7 +3,9 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { ReactNode } from "react";
 import { BadgeAlteracao } from "@/components/badges";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CORES_ALTERACAO } from "@/lib/cores";
+import { cartao, tituloSecao } from "@/lib/ui";
 import {
   TIPOS_ALTERACAO,
   VERSOES,
@@ -26,17 +28,13 @@ export default async function HistoricoPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-brand">
-          Histórico de Desenvolvimento
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Linha do tempo das versões do sistema. Dados demonstrativos.
-        </p>
-      </div>
+      <CabecalhoPagina
+        titulo="Histórico de Desenvolvimento"
+        descricao="Linha do tempo das versões do sistema. Dados demonstrativos."
+      />
 
       {/* Resumo e legenda dos tipos */}
-      <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className={`${cartao} flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between`}>
         <div>
           <p className="text-xs text-muted">Versão mais recente</p>
           <p className="mt-1 font-mono text-2xl leading-none font-semibold text-brand">
@@ -68,7 +66,7 @@ export default async function HistoricoPage() {
       </ol>
 
       {/* Documento real do projeto, preservado */}
-      <details className="rounded-lg border border-border bg-surface">
+      <details className={cartao}>
         <summary className="cursor-pointer px-5 py-4 text-sm font-medium text-brand">
           Documento de histórico do projeto (docs/10-HISTORICO-DESENVOLVIMENTO.md)
         </summary>
@@ -107,7 +105,7 @@ function ItemVersao({
         className={`relative mt-5 size-5 shrink-0 rounded-full border-2 border-surface ring-2 ring-border ${cor.ponto}`}
       />
 
-      <div className="min-w-0 flex-1 overflow-hidden rounded-lg border border-border bg-surface">
+      <div className={`${cartao} min-w-0 flex-1 overflow-hidden`}>
         <div className="flex flex-col gap-3 border-b border-border p-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
@@ -118,7 +116,7 @@ function ItemVersao({
                 {formatarDataVersao(versao.data)}
               </span>
             </div>
-            <h2 className="mt-2 font-semibold text-brand">{versao.titulo}</h2>
+            <h2 className={`mt-2 ${tituloSecao}`}>{versao.titulo}</h2>
           </div>
           <div className="sm:shrink-0">
             <BadgeAlteracao valor={versao.tipo} />

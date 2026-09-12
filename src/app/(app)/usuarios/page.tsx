@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { USUARIOS } from "@/lib/usuarios-mock";
 import { PainelUsuarios } from "./painel";
 
@@ -11,15 +12,10 @@ export default function UsuariosPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-brand">
-          Usuários e perfis
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Acessos ao sistema e vínculo com a estrutura administrativa. Dados
-          demonstrativos.
-        </p>
-      </div>
+      <CabecalhoPagina
+        titulo="Usuários e perfis"
+        descricao="Acessos ao sistema e vínculo com a estrutura administrativa. Dados demonstrativos."
+      />
 
       <PainelUsuarios usuarios={usuarios} />
 

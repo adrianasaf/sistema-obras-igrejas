@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { BadgeCadastro } from "@/components/badges";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import {
   AcoesRegistro,
   AvisoDemonstrativo,
-  CabecalhoLista,
-  CartaoRegistro,
-  Tabela,
 } from "@/components/estrutura/comuns";
+import { CartaoLista, Tabela } from "@/components/tabela";
+import { botaoPrimario } from "@/lib/ui";
+import Link from "next/link";
 import { IGREJAS, caminhoDaIgreja } from "@/lib/estrutura-mock";
 
 export const metadata: Metadata = { title: "Igrejas" };
@@ -18,14 +19,18 @@ export default function IgrejasPage() {
 
   return (
     <div className="space-y-6">
-      <CabecalhoLista
+      <CabecalhoPagina
         titulo="Igrejas"
         descricao="Cada igreja pertence a um polo. Dados demonstrativos."
-        novoHref="/igrejas/nova"
-        novoRotulo="Nova Igreja"
+        acao={
+          <Link href="/igrejas/nova" className={botaoPrimario}>
+            Nova Igreja
+          </Link>
+        }
       />
 
       <Tabela
+        acoes
         colunas={["Código", "Nome", "Polo", "Área", "Região", "Cidade", "Status"]}
       >
         {igrejas.map((i) => {
@@ -57,7 +62,7 @@ export default function IgrejasPage() {
         {igrejas.map((i) => {
           const { polo, area, regiao } = caminhoDaIgreja(i);
           return (
-            <CartaoRegistro
+            <CartaoLista
               key={i.id}
               titulo={i.nome}
               subtitulo={`Código ${i.codigo} · ${i.cidade}`}

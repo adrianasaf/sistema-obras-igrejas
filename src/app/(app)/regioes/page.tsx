@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { BadgeCadastro } from "@/components/badges";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import {
   AcoesRegistro,
   AvisoDemonstrativo,
-  CabecalhoLista,
-  CartaoRegistro,
-  Tabela,
 } from "@/components/estrutura/comuns";
+import { CartaoLista, Tabela } from "@/components/tabela";
+import { botaoPrimario } from "@/lib/ui";
+import Link from "next/link";
 import { REGIOES, areasDaRegiao } from "@/lib/estrutura-mock";
 
 export const metadata: Metadata = { title: "Regiões" };
@@ -16,14 +17,20 @@ export default function RegioesPage() {
 
   return (
     <div className="space-y-6">
-      <CabecalhoLista
+      <CabecalhoPagina
         titulo="Regiões"
         descricao="Primeiro nível da estrutura administrativa. Dados demonstrativos."
-        novoHref="/regioes/nova"
-        novoRotulo="Nova Região"
+        acao={
+          <Link href="/regioes/nova" className={botaoPrimario}>
+            Nova Região
+          </Link>
+        }
       />
 
-      <Tabela colunas={["Código", "Nome", "Coordenador", "Áreas", "Status"]}>
+      <Tabela
+        acoes
+        colunas={["Código", "Nome", "Coordenador", "Áreas", "Status"]}
+      >
         {regioes.map((r) => (
           <tr key={r.id} className="hover:bg-background">
             <td className="px-4 py-3 font-mono text-xs">{r.codigo}</td>
@@ -48,7 +55,7 @@ export default function RegioesPage() {
 
       <ul className="space-y-3 md:hidden">
         {regioes.map((r) => (
-          <CartaoRegistro
+          <CartaoLista
             key={r.id}
             titulo={r.nome}
             subtitulo={`Código ${r.codigo}`}
