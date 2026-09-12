@@ -96,3 +96,19 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Lista de perfis informada pelo responsável; a associação com o nível da estrutura é consequência direta do nome de cada perfil e serve para a interface exibir o vínculo correto.
 - **Impacto:** Apenas interface: **nenhuma permissão é aplicada** e não há relação com a autenticação (Clerk). Continuam **PENDENTES DE DEFINIÇÃO**: o que cada perfil pode ver e fazer (PEN-011), as atribuições de cada cargo (PEN-002), o papel do Responsável COMBENS (PEN-021) e se um usuário pode ter mais de um perfil ou mais de um vínculo (PEN-022). Observação de nomenclatura: DEC-008 registrou os níveis de aprovação como "Coordenador do Polo/da Área/da Região" e aqui os perfis foram informados como "Coordenador de Polo/de Área/de Região" — a forma oficial precisa ser confirmada (PEN-002).
 - **Status:** Ativa
+
+## DEC-010
+- **Data:** 2026-09-12
+- **Título:** Fluxo real de aprovação das solicitações de obras
+- **Contexto:** Primeira funcionalidade com gravação em banco (Neon). Antes, as aprovações eram apenas demonstrativas.
+- **Decisão:** O fluxo tem seis etapas, na ordem de DEC-008 (Pastor Local → Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS → Presbitério). Em cada etapa a decisão pode ser **Aprovar**, **Reprovar** ou **Solicitar correção**, com as regras informadas pelo responsável:
+  - a solicitação só avança para a próxima etapa após a aprovação da etapa atual;
+  - **não é possível pular etapas** (validado também no banco, no `WHERE` da própria gravação);
+  - **reprovação encerra o fluxo** (situação `Reprovada`);
+  - **"Solicitar correção"** mantém a mesma etapa e **não encerra** o processo (situação `Em correção`); a solicitação volta a ser analisável após um **reenvio**, registrado no histórico;
+  - toda decisão grava usuário, data/hora e comentário; o comentário é **obrigatório** em reprovação e pedido de correção;
+  - o histórico nunca é alterado nem apagado: cada decisão é um registro novo (tabela `decisoes_aprovacao`);
+  - após a aprovação do Presbitério, o fluxo fica `Aprovada` (todas as etapas aprovadas).
+- **Motivo:** Regras informadas pelo responsável do projeto.
+- **Impacto:** Duas tabelas novas (`fluxo_aprovacao`, `decisoes_aprovacao`), criadas pela migração `scripts/001-fluxo-aprovacao.sql`. As solicitações em si continuam vindo dos dados demonstrativos (`src/lib/obras-mock.ts`): o fluxo é identificado pelo número da solicitação, sem chave estrangeira, até as obras irem para o banco. **PENDENTE DE DEFINIÇÃO:** quais perfis podem decidir em cada etapa (PEN-023) — hoje qualquer usuário autenticado pode decidir, e fica registrado quem foi; quem pode reenviar após correção e se uma reprovação pode ser reaberta (PEN-024); prazos e alçadas (PEN-004). O status "Aprovada para execução" depende da etapa de orçamentos, ainda não implementada.
+- **Status:** Ativa

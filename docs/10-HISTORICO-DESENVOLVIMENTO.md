@@ -196,3 +196,23 @@ Próximo passo:
 - **Decisões:** nenhuma decisão institucional nova. A escala de cores descrita acima é convenção de interface e está documentada em `src/lib/cores.ts` e em `docs/07-TELAS.md`.
 - **Pendências:** nenhuma nova. As informações institucionais da tela de Configurações dependem de PEN-001 (nome oficial) e das definições do responsável.
 - **Próximo passo:** interface concluída nesta etapa; a evolução seguinte depende de definição do responsável (banco de dados e regras).
+
+## Entrada 013
+- **Data:** 2026-09-12
+- **Etapa:** Fluxo real de aprovação das solicitações (primeira funcionalidade com banco)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - Migração `scripts/001-fluxo-aprovacao.sql` com as tabelas `fluxo_aprovacao` (estado) e `decisoes_aprovacao` (histórico), documentadas em `docs/06-BANCO-DE-DADOS.md`.
+  - Regras do fluxo em `src/lib/aprovacao.ts` (puras, sem banco) e acesso ao banco em `src/lib/fluxo-aprovacao.ts`: seis etapas na ordem de DEC-008, decisões Aprovar/Reprovar/Solicitar correção, avanço só após aprovação, reprovação encerra, correção mantém a etapa com reenvio, e bloqueio de pulo de etapa.
+  - Server Actions em `src/app/(app)/obras/[id]/acoes.ts`: identificam o usuário pela sessão do Clerk, exigem comentário em reprovação e correção, e revalidam a página após gravar.
+  - Aba **Aprovações** (tela já existente) agora mostra dados reais: situação atual, etapa X de 6, painel de decisão da etapa atual (ou de reenvio, quando há correção) e linha do tempo com todas as decisões — usuário, data/hora e comentário.
+  - Cabeçalho da obra passou a exibir o status real do fluxo ("Aguardando Coordenador da Área", "Correção solicitada", "Reprovada", "Aprovada em todas as etapas").
+  - As aprovações demonstrativas foram removidas de `src/lib/obra-detalhe-mock.ts` (orçamentos, execução e conclusão continuam demonstrativos). Se o banco não responder, a aba avisa e as demais abas continuam funcionando.
+- **Testes executados:** Postgres 16 local (o ambiente desta sessão não alcança o Neon: a política de rede bloqueia `*.neon.tech`).
+  - Migração aplicada duas vezes: idempotente.
+  - Regras puras: 19 verificações, todas passaram (fluxo completo até o Presbitério, bloqueio de pulo de etapa, reprovação encerrando, correção mantendo a etapa, reenvio, rótulos de status).
+  - Banco, com o mesmo SQL guardado que a aplicação executa: fluxo completo das seis etapas até `Aprovada` com 6 registros no histórico; nova decisão após conclusão rejeitada; pulo da etapa 2 para a 4 rejeitado; reprovação encerrando e bloqueando decisões seguintes; correção bloqueando decisão até o reenvio e retomando na mesma etapa; histórico preservado com correção e reenvio; restrições rejeitando decisão inválida, etapa fora de 1..6 e situação inválida.
+  - **Não testado aqui:** o caminho pela interface em produção (exige as chaves do Clerk, ausentes nesta sessão).
+- **Decisões:** DEC-010.
+- **Pendências:** novas PEN-023 (quais perfis decidem em cada etapa) e PEN-024 (quem reenvia após correção; reabertura de reprovação). O status "Aprovada para execução" depende da etapa de orçamentos, ainda não implementada.
+- **Próximo passo:** aplicar a migração no Neon e validar o fluxo em produção; orçamentos e decisão do Presbitério sobre valores continuam pendentes.

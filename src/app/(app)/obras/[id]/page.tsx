@@ -10,11 +10,24 @@ import {
   BadgeStatus,
 } from "@/components/badges";
 import { GaleriaFotos } from "@/components/galeria-fotos";
+import {
+  NIVEIS_APROVACAO,
+  fluxoEncerrado,
+  nivelDaEtapa,
+  rotuloSituacao,
+  situacaoComoAprovacao,
+  type SituacaoAprovacao,
+} from "@/lib/aprovacao";
+import {
+  obterAprovacoes,
+  type DecisaoRegistrada,
+  type Fluxo,
+} from "@/lib/fluxo-aprovacao";
 import { OrcamentosPainel } from "@/components/orcamentos-painel";
+import { PainelDecisao, PainelReenvio } from "./painel-aprovacao";
 import { CORES_APROVACAO, CORES_FASE } from "@/lib/cores";
 import { cartao, tituloSecao } from "@/lib/ui";
 import {
-  type Aprovacao,
   type DetalheObra,
   detalheDemonstrativo,
 } from "@/lib/obra-detalhe-mock";
@@ -44,9 +57,20 @@ export default async function DetalheObraPage({
   const detalhe = detalheDemonstrativo(obra);
   const valores = valoresDemonstrativos(obra);
 
+  // Fluxo de aprovação: dados reais (banco). Se o banco não responder, a tela
+  // continua abrindo e avisa — as demais abas não dependem dele.
+  let aprovacoes: { fluxo: Fluxo; decisoes: DecisaoRegistrada[] } | null = null;
+  let erroBanco = false;
+  try {
+    aprovacoes = await obterAprovacoes(obra.id);
+  } catch (erro) {
+    console.error("Falha ao ler o fluxo de aprovação:", erro);
+    erroBanco = true;
+  }
+
   return (
     <div className="space-y-6">
-      <Cabecalho obra={obra} />
+      <Cabecalho obra={obra} fluxo={aprovacoes?.fluxo} />
 
       <Abas
         itens={[
@@ -58,7 +82,13 @@ export default async function DetalheObraPage({
           {
             id: "aprovacoes",
             rotulo: "Aprovações",
-            conteudo: <Aprovacoes aprovacoes={detalhe.aprovacoes} />,
+            conteudo: (
+              <Aprovacoes
+                obraId={obra.id}
+                dados={aprovacoes}
+                erroBanco={erroBanco}
+              />
+            ),
           },
           {
             id: "orcamentos",
@@ -93,7 +123,7 @@ export default async function DetalheObraPage({
 
 /* ---------------------------------------------------------------- cabeçalho */
 
-function Cabecalho({ obra }: { obra: Obra }) {
+function Cabecalho({ obra, fluxo }: { obra: Obra; fluxo?: Fluxo }) {
   return (
     <div>
       <LinkVoltar href="/obras">Voltar para Obras</LinkVoltar>
@@ -111,7 +141,14 @@ function Cabecalho({ obra }: { obra: Obra }) {
           </div>
           <div className="flex flex-wrap gap-2 sm:justify-end">
             <BadgePrioridade valor={obra.prioridade} />
-            <BadgeStatus valor={obra.status} />
+            {fluxo ? (
+              <BadgeAprovacao
+                valor={situacaoComoAprovacao(fluxo.situacao)}
+                rotulo={rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)}
+              />
+            ) : (
+              <BadgeStatus valor={obra.status} />
+            )}
           </div>
         </div>
 
@@ -120,7 +157,14 @@ function Cabecalho({ obra }: { obra: Obra }) {
           <Campo rotulo="Obra" valor={obra.titulo} />
           <Campo rotulo="Tipo" valor={obra.tipo} />
           <Campo rotulo="Prioridade" valor={obra.prioridade} />
-          <Campo rotulo="Status atual" valor={obra.status} />
+          <Campo
+            rotulo="Status atual"
+            valor={
+              fluxo
+                ? rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)
+                : obra.status
+            }
+          />
           <Campo rotulo="Data da solicitação" valor={formatarData(obra.data)} />
         </dl>
       </div>
@@ -209,52 +253,177 @@ function Linha({ rotulo, valor }: { rotulo: string; valor: string }) {
 
 /* --------------------------------------------------------------- aprovações */
 
-function Aprovacoes({ aprovacoes }: { aprovacoes: Aprovacao[] }) {
+type Aprovacoes = { fluxo: Fluxo; decisoes: DecisaoRegistrada[] };
+
+function Aprovacoes({
+  obraId,
+  dados,
+  erroBanco,
+}: {
+  obraId: string;
+  dados: Aprovacoes | null;
+  erroBanco: boolean;
+}) {
+  if (!dados) {
+    return (
+      <Cartao titulo="Aprovações">
+        <p className="text-sm text-muted">
+          {erroBanco
+            ? "Não foi possível consultar o fluxo de aprovação agora. Recarregue a página em instantes."
+            : "Fluxo de aprovação indisponível."}
+        </p>
+      </Cartao>
+    );
+  }
+
+  const { fluxo, decisoes } = dados;
+  const encerrado = fluxoEncerrado(fluxo.situacao);
+
   return (
-    <Cartao
-      titulo="Linha do tempo das aprovações"
-      descricao="Sequência informada pelo responsável do projeto. Alçadas, prazos e efeitos de reprovação ainda não estão definidos."
-    >
-      <ol>
-        {aprovacoes.map((a, i) => {
-          const cor = CORES_APROVACAO[a.situacao];
-          const ultimo = i === aprovacoes.length - 1;
-          const respondido = a.situacao !== "Aguardando";
-          return (
-            <li key={a.nivel} className="relative flex gap-4 pb-6 last:pb-0">
-              {!ultimo && (
+    <div className="space-y-6">
+      {/* Situação atual */}
+      <Cartao titulo="Situação da solicitação">
+        <div className="flex flex-wrap items-center gap-3">
+          <BadgeAprovacao
+            valor={situacaoComoAprovacao(fluxo.situacao)}
+            rotulo={rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)}
+          />
+          <p className="text-sm text-muted">
+            Etapa {fluxo.etapaAtual} de {NIVEIS_APROVACAO.length}
+            {fluxo.atualizadoEm &&
+              ` · última movimentação em ${formatarDataHora(fluxo.atualizadoEm)}`}
+          </p>
+        </div>
+      </Cartao>
+
+      {/* Decisão da etapa atual */}
+      {!encerrado &&
+        (fluxo.situacao === "Em correção" ? (
+          <Cartao
+            titulo="Correção solicitada"
+            descricao="A solicitação volta para a mesma etapa depois do reenvio; o fluxo não é encerrado."
+          >
+            <PainelReenvio obraId={obraId} />
+          </Cartao>
+        ) : (
+          <Cartao
+            titulo={`Decisão — ${nivelDaEtapa(fluxo.etapaAtual)}`}
+            descricao="Quais perfis podem decidir em cada etapa ainda não está definido: a decisão fica registrada com o usuário, a data e a hora."
+          >
+            <PainelDecisao
+              obraId={obraId}
+              etapa={fluxo.etapaAtual}
+              nivel={nivelDaEtapa(fluxo.etapaAtual)}
+            />
+          </Cartao>
+        ))}
+
+      {/* Linha do tempo */}
+      <Cartao
+        titulo="Linha do tempo das aprovações"
+        descricao="Sequência informada pelo responsável do projeto. A solicitação só avança após a aprovação da etapa atual."
+      >
+        <ol>
+          {NIVEIS_APROVACAO.map((nivel, i) => {
+            const etapa = i + 1;
+            const registros = decisoes.filter((d) => d.etapa === etapa);
+            const ultima = registros
+              .filter((d) => d.decisao !== "Reenviada após correção")
+              .at(-1);
+
+            const situacao: SituacaoAprovacao =
+              ultima?.decisao === "Aprovado"
+                ? "Aprovado"
+                : ultima?.decisao === "Reprovado"
+                  ? "Reprovado"
+                  : ultima?.decisao === "Correção solicitada" &&
+                      fluxo.situacao === "Em correção" &&
+                      fluxo.etapaAtual === etapa
+                    ? "Correção solicitada"
+                    : ultima?.decisao === "Correção solicitada"
+                      ? "Correção solicitada"
+                      : "Aguardando";
+
+            const cor = CORES_APROVACAO[situacao];
+            const atual = fluxo.etapaAtual === etapa && !encerrado;
+
+            return (
+              <li key={nivel} className="relative flex gap-4 pb-6 last:pb-0">
+                {i < NIVEIS_APROVACAO.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className={`absolute top-5 left-[9px] h-full w-0.5 ${
+                      registros.length > 0 ? cor.barra : "bg-border"
+                    }`}
+                  />
+                )}
                 <span
                   aria-hidden="true"
-                  className={`absolute top-5 left-[9px] h-full w-0.5 ${
-                    respondido ? cor.barra : "bg-border"
+                  className={`relative mt-1 size-5 shrink-0 rounded-full border-2 border-surface ${cor.ponto} ring-2 ${
+                    atual ? "ring-brand/40" : "ring-border"
                   }`}
                 />
-              )}
-              <span
-                aria-hidden="true"
-                className={`relative mt-1 size-5 shrink-0 rounded-full border-2 border-surface ${cor.ponto} ring-2 ring-border`}
-              />
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-medium">{a.nivel}</p>
-                  <BadgeAprovacao valor={a.situacao} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-medium">
+                      {etapa}. {nivel}
+                    </p>
+                    <BadgeAprovacao valor={situacao} />
+                    {atual && (
+                      <span className="text-xs text-brand">(etapa atual)</span>
+                    )}
+                  </div>
+
+                  {registros.length === 0 ? (
+                    <p className="mt-1 text-xs text-muted">
+                      Sem decisão registrada.
+                    </p>
+                  ) : (
+                    <ul className="mt-2 space-y-2">
+                      {registros.map((r) => (
+                        <li
+                          key={r.id}
+                          className="rounded-md border border-border bg-background px-3 py-2"
+                        >
+                          <p className="text-xs font-medium">
+                            {r.decisao} · {r.usuarioNome}
+                          </p>
+                          <p className="text-xs text-muted">
+                            {formatarDataHora(r.criadoEm)}
+                            {r.usuarioEmail ? ` · ${r.usuarioEmail}` : ""}
+                          </p>
+                          {r.comentario && (
+                            <p className="mt-1.5 text-xs leading-relaxed">
+                              {r.comentario}
+                            </p>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <p className="mt-1 text-xs text-muted">
-                  {a.responsavel}
-                  {a.data ? ` · ${formatarData(a.data)}` : " · sem data"}
-                </p>
-                {a.observacao && (
-                  <p className="mt-2 rounded-md border border-border bg-background px-3 py-2 text-xs leading-relaxed">
-                    {a.observacao}
-                  </p>
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
-    </Cartao>
+              </li>
+            );
+          })}
+        </ol>
+        <p className="mt-4 text-xs text-muted">
+          O histórico é preservado: cada decisão gera um registro novo e nada é
+          alterado nem apagado.
+        </p>
+      </Cartao>
+    </div>
   );
+}
+
+function formatarDataHora(iso: string): string {
+  return new Date(iso).toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "America/Fortaleza",
+  });
 }
 
 /* ------------------------------------------------------------------ execução */

@@ -11,8 +11,8 @@ import type { StatusMaterial } from "@/lib/estoque-mock";
 import type { StatusCadastro } from "@/lib/estrutura-mock";
 import type { TipoAlteracao } from "@/lib/historico-mock";
 import type { Perfil } from "@/lib/usuarios-mock";
+import type { SituacaoAprovacao } from "@/lib/aprovacao";
 import type {
-  SituacaoAprovacao,
   SituacaoFase,
   SituacaoOrcamento,
 } from "@/lib/obra-detalhe-mock";

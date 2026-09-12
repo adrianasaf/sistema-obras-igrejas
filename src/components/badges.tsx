@@ -16,8 +16,8 @@ import {
 } from "@/lib/estrutura-mock";
 import type { TipoAlteracao } from "@/lib/historico-mock";
 import type { Perfil } from "@/lib/usuarios-mock";
+import type { SituacaoAprovacao } from "@/lib/aprovacao";
 import type {
-  SituacaoAprovacao,
   SituacaoFase,
   SituacaoOrcamento,
 } from "@/lib/obra-detalhe-mock";
@@ -46,12 +46,20 @@ export function BadgeStatus({ valor }: { valor: StatusObra }) {
   );
 }
 
-export function BadgeAprovacao({ valor }: { valor: SituacaoAprovacao }) {
+// `rotulo` permite exibir um texto próprio (ex.: "Aguardando Presbitério")
+// mantendo a cor da situação.
+export function BadgeAprovacao({
+  valor,
+  rotulo,
+}: {
+  valor: SituacaoAprovacao;
+  rotulo?: string;
+}) {
   const cor = CORES_APROVACAO[valor];
   return (
     <span className={`${base} ${cor.cracha}`}>
       <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />
-      {valor}
+      {rotulo ?? valor}
     </span>
   );
 }

@@ -1,39 +1,13 @@
-// Dados DEMONSTRATIVOS das etapas da obra (aprovações, orçamentos, execução e
-// conclusão). Servem apenas para exibir a interface: não há gravação, cálculo
-// nem regra de negócio aqui.
+// Dados DEMONSTRATIVOS das etapas da obra (orçamentos, execução e conclusão).
+// Servem apenas para exibir a interface: não há gravação, cálculo nem regra de
+// negócio aqui.
 //
-// Os nomes dos níveis de aprovação foram informados pelo responsável do
-// projeto (ver DEC-008). Ordem exata, alçadas, prazos e efeitos de reprovação
-// continuam PENDENTES DE DEFINIÇÃO (PEN-004, PEN-005), assim como o conteúdo
-// das cinco fases de execução (PEN-009) e os critérios de conclusão (PEN-010).
+// As aprovações NÃO estão mais aqui: o fluxo de aprovação é real e vive no
+// banco (src/lib/fluxo-aprovacao.ts). Continuam PENDENTES DE DEFINIÇÃO o
+// conteúdo das cinco fases de execução (PEN-009) e os critérios de conclusão
+// (PEN-010).
 
 import { valoresDemonstrativos, type Foto, type Obra } from "@/lib/obras-mock";
-
-export const NIVEIS_APROVACAO = [
-  "Pastor Local",
-  "Coordenador do Polo",
-  "Coordenador da Área",
-  "Coordenador da Região",
-  "Responsável COMBENS",
-  "Presbitério",
-] as const;
-export type NivelAprovacao = (typeof NIVEIS_APROVACAO)[number];
-
-export const SITUACOES_APROVACAO = [
-  "Aguardando",
-  "Aprovado",
-  "Reprovado",
-  "Correção solicitada",
-] as const;
-export type SituacaoAprovacao = (typeof SITUACOES_APROVACAO)[number];
-
-export type Aprovacao = {
-  nivel: NivelAprovacao;
-  situacao: SituacaoAprovacao;
-  responsavel?: string;
-  data?: string;
-  observacao?: string;
-};
 
 export const CATEGORIAS_ORCAMENTO = ["Material", "Mão de obra"] as const;
 export type CategoriaOrcamento = (typeof CATEGORIAS_ORCAMENTO)[number];
@@ -67,86 +41,17 @@ export type Conclusao = {
   fotos: Foto[];
 };
 
-export type DetalheObra = {
-  aprovacoes: Aprovacao[];
-  orcamentos: Record<CategoriaOrcamento, Orcamento[]>;
-  fases: Fase[];
-  conclusao: Conclusao;
-};
-
-// Quantos níveis já responderam, por situação da obra (apenas demonstrativo).
-const NIVEIS_RESPONDIDOS: Record<Obra["status"], number> = {
-  Solicitada: 1,
-  "Em análise": 3,
-  Aprovada: 6,
-  "Em execução": 6,
-  Concluída: 6,
-};
-
-// Variações fixas para a interface mostrar também "Reprovado" e
-// "Correção solicitada". Somente ilustrativo.
-const VARIACOES: Record<
-  string,
-  { nivel: NivelAprovacao; situacao: SituacaoAprovacao; observacao: string }
-> = {
-  "2026-0008": {
-    nivel: "Coordenador da Área",
-    situacao: "Correção solicitada",
-    observacao:
-      "Solicitado incluir a planta do terreno vizinho e refazer a estimativa de área.",
-  },
-  "2026-0007": {
-    nivel: "Coordenador do Polo",
-    situacao: "Reprovado",
-    observacao:
-      "Reprovado nesta forma: avaliar troca parcial do piso antes de substituir toda a área.",
-  },
-};
-
-const RESPONSAVEIS: Record<NivelAprovacao, string> = {
-  "Pastor Local": "Pr. Exemplo da Silva",
-  "Coordenador do Polo": "Irmão Exemplo Souza",
-  "Coordenador da Área": "Irmão Exemplo Lima",
-  "Coordenador da Região": "Irmão Exemplo Alves",
-  "Responsável COMBENS": "Irmão Exemplo Nunes",
-  Presbitério: "Reunião do Presbitério",
-};
-
 function somarDias(iso: string, dias: number): string {
   const d = new Date(`${iso}T12:00:00Z`);
   d.setUTCDate(d.getUTCDate() + dias);
   return d.toISOString().slice(0, 10);
 }
 
-function aprovacoesDe(obra: Obra): Aprovacao[] {
-  const respondidos = NIVEIS_RESPONDIDOS[obra.status];
-  const variacao = VARIACOES[obra.id];
-
-  return NIVEIS_APROVACAO.map((nivel, i) => {
-    const responsavel = RESPONSAVEIS[nivel];
-
-    if (variacao && variacao.nivel === nivel) {
-      return {
-        nivel,
-        responsavel,
-        situacao: variacao.situacao,
-        data: somarDias(obra.data, (i + 1) * 2),
-        observacao: variacao.observacao,
-      };
-    }
-
-    if (i < respondidos) {
-      return {
-        nivel,
-        responsavel,
-        situacao: "Aprovado" as const,
-        data: somarDias(obra.data, (i + 1) * 2),
-      };
-    }
-
-    return { nivel, responsavel, situacao: "Aguardando" as const };
-  });
-}
+export type DetalheObra = {
+  orcamentos: Record<CategoriaOrcamento, Orcamento[]>;
+  fases: Fase[];
+  conclusao: Conclusao;
+};
 
 function orcamentosDe(obra: Obra): Record<CategoriaOrcamento, Orcamento[]> {
   // Só obras aprovadas ou adiante têm orçamentos de exemplo preenchidos.
@@ -248,7 +153,6 @@ function conclusaoDe(obra: Obra): Conclusao {
 
 export function detalheDemonstrativo(obra: Obra): DetalheObra {
   return {
-    aprovacoes: aprovacoesDe(obra),
     orcamentos: orcamentosDe(obra),
     fases: fasesDe(obra),
     conclusao: conclusaoDe(obra),
