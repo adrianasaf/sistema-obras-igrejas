@@ -98,3 +98,20 @@ Próximo passo:
 - **Decisões:** nenhuma nova decisão institucional. Os indicadores são calculados sobre os dados demonstrativos; a apuração no banco fica para etapa futura.
 - **Pendências:** nenhuma nova. O agrupamento "Aguardando aprovação" usa os status provisórios (Solicitada e Em análise) e será revisto quando o fluxo de aprovação for definido (PEN-004).
 - **Próximo passo:** cadastro de Região, Área, Polo e Igreja.
+
+## Entrada 007
+- **Data:** 2026-09-12
+- **Etapa:** Interface — tela de detalhes da obra
+- **Versão:** 0.3.0
+- **Realizado:**
+  - `/obras/[id]` reformulada: cabeçalho com igreja, título, tipo, prioridade, status atual e data da solicitação.
+  - Cinco abas acessíveis (`src/components/abas.tsx`, navegação por teclado e rolagem horizontal em telas estreitas): Visão Geral, Aprovações, Orçamentos, Execução e Conclusão.
+  - **Visão Geral:** descrição da necessidade, fotos da situação atual (espaço reservado) e informações principais da solicitação.
+  - **Aprovações:** linha do tempo com Pastor Local, Coordenador do Polo, Coordenador da Área, Coordenador da Região, Responsável COMBENS e Presbitério, com as situações Aguardando, Aprovado, Reprovado e Correção solicitada (cores distintas).
+  - **Orçamentos:** estrutura visual de três orçamentos para Material e três para Mão de obra (fornecedor/prestador, valor, data, anexo, situação).
+  - **Execução:** Fase 1 a Fase 5 com percentual, situação e barra de progresso, além do andamento geral.
+  - **Conclusão:** áreas preparadas para fotos finais, resumo da obra, valor final e data de conclusão.
+  - Dados demonstrativos em `src/lib/obra-detalhe-mock.ts`; cores das situações em `src/lib/cores.ts`; galeria reutilizável em `src/components/galeria-fotos.tsx`.
+- **Decisões:** DEC-008 (níveis e situações da linha do tempo de aprovações, informados pelo responsável).
+- **Pendências:** PEN-002 e PEN-004 passam a **Parcial**; nova PEN-021 (significado de COMBENS e atribuições do responsável). Alçadas, prazos, efeitos de reprovação (PEN-005), conteúdo das cinco fases (PEN-009) e critérios de conclusão (PEN-010) continuam abertos.
+- **Próximo passo:** aguardar definição do responsável; nenhuma lógica de banco foi implementada nesta etapa.

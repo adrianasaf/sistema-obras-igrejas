@@ -25,8 +25,10 @@ Visão macro do caminho de uma obra, com o que já se conhece. Os detalhes de ca
 - Quem pode abrir a solicitação na igreja: PENDENTE DE DEFINIÇÃO.
 
 ## 2. Aprovações hierárquicas
-- Segue a estrutura Região → Área → Polo → Igreja (sentido e níveis exatos: PENDENTE DE DEFINIÇÃO).
-- Quais níveis aprovam, em que ordem e se há alçadas por valor ou prioridade: PENDENTE DE DEFINIÇÃO.
+- Níveis exibidos na interface, nesta ordem (DEC-008): Pastor Local → Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS → Presbitério.
+- Situações possíveis de cada aprovação (DEC-008): Aguardando, Aprovado, Reprovado, Correção solicitada.
+- Atribuições de cada cargo e o significado de COMBENS: PENDENTE DE DEFINIÇÃO (PEN-002, PEN-021).
+- Se há alçadas por valor ou prioridade e prazos para cada nível: PENDENTE DE DEFINIÇÃO (PEN-004).
 - Comportamento em caso de rejeição (devolve, encerra, permite correção): PENDENTE DE DEFINIÇÃO.
 
 ## 3. Análise pelo Presbitério

@@ -1,8 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BadgePrioridade, BadgeStatus } from "@/components/badges";
-import { STATUS_OBRA, buscarObra, formatarData } from "@/lib/obras-mock";
+import type { ReactNode } from "react";
+import { Abas } from "@/components/abas";
+import {
+  BadgeAprovacao,
+  BadgeFase,
+  BadgePrioridade,
+  BadgeStatus,
+} from "@/components/badges";
+import { GaleriaFotos } from "@/components/galeria-fotos";
+import { CORES_APROVACAO, CORES_FASE } from "@/lib/cores";
+import {
+  CATEGORIAS_ORCAMENTO,
+  type Aprovacao,
+  type DetalheObra,
+  detalheDemonstrativo,
+  formatarValor,
+} from "@/lib/obra-detalhe-mock";
+import { buscarObra, formatarData, type Obra } from "@/lib/obras-mock";
 
 export async function generateMetadata({
   params,
@@ -19,144 +35,417 @@ export default async function DetalheObraPage({
   const obra = buscarObra(id);
   if (!obra) notFound();
 
-  // Linha do tempo baseada na sequência provisória de status. As etapas de
-  // aprovação hierárquica e Presbitério serão inseridas aqui quando o fluxo
-  // for definido (docs/03-FLUXO-DA-OBRA.md).
-  const indiceAtual = STATUS_OBRA.indexOf(obra.status);
-  const etapas = STATUS_OBRA.map((status, i) => ({
-    status,
-    situacao:
-      i < indiceAtual ? "concluida" : i === indiceAtual ? "atual" : "futura",
-    data: i === 0 ? formatarData(obra.data) : undefined,
-  }));
+  const detalhe = detalheDemonstrativo(obra);
 
   return (
     <div className="space-y-6">
-      <div>
-        <Link href="/obras" className="text-sm text-muted hover:text-brand">
-          ← Voltar para Obras
-        </Link>
-        <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="font-mono text-xs text-muted">Solicitação {obra.id}</p>
-            <h1 className="text-2xl font-semibold tracking-tight text-brand">
+      <Cabecalho obra={obra} />
+
+      <Abas
+        itens={[
+          {
+            id: "visao-geral",
+            rotulo: "Visão Geral",
+            conteudo: <VisaoGeral obra={obra} />,
+          },
+          {
+            id: "aprovacoes",
+            rotulo: "Aprovações",
+            conteudo: <Aprovacoes aprovacoes={detalhe.aprovacoes} />,
+          },
+          {
+            id: "orcamentos",
+            rotulo: "Orçamentos",
+            conteudo: <Orcamentos orcamentos={detalhe.orcamentos} />,
+          },
+          {
+            id: "execucao",
+            rotulo: "Execução",
+            conteudo: <Execucao fases={detalhe.fases} />,
+          },
+          {
+            id: "conclusao",
+            rotulo: "Conclusão",
+            conteudo: <Conclusao conclusao={detalhe.conclusao} />,
+          },
+        ]}
+      />
+
+      <p className="text-xs text-muted">
+        Tela demonstrativa: os dados são fictícios e as etapas ainda não têm
+        funcionamento real.
+      </p>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- cabeçalho */
+
+function Cabecalho({ obra }: { obra: Obra }) {
+  return (
+    <div>
+      <Link href="/obras" className="text-sm text-muted hover:text-brand">
+        ← Voltar para Obras
+      </Link>
+
+      <div className="mt-3 overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-muted">{obra.igreja}</p>
+            <h1 className="mt-1 text-xl font-semibold tracking-tight text-brand sm:text-2xl">
               {obra.titulo}
             </h1>
-            <p className="mt-1 text-sm text-muted">{obra.igreja}</p>
+            <p className="mt-1 font-mono text-xs text-muted">
+              Solicitação {obra.id}
+            </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 sm:justify-end">
             <BadgePrioridade valor={obra.prioridade} />
             <BadgeStatus valor={obra.status} />
           </div>
         </div>
-      </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
-          <section className="rounded-lg border border-border bg-surface p-5">
-            <h2 className="font-semibold text-brand">Dados da solicitação</h2>
-            <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Item rotulo="Igreja solicitante" valor={obra.igreja} />
-              <Item rotulo="Tipo da obra" valor={obra.tipo} />
-              <Item rotulo="Prioridade" valor={obra.prioridade} />
-              <Item rotulo="Data da solicitação" valor={formatarData(obra.data)} />
-              <Item rotulo="Situação atual" valor={obra.status} />
-            </dl>
-          </section>
-
-          <section className="rounded-lg border border-border bg-surface p-5">
-            <h2 className="font-semibold text-brand">Descrição</h2>
-            <p className="mt-3 text-sm leading-relaxed whitespace-pre-line">
-              {obra.descricao}
-            </p>
-          </section>
-
-          <section className="rounded-lg border border-border bg-surface p-5">
-            <h2 className="font-semibold text-brand">Fotos</h2>
-            {obra.fotos.length === 0 ? (
-              <p className="mt-3 text-sm text-muted">
-                Nenhuma foto anexada a esta solicitação.
-              </p>
-            ) : (
-              <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {obra.fotos.map((f) => (
-                  <li key={f.id}>
-                    {/* Espaço reservado: as imagens reais virão com o armazenamento de arquivos. */}
-                    <div
-                      role="img"
-                      aria-label={`Foto: ${f.legenda} (imagem de exemplo)`}
-                      className="flex aspect-[4/3] items-center justify-center rounded-md border border-border bg-background text-xs text-muted"
-                    >
-                      Foto de exemplo
-                    </div>
-                    <p className="mt-1 text-xs text-muted">{f.legenda}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </div>
-
-        <aside className="rounded-lg border border-border bg-surface p-5 lg:col-span-1">
-          <h2 className="font-semibold text-brand">Linha do tempo</h2>
-          <p className="mt-1 text-xs text-muted">
-            As etapas de aprovação serão adicionadas quando o fluxo for
-            definido.
-          </p>
-          <ol className="mt-5 space-y-0">
-            {etapas.map((e, i) => (
-              <li key={e.status} className="relative flex gap-3 pb-6 last:pb-0">
-                {i < etapas.length - 1 && (
-                  <span
-                    aria-hidden="true"
-                    className={`absolute top-3 left-[7px] h-full w-0.5 ${
-                      e.situacao === "concluida" ? "bg-brand" : "bg-border"
-                    }`}
-                  />
-                )}
-                <span
-                  aria-hidden="true"
-                  className={`relative mt-1 h-4 w-4 shrink-0 rounded-full border-2 ${
-                    e.situacao === "concluida"
-                      ? "border-brand bg-brand"
-                      : e.situacao === "atual"
-                        ? "border-brand bg-surface ring-4 ring-brand/15"
-                        : "border-border bg-surface"
-                  }`}
-                />
-                <div className="min-w-0">
-                  <p
-                    className={`text-sm ${
-                      e.situacao === "futura"
-                        ? "text-muted"
-                        : "font-medium text-foreground"
-                    }`}
-                  >
-                    {e.status}
-                    {e.situacao === "atual" && (
-                      <span className="ml-2 text-xs font-normal text-brand">
-                        (atual)
-                      </span>
-                    )}
-                  </p>
-                  {e.data && (
-                    <p className="text-xs text-muted">{e.data}</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </aside>
+        <dl className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-3 lg:grid-cols-6">
+          <Campo rotulo="Igreja" valor={obra.igreja} />
+          <Campo rotulo="Obra" valor={obra.titulo} />
+          <Campo rotulo="Tipo" valor={obra.tipo} />
+          <Campo rotulo="Prioridade" valor={obra.prioridade} />
+          <Campo rotulo="Status atual" valor={obra.status} />
+          <Campo rotulo="Data da solicitação" valor={formatarData(obra.data)} />
+        </dl>
       </div>
     </div>
   );
 }
 
-function Item({ rotulo, valor }: { rotulo: string; valor: string }) {
+function Campo({ rotulo, valor }: { rotulo: string; valor: string }) {
   return (
-    <div>
+    <div className="bg-surface px-5 py-3">
       <dt className="text-xs text-muted">{rotulo}</dt>
-      <dd className="mt-0.5 text-sm font-medium">{valor}</dd>
+      <dd className="mt-0.5 truncate text-sm font-medium" title={valor}>
+        {valor}
+      </dd>
     </div>
+  );
+}
+
+/* -------------------------------------------------------------- visão geral */
+
+function VisaoGeral({ obra }: { obra: Obra }) {
+  return (
+    <div className="grid gap-6 lg:grid-cols-3">
+      <div className="space-y-6 lg:col-span-2">
+        <Cartao titulo="Descrição da necessidade">
+          <p className="text-sm leading-relaxed whitespace-pre-line">
+            {obra.descricao}
+          </p>
+        </Cartao>
+
+        <Cartao
+          titulo="Fotos da situação atual"
+          descricao="Enviadas junto com a solicitação."
+        >
+          <GaleriaFotos
+            fotos={obra.fotos}
+            vazio="Nenhuma foto anexada a esta solicitação."
+          />
+        </Cartao>
+      </div>
+
+      <Cartao titulo="Informações da solicitação">
+        <dl className="space-y-3">
+          <Linha rotulo="Igreja solicitante" valor={obra.igreja} />
+          <Linha rotulo="Tipo da obra" valor={obra.tipo} />
+          <Linha rotulo="Prioridade" valor={obra.prioridade} />
+          <Linha rotulo="Data da solicitação" valor={formatarData(obra.data)} />
+          <Linha rotulo="Status atual" valor={obra.status} />
+          <Linha
+            rotulo="Fotos anexadas"
+            valor={String(obra.fotos.length)}
+          />
+          <Linha rotulo="Número da solicitação" valor={obra.id} />
+        </dl>
+      </Cartao>
+    </div>
+  );
+}
+
+function Linha({ rotulo, valor }: { rotulo: string; valor: string }) {
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 border-b border-border pb-3 last:border-0 last:pb-0">
+      <dt className="text-xs text-muted">{rotulo}</dt>
+      <dd className="text-sm font-medium">{valor}</dd>
+    </div>
+  );
+}
+
+/* --------------------------------------------------------------- aprovações */
+
+function Aprovacoes({ aprovacoes }: { aprovacoes: Aprovacao[] }) {
+  return (
+    <Cartao
+      titulo="Linha do tempo das aprovações"
+      descricao="Sequência informada pelo responsável do projeto. Alçadas, prazos e efeitos de reprovação ainda não estão definidos."
+    >
+      <ol>
+        {aprovacoes.map((a, i) => {
+          const cor = CORES_APROVACAO[a.situacao];
+          const ultimo = i === aprovacoes.length - 1;
+          const respondido = a.situacao !== "Aguardando";
+          return (
+            <li key={a.nivel} className="relative flex gap-4 pb-6 last:pb-0">
+              {!ultimo && (
+                <span
+                  aria-hidden="true"
+                  className={`absolute top-5 left-[9px] h-full w-0.5 ${
+                    respondido ? cor.barra : "bg-border"
+                  }`}
+                />
+              )}
+              <span
+                aria-hidden="true"
+                className={`relative mt-1 size-5 shrink-0 rounded-full border-2 border-surface ${cor.ponto} ring-2 ring-border`}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-sm font-medium">{a.nivel}</p>
+                  <BadgeAprovacao valor={a.situacao} />
+                </div>
+                <p className="mt-1 text-xs text-muted">
+                  {a.responsavel}
+                  {a.data ? ` · ${formatarData(a.data)}` : " · sem data"}
+                </p>
+                {a.observacao && (
+                  <p className="mt-2 rounded-md border border-border bg-background px-3 py-2 text-xs leading-relaxed">
+                    {a.observacao}
+                  </p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </Cartao>
+  );
+}
+
+/* ---------------------------------------------------------------- orçamentos */
+
+function Orcamentos({ orcamentos }: { orcamentos: DetalheObra["orcamentos"] }) {
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      {CATEGORIAS_ORCAMENTO.map((categoria) => (
+        <Cartao
+          key={categoria}
+          titulo={categoria}
+          descricao="Três orçamentos previstos. Quantidade mínima e aprovação ainda não definidas."
+        >
+          <ul className="space-y-3">
+            {orcamentos[categoria].map((o) => (
+              <li
+                key={o.rotulo}
+                className="rounded-md border border-border bg-background p-4"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-medium">{o.rotulo}</p>
+                  <span
+                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+                      o.situacao === "Selecionado"
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                        : o.situacao === "Recebido"
+                          ? "border-blue-200 bg-blue-50 text-blue-700"
+                          : "border-slate-200 bg-surface text-slate-600"
+                    }`}
+                  >
+                    {o.situacao}
+                  </span>
+                </div>
+                <dl className="mt-3 grid grid-cols-2 gap-3">
+                  <div>
+                    <dt className="text-xs text-muted">
+                      {categoria === "Material" ? "Fornecedor" : "Prestador"}
+                    </dt>
+                    <dd className="truncate text-sm">{o.fornecedor ?? "—"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted">Valor</dt>
+                    <dd className="text-sm font-medium tabular-nums">
+                      {o.valor !== undefined ? formatarValor(o.valor) : "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted">Data</dt>
+                    <dd className="text-sm">
+                      {o.data ? formatarData(o.data) : "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted">Anexo</dt>
+                    <dd className="text-sm text-muted">
+                      {o.situacao === "Não recebido" ? "—" : "Arquivo de exemplo"}
+                    </dd>
+                  </div>
+                </dl>
+              </li>
+            ))}
+          </ul>
+        </Cartao>
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ execução */
+
+function Execucao({ fases }: { fases: DetalheObra["fases"] }) {
+  const media = Math.round(
+    fases.reduce((t, f) => t + f.percentual, 0) / fases.length,
+  );
+
+  return (
+    <div className="space-y-6">
+      <Cartao
+        titulo="Andamento geral"
+        descricao="Média das cinco fases. O conteúdo de cada fase ainda não está definido."
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className="h-2.5 flex-1 overflow-hidden rounded-full bg-background"
+            role="progressbar"
+            aria-label="Andamento geral da obra"
+            aria-valuenow={media}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <div
+              className="h-full rounded-full bg-brand"
+              style={{ width: `${media}%` }}
+            />
+          </div>
+          <p className="text-lg font-semibold tabular-nums text-brand">
+            {media}%
+          </p>
+        </div>
+      </Cartao>
+
+      <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {fases.map((f) => {
+          const cor = CORES_FASE[f.situacao];
+          return (
+            <li
+              key={f.rotulo}
+              className="flex overflow-hidden rounded-lg border border-border bg-surface"
+            >
+              <span aria-hidden="true" className={`w-1.5 shrink-0 ${cor.barra}`} />
+              <div className="flex-1 p-5">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-medium">{f.rotulo}</p>
+                  <span className={`text-sm font-semibold tabular-nums ${cor.texto}`}>
+                    {f.percentual}%
+                  </span>
+                </div>
+                <div
+                  className="mt-3 h-2 overflow-hidden rounded-full bg-background"
+                  role="progressbar"
+                  aria-label={`Andamento da ${f.rotulo}`}
+                  aria-valuenow={f.percentual}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <div
+                    className={`h-full rounded-full ${cor.barra}`}
+                    style={{ width: `${f.percentual}%` }}
+                  />
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <BadgeFase valor={f.situacao} />
+                  {f.inicio && (
+                    <span className="text-xs text-muted">
+                      Início em {formatarData(f.inicio)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+/* ----------------------------------------------------------------- conclusão */
+
+function Conclusao({ conclusao }: { conclusao: DetalheObra["conclusao"] }) {
+  const concluida = conclusao.data !== undefined;
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-3">
+      <div className="space-y-6 lg:col-span-2">
+        <Cartao titulo="Resumo da obra">
+          {conclusao.resumo ? (
+            <p className="text-sm leading-relaxed">{conclusao.resumo}</p>
+          ) : (
+            <p className="text-sm text-muted">
+              O resumo será preenchido quando a obra for concluída.
+            </p>
+          )}
+        </Cartao>
+
+        <Cartao titulo="Fotos finais">
+          <GaleriaFotos
+            fotos={conclusao.fotos}
+            vazio="As fotos finais serão anexadas na conclusão da obra."
+          />
+        </Cartao>
+      </div>
+
+      <Cartao titulo="Encerramento">
+        <dl className="space-y-3">
+          <Linha
+            rotulo="Valor final"
+            valor={
+              conclusao.valorFinal !== undefined
+                ? formatarValor(conclusao.valorFinal)
+                : "—"
+            }
+          />
+          <Linha
+            rotulo="Data de conclusão"
+            valor={conclusao.data ? formatarData(conclusao.data) : "—"}
+          />
+          <Linha
+            rotulo="Fotos finais"
+            valor={String(conclusao.fotos.length)}
+          />
+        </dl>
+        {!concluida && (
+          <p className="mt-4 text-xs text-muted">
+            Área preparada: os critérios de conclusão da obra ainda não estão
+            definidos.
+          </p>
+        )}
+      </Cartao>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------- comum */
+
+function Cartao({
+  titulo,
+  descricao,
+  children,
+}: {
+  titulo: string;
+  descricao?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="rounded-lg border border-border bg-surface p-5">
+      <h2 className="font-semibold text-brand">{titulo}</h2>
+      {descricao && <p className="mt-1 text-xs text-muted">{descricao}</p>}
+      <div className="mt-4">{children}</div>
+    </section>
   );
 }

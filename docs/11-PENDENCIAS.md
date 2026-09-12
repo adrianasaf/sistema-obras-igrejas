@@ -5,9 +5,9 @@ Questões institucionais e técnicas ainda **não decididas**. Não devem ser re
 | ID | Pendência | Documento relacionado | Status |
 |---|---|---|---|
 | PEN-001 | Nome oficial do sistema (o atual é provisório) | README | Aberta |
-| PEN-002 | Nomenclatura oficial dos cargos/responsáveis em cada nível (Igreja, Polo, Área, Região) e do Presbitério | 04 | Aberta |
+| PEN-002 | Nomenclatura oficial dos cargos/responsáveis em cada nível (Igreja, Polo, Área, Região) e do Presbitério | 04 | Parcial — nomes dos níveis de aprovação definidos em DEC-008; atribuições de cada cargo em aberto |
 | PEN-003 | Quem, dentro da igreja, pode abrir uma solicitação de obra | 03, 04 | Aberta |
-| PEN-004 | Ordem e níveis exatos das aprovações hierárquicas (todos os níveis aprovam? há alçadas por valor ou prioridade?) | 03, 05 | Aberta |
+| PEN-004 | Ordem e níveis exatos das aprovações hierárquicas (todos os níveis aprovam? há alçadas por valor ou prioridade?) | 03, 05 | Parcial — ordem definida em DEC-008; alçadas por valor/prioridade e prazos em aberto |
 | PEN-005 | Comportamento em caso de rejeição de uma solicitação (devolver para correção, encerrar, reabrir) | 03 | Aberta |
 | PEN-006 | Definição de cada prioridade (Emergencial, P1, P2, P3) e se Emergencial altera o fluxo | 03, 05 | Aberta |
 | PEN-007 | Papel exato do Presbitério: critérios de análise, resultados possíveis, quem participa | 03, 04 | Aberta |
@@ -24,3 +24,4 @@ Questões institucionais e técnicas ainda **não decididas**. Não devem ser re
 | PEN-018 | Uso em celular / em campo (obra) | 02 | Aberta |
 | PEN-019 | Tecnologias: aplicação web, banco, autenticação, hospedagem | 02, 06 | Aberta (Etapa 2) |
 | PEN-020 | Conteúdo do dashboard inicial | 07 | Aberta |
+| PEN-021 | Significado da sigla COMBENS e atribuições do "Responsável COMBENS" no fluxo | 03, 04 | Aberta |

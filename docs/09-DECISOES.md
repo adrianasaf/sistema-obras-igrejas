@@ -78,3 +78,12 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Escolha do responsável; integração nativa Vercel↔Neon simplifica configuração.
 - **Impacto:** DEC-006 fica **Substituída por DEC-007**. Código Supabase removido. Tabelas das obras e permissões por cargo continuam pendentes.
 - **Status:** Ativa
+
+## DEC-008
+- **Data:** 2026-09-12
+- **Título:** Níveis exibidos na linha do tempo de aprovações da obra
+- **Contexto:** Criação da tela de detalhes da obra (interface). A tela precisa exibir os níveis de aprovação, até então não informados.
+- **Decisão:** A linha do tempo de aprovações exibe, nesta ordem: **Pastor Local → Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS → Presbitério**. Cada nível pode representar quatro situações: **Aguardando, Aprovado, Reprovado, Correção solicitada**.
+- **Motivo:** Sequência e situações informadas pelo responsável do projeto.
+- **Impacto:** Atende parcialmente PEN-002 (nomes dos responsáveis) e PEN-004 (ordem dos níveis). Continuam **PENDENTES DE DEFINIÇÃO**: alçadas por valor ou prioridade, prazos, quem pode agir em cada nível, o que acontece após "Reprovado" ou "Correção solicitada" (PEN-005) e o significado da sigla COMBENS (PEN-021). Por ora, apenas interface: nenhuma regra é executada pelo sistema.
+- **Status:** Ativa
