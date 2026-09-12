@@ -1,0 +1,39 @@
+# 08 — Roadmap
+
+O roadmap poderá ser refinado ao longo do projeto. Alterações relevantes devem ser registradas em `09-DECISOES.md`.
+
+**Situação atual:** Fase 1 — Etapa 1 (fundação documental) concluída. Nenhuma tecnologia configurada ainda.
+
+## Fase 1 — Fundação administrativa do sistema
+- [x] Etapa 1 — Estrutura do projeto e documentação inicial
+- [ ] Git/GitHub
+- [ ] Aplicação web
+- [ ] Banco de dados
+- [ ] Autenticação (login e senha)
+- [ ] Usuários e perfis
+- [ ] Cadastro de Região, Área, Polo e Igreja
+- [ ] Dashboard
+- [ ] Histórico de desenvolvimento (manutenção contínua)
+- [ ] Auditoria básica
+- [ ] Deploy
+
+## Fase 2 — Solicitação de obras
+Igreja registra solicitações (reforma, ampliação, construção, manutenção) com prioridade Emergencial, P1, P2 ou P3.
+
+## Fase 3 — Fluxo de aprovações
+Aprovações hierárquicas pela estrutura Região → Área → Polo → Igreja.
+
+## Fase 4 — Orçamentos e Presbitério
+Análise pelo Presbitério e gestão de orçamentos.
+
+## Fase 5 — Execução em cinco fases
+Acompanhamento da obra em cinco fases, com materiais e fotos.
+
+## Fase 6 — Estoque
+Controle de materiais e movimentações de estoque.
+
+## Fase 7 — Financeiro
+Controle financeiro das obras.
+
+## Fase 8 — Relatórios, indicadores e evolução do sistema
+Relatórios, indicadores e melhorias contínuas.

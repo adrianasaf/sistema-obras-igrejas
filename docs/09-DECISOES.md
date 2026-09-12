@@ -1,0 +1,53 @@
+# 09 — Decisões
+
+Registro de decisões do projeto. **Nunca apague uma decisão.** Para reverter, altere o `Status` da antiga (ex.: `Substituída por DEC-NNN`) e registre uma nova.
+
+## Formato
+```
+DEC-NNN
+Data:
+Título:
+Contexto:
+Decisão:
+Motivo:
+Impacto:
+Status: (Ativa | Substituída por DEC-NNN | Cancelada)
+```
+
+---
+
+## DEC-001
+- **Data:** 2026-09-12
+- **Título:** Raiz oficial do projeto
+- **Contexto:** O projeto é novo e não deve reaproveitar nem tocar outros projetos existentes no computador.
+- **Decisão:** A pasta `sistema-obras-igrejas/` é a raiz oficial do projeto. Todo arquivo, código, documentação e configuração fica dentro dela.
+- **Motivo:** Isolamento total de outros projetos; organização clara.
+- **Impacto:** Nenhum recurso de outros diretórios será consultado ou modificado.
+- **Status:** Ativa
+
+## DEC-002
+- **Data:** 2026-09-12
+- **Título:** Documentação como fundação, antes do código
+- **Contexto:** Início da Fase 1. Muitas regras institucionais ainda não estão definidas.
+- **Decisão:** A Etapa 1 cria apenas `CLAUDE.md`, `README.md` e `docs/` (11 documentos). Nenhum código, banco, autenticação ou deploy é feito nesta etapa. O que não é conhecido fica marcado como `PENDENTE DE DEFINIÇÃO`.
+- **Motivo:** Evitar inventar regras administrativas e evitar retrabalho técnico.
+- **Impacto:** Tecnologias (aplicação web, banco, hospedagem) serão decididas em etapa posterior, com registro aqui.
+- **Status:** Ativa
+
+## DEC-003
+- **Data:** 2026-09-12
+- **Título:** Registro obrigatório de decisões, histórico e pendências
+- **Contexto:** Necessidade de rastreabilidade do próprio desenvolvimento.
+- **Decisão:** Decisões vão em `09-DECISOES.md` (formato DEC-NNN); cada etapa concluída gera entrada em `10-HISTORICO-DESENVOLVIMENTO.md` (nunca reescrito retroativamente); dúvidas institucionais vão em `11-PENDENCIAS.md`.
+- **Motivo:** Manter memória permanente do projeto e evitar mudanças silenciosas.
+- **Impacto:** Toda etapa deve terminar atualizando esses documentos.
+- **Status:** Ativa
+
+## DEC-004
+- **Data:** 2026-09-12
+- **Título:** Idioma do projeto
+- **Contexto:** Sistema para uso interno na Paraíba.
+- **Decisão:** Documentação, interface, commits e nomes de negócio em português do Brasil.
+- **Motivo:** Público interno brasileiro.
+- **Impacto:** Nomes técnicos de código podem seguir convenções da tecnologia escolhida (a definir).
+- **Status:** Ativa
