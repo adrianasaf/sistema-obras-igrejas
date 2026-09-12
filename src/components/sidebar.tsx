@@ -1,5 +1,6 @@
 "use client";
 
+import { useClerk } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -18,14 +19,13 @@ export function Sidebar({
   nome,
   subtitulo,
   usuarioEmail,
-  acaoSair,
 }: {
   nome: string;
   subtitulo: string;
   usuarioEmail: string;
-  acaoSair: () => Promise<void>;
 }) {
   const pathname = usePathname();
+  const { signOut } = useClerk();
   const [aberto, setAberto] = useState(false);
 
   const rodape = (
@@ -33,7 +33,12 @@ export function Sidebar({
       <p className="truncate px-3 text-xs text-white/60" title={usuarioEmail}>
         {usuarioEmail}
       </p>
-      <form action={acaoSair}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          signOut({ redirectUrl: "/login" });
+        }}
+      >
         <button
           type="submit"
           className="mt-2 w-full rounded-md px-3 py-2 text-left text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white"
