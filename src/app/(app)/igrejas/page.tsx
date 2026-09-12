@@ -1,19 +1,86 @@
 import type { Metadata } from "next";
-import { ModuloPrevisto } from "@/components/modulo-previsto";
+import { BadgeCadastro } from "@/components/badges";
+import {
+  AcoesRegistro,
+  AvisoDemonstrativo,
+  CabecalhoLista,
+  CartaoRegistro,
+  Tabela,
+} from "@/components/estrutura/comuns";
+import { IGREJAS, caminhoDaIgreja } from "@/lib/estrutura-mock";
 
 export const metadata: Metadata = { title: "Igrejas" };
 
 export default function IgrejasPage() {
+  const igrejas = [...IGREJAS].sort((a, b) =>
+    a.nome.localeCompare(b.nome, "pt-BR"),
+  );
+
   return (
-    <ModuloPrevisto
-      titulo="Igrejas"
-      descricao="Cadastro das igrejas e da estrutura administrativa."
-      fase="Fase 1 — em desenvolvimento"
-      itens={[
-        "Cadastro de Região, Área, Polo e Igreja.",
-        "Consulta das igrejas por região, área e polo.",
-        "Vínculo de cada obra à igreja correspondente.",
-      ]}
-    />
+    <div className="space-y-6">
+      <CabecalhoLista
+        titulo="Igrejas"
+        descricao="Cada igreja pertence a um polo. Dados demonstrativos."
+        novoHref="/igrejas/nova"
+        novoRotulo="Nova Igreja"
+      />
+
+      <Tabela
+        colunas={["Código", "Nome", "Polo", "Área", "Região", "Cidade", "Status"]}
+      >
+        {igrejas.map((i) => {
+          const { polo, area, regiao } = caminhoDaIgreja(i);
+          return (
+            <tr key={i.id} className="hover:bg-background">
+              <td className="px-4 py-3 font-mono text-xs">{i.codigo}</td>
+              <td className="px-4 py-3 font-medium">{i.nome}</td>
+              <td className="px-4 py-3">{polo?.nome ?? "—"}</td>
+              <td className="px-4 py-3">{area?.nome ?? "—"}</td>
+              <td className="px-4 py-3">{regiao?.nome ?? "—"}</td>
+              <td className="px-4 py-3">{i.cidade}</td>
+              <td className="px-4 py-3">
+                <BadgeCadastro valor={i.status} feminino />
+              </td>
+              <td className="px-4 py-3">
+                <AcoesRegistro
+                  nome={i.nome}
+                  verHref={`/igrejas/${i.id}`}
+                  editarHref={`/igrejas/${i.id}/editar`}
+                />
+              </td>
+            </tr>
+          );
+        })}
+      </Tabela>
+
+      <ul className="space-y-3 md:hidden">
+        {igrejas.map((i) => {
+          const { polo, area, regiao } = caminhoDaIgreja(i);
+          return (
+            <CartaoRegistro
+              key={i.id}
+              titulo={i.nome}
+              subtitulo={`Código ${i.codigo} · ${i.cidade}`}
+              cracha={<BadgeCadastro valor={i.status} feminino />}
+              dados={[
+                { rotulo: "Polo", valor: polo?.nome ?? "—" },
+                { rotulo: "Área", valor: area?.nome ?? "—" },
+                { rotulo: "Região", valor: regiao?.nome ?? "—" },
+                { rotulo: "Cidade", valor: i.cidade },
+              ]}
+              acoes={
+                <AcoesRegistro
+                  nome={i.nome}
+                  verHref={`/igrejas/${i.id}`}
+                  editarHref={`/igrejas/${i.id}/editar`}
+                />
+              }
+            />
+          );
+        })}
+      </ul>
+
+      <AvisoDemonstrativo />
+    </div>
   );
 }

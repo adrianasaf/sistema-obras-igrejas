@@ -1,0 +1,78 @@
+import type { Metadata } from "next";
+import { BadgeCadastro } from "@/components/badges";
+import {
+  AcoesRegistro,
+  AvisoDemonstrativo,
+  CabecalhoLista,
+  CartaoRegistro,
+  Tabela,
+} from "@/components/estrutura/comuns";
+import { AREAS, buscarRegiao, polosDaArea } from "@/lib/estrutura-mock";
+
+export const metadata: Metadata = { title: "Áreas" };
+
+export default function AreasPage() {
+  const areas = [...AREAS].sort((a, b) => a.codigo.localeCompare(b.codigo));
+
+  return (
+    <div className="space-y-6">
+      <CabecalhoLista
+        titulo="Áreas"
+        descricao="Cada área pertence a uma região. Dados demonstrativos."
+        novoHref="/areas/nova"
+        novoRotulo="Nova Área"
+      />
+
+      <Tabela
+        colunas={["Código", "Nome", "Região vinculada", "Polos", "Status"]}
+      >
+        {areas.map((a) => (
+          <tr key={a.id} className="hover:bg-background">
+            <td className="px-4 py-3 font-mono text-xs">{a.codigo}</td>
+            <td className="px-4 py-3">
+              <p className="font-medium">{a.nome}</p>
+              <p className="text-xs text-muted">{a.responsavel}</p>
+            </td>
+            <td className="px-4 py-3">{buscarRegiao(a.regiaoId)?.nome ?? "—"}</td>
+            <td className="px-4 py-3 tabular-nums">{polosDaArea(a.id).length}</td>
+            <td className="px-4 py-3">
+              <BadgeCadastro valor={a.status} feminino />
+            </td>
+            <td className="px-4 py-3">
+              <AcoesRegistro
+                nome={a.nome}
+                verHref={`/areas/${a.id}`}
+                editarHref={`/areas/${a.id}/editar`}
+              />
+            </td>
+          </tr>
+        ))}
+      </Tabela>
+
+      <ul className="space-y-3 md:hidden">
+        {areas.map((a) => (
+          <CartaoRegistro
+            key={a.id}
+            titulo={a.nome}
+            subtitulo={`Código ${a.codigo}`}
+            cracha={<BadgeCadastro valor={a.status} feminino />}
+            dados={[
+              { rotulo: "Região", valor: buscarRegiao(a.regiaoId)?.nome ?? "—" },
+              { rotulo: "Polos", valor: String(polosDaArea(a.id).length) },
+              { rotulo: "Coordenador", valor: a.responsavel },
+            ]}
+            acoes={
+              <AcoesRegistro
+                nome={a.nome}
+                verHref={`/areas/${a.id}`}
+                editarHref={`/areas/${a.id}/editar`}
+              />
+            }
+          />
+        ))}
+      </ul>
+
+      <AvisoDemonstrativo />
+    </div>
+  );
+}

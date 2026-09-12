@@ -1,5 +1,6 @@
 import {
   CORES_APROVACAO,
+  CORES_CADASTRO,
   CORES_ESTOQUE,
   CORES_FASE,
   CORES_ORCAMENTO,
@@ -7,6 +8,10 @@ import {
   CORES_STATUS,
 } from "@/lib/cores";
 import type { StatusMaterial } from "@/lib/estoque-mock";
+import {
+  statusFeminino,
+  type StatusCadastro,
+} from "@/lib/estrutura-mock";
 import type {
   SituacaoAprovacao,
   SituacaoFase,
@@ -73,6 +78,23 @@ export function BadgeEstoque({ valor }: { valor: StatusMaterial }) {
     <span className={`${base} ${cor.cracha}`}>
       <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />
       {valor}
+    </span>
+  );
+}
+
+// `feminino` ajusta o rótulo para região, área e igreja (Ativa/Inativa).
+export function BadgeCadastro({
+  valor,
+  feminino,
+}: {
+  valor: StatusCadastro;
+  feminino?: boolean;
+}) {
+  const cor = CORES_CADASTRO[valor];
+  return (
+    <span className={`${base} ${cor.cracha}`}>
+      <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />
+      {feminino ? statusFeminino(valor) : valor}
     </span>
   );
 }

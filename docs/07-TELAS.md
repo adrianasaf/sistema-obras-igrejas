@@ -33,7 +33,10 @@
 | Obras (lista) | `/obras` | Interface: tabela/cartões, filtros por prioridade e status, busca |
 | Nova solicitação | `/obras/nova` | Interface: formulário com valores estimados, "Salvar rascunho" e "Enviar solicitação" (não gravam) |
 | Detalhes da obra | `/obras/[id]` | Interface: abas Visão Geral, Aprovações, Orçamentos, Execução e Conclusão |
-| Igrejas | `/igrejas` | Espaço na navegação (a desenvolver) |
+| Regiões | `/regioes` | Interface: lista, cadastro, visualização e edição |
+| Áreas | `/areas` | Interface: lista, cadastro, visualização e edição |
+| Polos | `/polos` | Interface: lista, cadastro, visualização e edição |
+| Igrejas | `/igrejas` | Interface: lista, cadastro, visualização e edição |
 | Estoque | `/estoque` | Interface: materiais, saldos e botões Entrada/Saída/Novo material (não movimentam) |
 | Histórico de Desenvolvimento | `/historico` | Funcional (lê `docs/10-...`) |
 

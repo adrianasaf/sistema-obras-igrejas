@@ -130,3 +130,20 @@ Próximo passo:
 - **Decisões:** nenhuma nova. Os valores, custos por fase, materiais por fase e saldos de estoque são fictícios e não seguem nenhuma regra institucional.
 - **Pendências:** nenhuma nova. Seguem abertas PEN-008 (quem elabora e aprova orçamentos), PEN-009 (conteúdo das cinco fases), PEN-014 (regras de estoque) e PEN-015 (regras financeiras).
 - **Próximo passo:** aguardar definição do responsável; nada foi ligado ao banco de dados.
+
+## Entrada 009
+- **Data:** 2026-09-12
+- **Etapa:** Interface — estrutura administrativa (Regiões, Áreas, Polos e Igrejas)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - Menu lateral reorganizado em grupos, com a seção **Estrutura administrativa** (Regiões, Áreas, Polos, Igrejas).
+  - **Regiões (`/regioes`):** lista com código, nome, coordenador, quantidade de áreas e status, botão "Nova Região" e ações Visualizar/Editar. Visualização (`/regioes/[id]`) mostra os dados e as áreas vinculadas.
+  - **Áreas (`/areas`):** lista com código, nome, região vinculada, quantidade de polos e status; botão "Nova Área"; visualização com os polos vinculados.
+  - **Polos (`/polos`):** lista com código, nome, área vinculada, região, quantidade de igrejas e status; botão "Novo Polo"; visualização com as igrejas vinculadas.
+  - **Igrejas (`/igrejas`):** substituiu o espaço reservado — lista com código, nome, polo, área, região, cidade e status; botão "Nova Igreja"; visualização com os dados e as obras demonstrativas da igreja.
+  - Formulários visuais de cadastro e edição para os quatro níveis (`src/components/estrutura/formularios.tsx`), com seleção do nível superior, código, status e responsável. Nenhum grava: ao salvar, exibem aviso.
+  - Componentes comuns em `src/components/estrutura/comuns.tsx` e `src/components/formulario-cadastro.tsx`; dados demonstrativos em `src/lib/estrutura-mock.ts` (4 regiões, 7 áreas, 12 polos, 16 igrejas, com cidades da Paraíba).
+  - Componente `modulo-previsto.tsx` removido: não havia mais tela usando o espaço reservado.
+- **Decisões:** nenhuma nova. Os nomes dos coordenadores seguem os níveis já registrados em DEC-008; códigos (R01, A01, P01, IG001) são apenas de exemplo.
+- **Pendências:** nenhuma nova. Seguem abertas PEN-002 (atribuições de cada cargo) e PEN-011 (escopo de visibilidade por usuário); os campos oficiais de cada cadastro também continuam a definir.
+- **Próximo passo:** aguardar definição do responsável; nada foi ligado ao banco de dados.

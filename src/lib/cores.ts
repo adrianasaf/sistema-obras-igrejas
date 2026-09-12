@@ -3,6 +3,7 @@
 // para que a mesma prioridade tenha sempre a mesma cor em qualquer tela.
 
 import type { StatusMaterial } from "@/lib/estoque-mock";
+import type { StatusCadastro } from "@/lib/estrutura-mock";
 import type {
   SituacaoAprovacao,
   SituacaoFase,
@@ -168,5 +169,22 @@ export const CORES_ESTOQUE: Record<StatusMaterial, Paleta> = {
     ponto: "bg-red-600",
     barra: "bg-red-600",
     texto: "text-red-700",
+  },
+};
+
+// Situação dos cadastros da estrutura administrativa (região, área, polo,
+// igreja).
+export const CORES_CADASTRO: Record<StatusCadastro, Paleta> = {
+  Ativo: {
+    cracha: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    ponto: "bg-emerald-500",
+    barra: "bg-emerald-500",
+    texto: "text-emerald-700",
+  },
+  Inativo: {
+    cracha: "border-slate-200 bg-slate-50 text-slate-600",
+    ponto: "bg-slate-400",
+    barra: "bg-slate-400",
+    texto: "text-slate-600",
   },
 };

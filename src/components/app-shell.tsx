@@ -5,13 +5,31 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
-// Itens do menu lateral. Novos módulos entram aqui conforme o roadmap.
-const ITENS = [
-  { href: "/", rotulo: "Dashboard", icone: "▦" },
-  { href: "/obras", rotulo: "Obras", icone: "▣" },
-  { href: "/igrejas", rotulo: "Igrejas", icone: "⌂" },
-  { href: "/estoque", rotulo: "Estoque", icone: "☰" },
-  { href: "/historico", rotulo: "Histórico de Desenvolvimento", icone: "◷" },
+// Menu lateral, em grupos. Novos módulos entram aqui conforme o roadmap.
+const GRUPOS = [
+  {
+    titulo: null,
+    itens: [
+      { href: "/", rotulo: "Dashboard", icone: "▦" },
+      { href: "/obras", rotulo: "Obras", icone: "▣" },
+    ],
+  },
+  {
+    titulo: "Estrutura administrativa",
+    itens: [
+      { href: "/regioes", rotulo: "Regiões", icone: "◎" },
+      { href: "/areas", rotulo: "Áreas", icone: "◇" },
+      { href: "/polos", rotulo: "Polos", icone: "◈" },
+      { href: "/igrejas", rotulo: "Igrejas", icone: "⌂" },
+    ],
+  },
+  {
+    titulo: null,
+    itens: [
+      { href: "/estoque", rotulo: "Estoque", icone: "☰" },
+      { href: "/historico", rotulo: "Histórico de Desenvolvimento", icone: "◷" },
+    ],
+  },
 ] as const;
 
 function ativo(pathname: string, href: string) {
@@ -39,28 +57,37 @@ export function AppShell({
   const [contaAberta, setContaAberta] = useState(false);
 
   const nav = (
-    <nav aria-label="Menu principal" className="flex flex-col gap-1 p-3">
-      {ITENS.map((item) => {
-        const atual = ativo(pathname, item.href);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={() => setMenuAberto(false)}
-            aria-current={atual ? "page" : undefined}
-            className={`flex items-start gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              atual
-                ? "bg-white/15 text-white"
-                : "text-white/75 hover:bg-white/10 hover:text-white"
-            }`}
-          >
-            <span aria-hidden="true" className="w-4 text-center text-white/60">
-              {item.icone}
-            </span>
-            <span>{item.rotulo}</span>
-          </Link>
-        );
-      })}
+    <nav aria-label="Menu principal" className="flex flex-col gap-4 overflow-y-auto p-3">
+      {GRUPOS.map((grupo, indice) => (
+        <div key={grupo.titulo ?? `grupo-${indice}`} className="flex flex-col gap-1">
+          {grupo.titulo && (
+            <p className="px-3 pt-1 pb-1 text-[11px] font-semibold tracking-wide text-white/40 uppercase">
+              {grupo.titulo}
+            </p>
+          )}
+          {grupo.itens.map((item) => {
+            const atual = ativo(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuAberto(false)}
+                aria-current={atual ? "page" : undefined}
+                className={`flex items-start gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  atual
+                    ? "bg-white/15 text-white"
+                    : "text-white/75 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <span aria-hidden="true" className="w-4 text-center text-white/60">
+                  {item.icone}
+                </span>
+                <span>{item.rotulo}</span>
+              </Link>
+            );
+          })}
+        </div>
+      ))}
     </nav>
   );
 

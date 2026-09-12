@@ -11,7 +11,7 @@ O roadmap poderá ser refinado ao longo do projeto. Alterações relevantes deve
 - [x] Banco de dados — Neon PostgreSQL (conexão; sem tabelas ainda)
 - [x] Autenticação (login e senha) — Clerk
 - [ ] Usuários e perfis
-- [ ] Cadastro de Região, Área, Polo e Igreja
+- [ ] Cadastro de Região, Área, Polo e Igreja (interface pronta; gravação em banco pendente)
 - [ ] Dashboard
 - [ ] Histórico de desenvolvimento (manutenção contínua)
 - [ ] Auditoria básica
