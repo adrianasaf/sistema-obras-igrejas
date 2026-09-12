@@ -2,16 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BadgePrioridade, BadgeStatus } from "@/components/badges";
-import {
-  OBRAS,
-  STATUS_OBRA,
-  buscarObra,
-  formatarData,
-} from "@/lib/obras-mock";
-
-export function generateStaticParams() {
-  return OBRAS.map((o) => ({ id: o.id }));
-}
+import { STATUS_OBRA, buscarObra, formatarData } from "@/lib/obras-mock";
 
 export async function generateMetadata({
   params,

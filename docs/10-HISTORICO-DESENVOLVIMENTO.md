@@ -55,3 +55,17 @@ Próximo passo:
 - **Decisões:** status provisórios da obra (Solicitada, Em análise, Aprovada, Em execução, Concluída) apenas para demonstração — os oficiais dependem de PEN-004.
 - **Pendências:** nenhuma nova.
 - **Próximo passo:** login e autenticação.
+
+## Entrada 004
+- **Data:** 2026-09-12
+- **Etapa:** Fase 1 — Login e autenticação (Supabase Auth)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - Supabase Auth com e-mail e senha (`@supabase/ssr`): página `/login`, ações de entrar/sair, sessão em cookies renovada pelo `src/proxy.ts`.
+  - Todas as páginas internas (grupo `src/app/(app)`) exigem usuário autenticado; não autenticado é redirecionado para `/login` (com retorno à página pedida); autenticado que acessa `/login` vai para o sistema.
+  - Botão "Sair" e e-mail do usuário no menu lateral.
+  - Sem cadastro público: usuários são criados pelo administrador no painel do Supabase.
+  - Credenciais somente por variáveis de ambiente (`.env.example` documenta; `.env.local` não é versionado).
+- **Decisões:** DEC-006 (Supabase como autenticação e futuro banco).
+- **Pendências:** configurar o projeto no Supabase (URL, chave, desativar cadastro público, criar primeiro usuário) e o deploy na Vercel.
+- **Próximo passo:** validar o login com o projeto Supabase real e publicar.

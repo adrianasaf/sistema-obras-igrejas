@@ -60,3 +60,12 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Solicitado pelo responsável do projeto; stack moderna, amplamente documentada e compatível com hospedagem na Vercel.
 - **Impacto:** Banco, autenticação e hospedagem continuam a definir (PEN-019).
 - **Status:** Ativa
+
+## DEC-006
+- **Data:** 2026-09-12
+- **Título:** Supabase para autenticação (e, futuramente, banco de dados)
+- **Contexto:** Necessidade de login privado com e-mail e senha, sem cadastro público.
+- **Decisão:** Usar Supabase Auth via `@supabase/ssr` no Next.js (sessão em cookies, validada com `getUser()` no proxy e no layout). Usuários criados apenas pelo administrador no painel do Supabase. Chaves lidas de variáveis de ambiente (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`).
+- **Motivo:** Solicitado pelo responsável; integra autenticação e banco Postgres em um só serviço.
+- **Impacto:** O banco de dados das obras (etapa futura) deverá usar o mesmo projeto Supabase. Permissões por cargo ainda PENDENTE (PEN-002, PEN-011).
+- **Status:** Ativa

@@ -9,7 +9,7 @@ O sistema será **privado** e exigirá login e senha.
 
 ## Status atual
 **Fase 1 em andamento.**
-Site base em Next.js + TypeScript + Tailwind CSS com a interface do módulo Obras (dados demonstrativos). Ainda **não há** banco de dados, autenticação ou deploy.
+Site em Next.js + TypeScript + Tailwind CSS com login (Supabase Auth) e a interface do módulo Obras (dados demonstrativos). Ainda **não há** banco de dados das obras nem permissões por cargo.
 
 ## Antes de trabalhar
 Leia **[CLAUDE.md](CLAUDE.md)** — regras operacionais permanentes do projeto (o que consultar, onde registrar decisões e pendências, o que não fazer).
@@ -40,6 +40,9 @@ Leia **[CLAUDE.md](CLAUDE.md)** — regras operacionais permanentes do projeto (
 8. **Fase 8** — Relatórios, indicadores e evolução do sistema
 
 ## Executar localmente
+1. Copie `.env.example` para `.env.local` e preencha com a URL e a chave *publishable* do projeto Supabase (nunca versione o `.env.local`).
+2. No painel do Supabase, em Authentication → Sign In / Providers, desative **Allow new users to sign up** (não há cadastro público) e crie os usuários em Authentication → Users.
+3. Rode:
 ```bash
 npm install
 npm run dev

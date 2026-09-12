@@ -6,10 +6,10 @@ O roadmap poderá ser refinado ao longo do projeto. Alterações relevantes deve
 
 ## Fase 1 — Fundação administrativa do sistema
 - [x] Etapa 1 — Estrutura do projeto e documentação inicial
-- [ ] Git/GitHub
+- [x] Git (GitHub pendente)
 - [x] Aplicação web (Next.js + TypeScript + Tailwind)
 - [ ] Banco de dados
-- [ ] Autenticação (login e senha)
+- [x] Autenticação (login e senha) — Supabase Auth
 - [ ] Usuários e perfis
 - [ ] Cadastro de Região, Área, Polo e Igreja
 - [ ] Dashboard

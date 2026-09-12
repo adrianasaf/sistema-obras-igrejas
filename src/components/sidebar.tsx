@@ -17,12 +17,32 @@ function ativo(pathname: string, href: string) {
 export function Sidebar({
   nome,
   subtitulo,
+  usuarioEmail,
+  acaoSair,
 }: {
   nome: string;
   subtitulo: string;
+  usuarioEmail: string;
+  acaoSair: () => Promise<void>;
 }) {
   const pathname = usePathname();
   const [aberto, setAberto] = useState(false);
+
+  const rodape = (
+    <div className="mt-auto border-t border-white/10 p-3">
+      <p className="truncate px-3 text-xs text-white/60" title={usuarioEmail}>
+        {usuarioEmail}
+      </p>
+      <form action={acaoSair}>
+        <button
+          type="submit"
+          className="mt-2 w-full rounded-md px-3 py-2 text-left text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white"
+        >
+          Sair
+        </button>
+      </form>
+    </div>
+  );
 
   const nav = (
     <nav aria-label="Menu principal" className="flex flex-col gap-1 p-3">
@@ -73,6 +93,7 @@ export function Sidebar({
           <p className="mt-1 text-xs text-white/60">{subtitulo}</p>
         </div>
         {nav}
+        {rodape}
       </aside>
 
       {/* Menu lateral (celular, sobreposto) */}
@@ -84,12 +105,13 @@ export function Sidebar({
             onClick={() => setAberto(false)}
             className="absolute inset-0 bg-black/40"
           />
-          <aside className="absolute inset-y-0 left-0 w-64 bg-brand text-white shadow-xl">
+          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col bg-brand text-white shadow-xl">
             <div className="border-b border-white/10 px-5 py-5">
               <p className="text-sm font-semibold leading-tight">{nome}</p>
               <p className="mt-1 text-xs text-white/60">{subtitulo}</p>
             </div>
             {nav}
+            {rodape}
           </aside>
         </div>
       )}
