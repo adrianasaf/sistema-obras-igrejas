@@ -115,3 +115,18 @@ Próximo passo:
 - **Decisões:** DEC-008 (níveis e situações da linha do tempo de aprovações, informados pelo responsável).
 - **Pendências:** PEN-002 e PEN-004 passam a **Parcial**; nova PEN-021 (significado de COMBENS e atribuições do responsável). Alçadas, prazos, efeitos de reprovação (PEN-005), conteúdo das cinco fases (PEN-009) e critérios de conclusão (PEN-010) continuam abertos.
 - **Próximo passo:** aguardar definição do responsável; nenhuma lógica de banco foi implementada nesta etapa.
+
+## Entrada 008
+- **Data:** 2026-09-12
+- **Etapa:** Interface — lista de obras, solicitação, detalhes, estoque e dashboard
+- **Versão:** 0.3.0
+- **Realizado:**
+  - **Lista de obras (`/obras`):** tabela em tablet/computador e cartões em celular, com igreja, tipo, prioridade, status, data, valor estimado e botão "Abrir detalhes"; filtros visuais por prioridade e por status e busca por igreja, título, tipo ou número. Filtro e busca atuam somente sobre os dados demonstrativos carregados na tela.
+  - **Nova solicitação (`/obras/nova`):** acrescentados os campos "Valor estimado de material" e "Valor estimado de mão de obra" e o botão "Salvar rascunho" (ao lado de "Enviar solicitação"). Nenhum dos dois grava: ambos exibem aviso.
+  - **Detalhes da obra (`/obras/[id]`):** abas mantidas; aba Orçamentos passou a ter botão de seleção por orçamento (visual) e resumo com Total material, Total mão de obra, Total estimado e Valor aprovado; aba Execução passou a mostrar, por fase, descrição resumida, materiais utilizados e custo da fase, além do custo executado no andamento geral; Visão Geral mostra os valores estimados e o valor aprovado.
+  - **Estoque (`/estoque`):** tela substituiu o espaço reservado — material, categoria, unidade, quantidade atual, estoque mínimo e status (Normal, Abaixo do mínimo, Em falta), com resumo e botões visuais Entrada, Saída e Novo material (exibem aviso; não movimentam nada).
+  - **Dashboard:** acrescentados os cartões "Valor total estimado" e "Valor total aprovado" aos oito indicadores já existentes.
+  - Novos módulos de dados demonstrativos: `src/lib/estoque-mock.ts` e valores por obra em `src/lib/obras-mock.ts` (`valoresDemonstrativos`, derivados do número da solicitação); cores de orçamento e estoque em `src/lib/cores.ts`.
+- **Decisões:** nenhuma nova. Os valores, custos por fase, materiais por fase e saldos de estoque são fictícios e não seguem nenhuma regra institucional.
+- **Pendências:** nenhuma nova. Seguem abertas PEN-008 (quem elabora e aprova orçamentos), PEN-009 (conteúdo das cinco fases), PEN-014 (regras de estoque) e PEN-015 (regras financeiras).
+- **Próximo passo:** aguardar definição do responsável; nada foi ligado ao banco de dados.

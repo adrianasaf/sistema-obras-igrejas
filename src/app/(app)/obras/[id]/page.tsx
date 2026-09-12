@@ -10,15 +10,20 @@ import {
   BadgeStatus,
 } from "@/components/badges";
 import { GaleriaFotos } from "@/components/galeria-fotos";
+import { OrcamentosPainel } from "@/components/orcamentos-painel";
 import { CORES_APROVACAO, CORES_FASE } from "@/lib/cores";
 import {
-  CATEGORIAS_ORCAMENTO,
   type Aprovacao,
   type DetalheObra,
   detalheDemonstrativo,
-  formatarValor,
 } from "@/lib/obra-detalhe-mock";
-import { buscarObra, formatarData, type Obra } from "@/lib/obras-mock";
+import {
+  buscarObra,
+  formatarData,
+  formatarValor,
+  valoresDemonstrativos,
+  type Obra,
+} from "@/lib/obras-mock";
 
 export async function generateMetadata({
   params,
@@ -36,6 +41,7 @@ export default async function DetalheObraPage({
   if (!obra) notFound();
 
   const detalhe = detalheDemonstrativo(obra);
+  const valores = valoresDemonstrativos(obra);
 
   return (
     <div className="space-y-6">
@@ -56,7 +62,12 @@ export default async function DetalheObraPage({
           {
             id: "orcamentos",
             rotulo: "Orçamentos",
-            conteudo: <Orcamentos orcamentos={detalhe.orcamentos} />,
+            conteudo: (
+              <OrcamentosPainel
+                orcamentos={detalhe.orcamentos}
+                valorAprovado={valores.aprovado}
+              />
+            ),
           },
           {
             id: "execucao",
@@ -132,6 +143,8 @@ function Campo({ rotulo, valor }: { rotulo: string; valor: string }) {
 /* -------------------------------------------------------------- visão geral */
 
 function VisaoGeral({ obra }: { obra: Obra }) {
+  const valores = valoresDemonstrativos(obra);
+
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="space-y-6 lg:col-span-2">
@@ -160,8 +173,24 @@ function VisaoGeral({ obra }: { obra: Obra }) {
           <Linha rotulo="Data da solicitação" valor={formatarData(obra.data)} />
           <Linha rotulo="Status atual" valor={obra.status} />
           <Linha
-            rotulo="Fotos anexadas"
-            valor={String(obra.fotos.length)}
+            rotulo="Estimado — material"
+            valor={formatarValor(valores.material)}
+          />
+          <Linha
+            rotulo="Estimado — mão de obra"
+            valor={formatarValor(valores.maoDeObra)}
+          />
+          <Linha
+            rotulo="Total estimado"
+            valor={formatarValor(valores.estimado)}
+          />
+          <Linha
+            rotulo="Valor aprovado"
+            valor={
+              valores.aprovado !== undefined
+                ? formatarValor(valores.aprovado)
+                : "—"
+            }
           />
           <Linha rotulo="Número da solicitação" valor={obra.id} />
         </dl>
@@ -229,78 +258,13 @@ function Aprovacoes({ aprovacoes }: { aprovacoes: Aprovacao[] }) {
   );
 }
 
-/* ---------------------------------------------------------------- orçamentos */
-
-function Orcamentos({ orcamentos }: { orcamentos: DetalheObra["orcamentos"] }) {
-  return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {CATEGORIAS_ORCAMENTO.map((categoria) => (
-        <Cartao
-          key={categoria}
-          titulo={categoria}
-          descricao="Três orçamentos previstos. Quantidade mínima e aprovação ainda não definidas."
-        >
-          <ul className="space-y-3">
-            {orcamentos[categoria].map((o) => (
-              <li
-                key={o.rotulo}
-                className="rounded-md border border-border bg-background p-4"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-sm font-medium">{o.rotulo}</p>
-                  <span
-                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
-                      o.situacao === "Selecionado"
-                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                        : o.situacao === "Recebido"
-                          ? "border-blue-200 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-surface text-slate-600"
-                    }`}
-                  >
-                    {o.situacao}
-                  </span>
-                </div>
-                <dl className="mt-3 grid grid-cols-2 gap-3">
-                  <div>
-                    <dt className="text-xs text-muted">
-                      {categoria === "Material" ? "Fornecedor" : "Prestador"}
-                    </dt>
-                    <dd className="truncate text-sm">{o.fornecedor ?? "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs text-muted">Valor</dt>
-                    <dd className="text-sm font-medium tabular-nums">
-                      {o.valor !== undefined ? formatarValor(o.valor) : "—"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs text-muted">Data</dt>
-                    <dd className="text-sm">
-                      {o.data ? formatarData(o.data) : "—"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs text-muted">Anexo</dt>
-                    <dd className="text-sm text-muted">
-                      {o.situacao === "Não recebido" ? "—" : "Arquivo de exemplo"}
-                    </dd>
-                  </div>
-                </dl>
-              </li>
-            ))}
-          </ul>
-        </Cartao>
-      ))}
-    </div>
-  );
-}
-
 /* ------------------------------------------------------------------ execução */
 
 function Execucao({ fases }: { fases: DetalheObra["fases"] }) {
   const media = Math.round(
     fases.reduce((t, f) => t + f.percentual, 0) / fases.length,
   );
+  const custoExecutado = fases.reduce((t, f) => t + f.custo, 0);
 
   return (
     <div className="space-y-6">
@@ -326,6 +290,12 @@ function Execucao({ fases }: { fases: DetalheObra["fases"] }) {
             {media}%
           </p>
         </div>
+        <p className="mt-3 text-xs text-muted">
+          Custo das fases já executadas:{" "}
+          <span className="font-medium tabular-nums text-foreground">
+            {custoExecutado > 0 ? formatarValor(custoExecutado) : "—"}
+          </span>
+        </p>
       </Cartao>
 
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -364,6 +334,33 @@ function Execucao({ fases }: { fases: DetalheObra["fases"] }) {
                       Início em {formatarData(f.inicio)}
                     </span>
                   )}
+                </div>
+
+                <p className="mt-3 text-sm leading-relaxed text-muted">
+                  {f.descricao}
+                </p>
+
+                <div className="mt-3">
+                  <p className="text-xs font-medium text-muted">
+                    Materiais utilizados
+                  </p>
+                  <ul className="mt-1.5 flex flex-wrap gap-1.5">
+                    {f.materiais.map((m) => (
+                      <li
+                        key={m}
+                        className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs"
+                      >
+                        {m}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-4 flex items-baseline justify-between border-t border-border pt-3">
+                  <span className="text-xs text-muted">Custo da fase</span>
+                  <span className="text-sm font-semibold tabular-nums">
+                    {f.custo > 0 ? formatarValor(f.custo) : "—"}
+                  </span>
                 </div>
               </div>
             </li>

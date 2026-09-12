@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BadgePrioridade, BadgeStatus } from "@/components/badges";
 import { CORES_PRIORIDADE, CORES_STATUS } from "@/lib/cores";
-import { OBRAS, formatarData, type Obra } from "@/lib/obras-mock";
+import {
+  OBRAS,
+  formatarData,
+  formatarValor,
+  valoresDemonstrativos,
+  type Obra,
+} from "@/lib/obras-mock";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -62,6 +68,11 @@ const CARTOES = [
   },
 ];
 
+// Totais monetários demonstrativos: soma dos valores de exemplo de cada obra.
+const VALORES = OBRAS.map(valoresDemonstrativos);
+const TOTAL_ESTIMADO = VALORES.reduce((t, v) => t + v.estimado, 0);
+const TOTAL_APROVADO = VALORES.reduce((t, v) => t + (v.aprovado ?? 0), 0);
+
 const porData = (a: Obra, b: Obra) => b.data.localeCompare(a.data);
 
 export default function Dashboard() {
@@ -115,6 +126,24 @@ export default function Dashboard() {
             </li>
           ))}
         </ul>
+        <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:gap-4">
+          <li>
+            <CartaoValor
+              rotulo="Valor total estimado"
+              valor={TOTAL_ESTIMADO}
+              descricao="Material e mão de obra de todas as obras."
+            />
+          </li>
+          <li>
+            <CartaoValor
+              rotulo="Valor total aprovado"
+              valor={TOTAL_APROVADO}
+              descricao="Obras aprovadas, em execução e concluídas."
+              destaque
+            />
+          </li>
+        </ul>
+
         <p className="mt-3 text-xs text-muted">
           Indicadores demonstrativos; ainda não calculados a partir do banco de
           dados.
@@ -142,6 +171,38 @@ export default function Dashboard() {
           vazio="Nenhuma obra em execução."
           obras={andamento}
         />
+      </div>
+    </div>
+  );
+}
+
+function CartaoValor({
+  rotulo,
+  valor,
+  descricao,
+  destaque,
+}: {
+  rotulo: string;
+  valor: number;
+  descricao: string;
+  destaque?: boolean;
+}) {
+  return (
+    <div
+      className={`flex h-full overflow-hidden rounded-lg border bg-surface ${
+        destaque ? "border-brand/30" : "border-border"
+      }`}
+    >
+      <span
+        aria-hidden="true"
+        className={`w-1.5 shrink-0 ${destaque ? "bg-accent" : "bg-brand"}`}
+      />
+      <div className="min-w-0 flex-1 p-4">
+        <p className="text-xs font-medium text-muted">{rotulo}</p>
+        <p className="mt-2 text-2xl leading-none font-semibold tabular-nums text-brand">
+          {formatarValor(valor)}
+        </p>
+        <p className="mt-2 text-xs text-muted">{descricao}</p>
       </div>
     </div>
   );

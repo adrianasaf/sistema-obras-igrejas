@@ -22,7 +22,7 @@ type Preview = { nome: string; url: string };
 
 export function FormularioSolicitacao() {
   const [fotos, setFotos] = useState<Preview[]>([]);
-  const [enviado, setEnviado] = useState(false);
+  const [aviso, setAviso] = useState<"rascunho" | "envio" | null>(null);
 
   // Libera as URLs temporárias das prévias ao trocar/desmontar.
   useEffect(() => {
@@ -46,7 +46,7 @@ export function FormularioSolicitacao() {
       className="space-y-6 rounded-lg border border-border bg-surface p-5 sm:p-6"
       onSubmit={(e) => {
         e.preventDefault();
-        setEnviado(true);
+        setAviso("envio");
       }}
     >
       <div className="grid gap-5 sm:grid-cols-2">
@@ -127,6 +127,50 @@ export function FormularioSolicitacao() {
           />
         </div>
 
+        <div>
+          <label htmlFor="valorMaterial" className={rotulo}>
+            Valor estimado de material
+          </label>
+          <div className="relative mt-1">
+            <span className="absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted">
+              R$
+            </span>
+            <input
+              id="valorMaterial"
+              name="valorMaterial"
+              type="number"
+              min={0}
+              step="0.01"
+              inputMode="decimal"
+              placeholder="0,00"
+              className={`${campo} pl-9`}
+            />
+          </div>
+          <p className="mt-1 text-xs text-muted">Estimativa da igreja, se houver.</p>
+        </div>
+
+        <div>
+          <label htmlFor="valorMaoDeObra" className={rotulo}>
+            Valor estimado de mão de obra
+          </label>
+          <div className="relative mt-1">
+            <span className="absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted">
+              R$
+            </span>
+            <input
+              id="valorMaoDeObra"
+              name="valorMaoDeObra"
+              type="number"
+              min={0}
+              step="0.01"
+              inputMode="decimal"
+              placeholder="0,00"
+              className={`${campo} pl-9`}
+            />
+          </div>
+          <p className="mt-1 text-xs text-muted">Estimativa da igreja, se houver.</p>
+        </div>
+
         <div className="sm:col-span-2">
           <span className={rotulo}>Fotos da situação atual</span>
           <label
@@ -177,13 +221,14 @@ export function FormularioSolicitacao() {
         </div>
       </div>
 
-      {enviado && (
+      {aviso && (
         <p
           role="status"
           className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
         >
-          O envio de solicitações ainda não está habilitado: o banco de dados
-          será configurado em uma etapa futura. Nenhum dado foi salvo.
+          {aviso === "rascunho"
+            ? "Salvar rascunho é apenas visual nesta etapa: o banco de dados será configurado em uma etapa futura. Nenhum dado foi salvo."
+            : "O envio de solicitações ainda não está habilitado: o banco de dados será configurado em uma etapa futura. Nenhum dado foi salvo."}
         </p>
       )}
 
@@ -194,6 +239,13 @@ export function FormularioSolicitacao() {
         >
           Cancelar
         </Link>
+        <button
+          type="button"
+          onClick={() => setAviso("rascunho")}
+          className="inline-flex items-center justify-center rounded-md border border-brand px-4 py-2 text-sm font-medium text-brand hover:bg-background"
+        >
+          Salvar rascunho
+        </button>
         <button
           type="submit"
           className="inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-strong"

@@ -1,12 +1,16 @@
 import {
   CORES_APROVACAO,
+  CORES_ESTOQUE,
   CORES_FASE,
+  CORES_ORCAMENTO,
   CORES_PRIORIDADE,
   CORES_STATUS,
 } from "@/lib/cores";
+import type { StatusMaterial } from "@/lib/estoque-mock";
 import type {
   SituacaoAprovacao,
   SituacaoFase,
+  SituacaoOrcamento,
 } from "@/lib/obra-detalhe-mock";
 import type { Prioridade, StatusObra } from "@/lib/obras-mock";
 
@@ -45,6 +49,26 @@ export function BadgeAprovacao({ valor }: { valor: SituacaoAprovacao }) {
 
 export function BadgeFase({ valor }: { valor: SituacaoFase }) {
   const cor = CORES_FASE[valor];
+  return (
+    <span className={`${base} ${cor.cracha}`}>
+      <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />
+      {valor}
+    </span>
+  );
+}
+
+export function BadgeOrcamento({ valor }: { valor: SituacaoOrcamento }) {
+  const cor = CORES_ORCAMENTO[valor];
+  return (
+    <span className={`${base} ${cor.cracha}`}>
+      <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />
+      {valor}
+    </span>
+  );
+}
+
+export function BadgeEstoque({ valor }: { valor: StatusMaterial }) {
+  const cor = CORES_ESTOQUE[valor];
   return (
     <span className={`${base} ${cor.cracha}`}>
       <span aria-hidden="true" className={`size-1.5 rounded-full ${cor.ponto}`} />

@@ -215,3 +215,44 @@ export function formatarData(iso: string): string {
   const [ano, mes, dia] = iso.split("-");
   return `${dia}/${mes}/${ano}`;
 }
+
+// Valores DEMONSTRATIVOS de cada solicitação. Derivados do número da
+// solicitação apenas para a interface ter números estáveis; não há cálculo,
+// gravação nem regra de aprovação de valores (PENDENTE DE DEFINIÇÃO: PEN-015).
+export type ValoresObra = {
+  material: number;
+  maoDeObra: number;
+  estimado: number;
+  aprovado?: number;
+};
+
+export function valoresDemonstrativos(obra: Obra): ValoresObra {
+  const semente = Number(obra.id.slice(-4));
+  const fator = { Construção: 6, Ampliação: 3, Reforma: 2, Manutenção: 1 }[
+    obra.tipo
+  ];
+  const material = (8000 + semente * 350) * fator;
+  const maoDeObra = Math.round(material * 0.62);
+  const estimado = material + maoDeObra;
+
+  // Só obras aprovadas ou adiante têm valor aprovado de exemplo.
+  const temAprovado =
+    obra.status === "Aprovada" ||
+    obra.status === "Em execução" ||
+    obra.status === "Concluída";
+
+  return {
+    material,
+    maoDeObra,
+    estimado,
+    aprovado: temAprovado ? Math.round(estimado * 0.95) : undefined,
+  };
+}
+
+export function formatarValor(valor: number): string {
+  return valor.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  });
+}
