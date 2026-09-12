@@ -2,12 +2,12 @@
 
 O roadmap poderá ser refinado ao longo do projeto. Alterações relevantes devem ser registradas em `09-DECISOES.md`.
 
-**Situação atual:** Fase 1 — Etapa 1 (fundação documental) concluída. Nenhuma tecnologia configurada ainda.
+**Situação atual:** Fase 1 em andamento — site base criado; interface do módulo Obras (Fase 2) antecipada com dados demonstrativos.
 
 ## Fase 1 — Fundação administrativa do sistema
 - [x] Etapa 1 — Estrutura do projeto e documentação inicial
 - [ ] Git/GitHub
-- [ ] Aplicação web
+- [x] Aplicação web (Next.js + TypeScript + Tailwind)
 - [ ] Banco de dados
 - [ ] Autenticação (login e senha)
 - [ ] Usuários e perfis

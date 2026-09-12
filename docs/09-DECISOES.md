@@ -51,3 +51,12 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Público interno brasileiro.
 - **Impacto:** Nomes técnicos de código podem seguir convenções da tecnologia escolhida (a definir).
 - **Status:** Ativa
+
+## DEC-005
+- **Data:** 2026-09-12
+- **Título:** Stack da aplicação web
+- **Contexto:** Início do site (Fase 1 — Etapa 2).
+- **Decisão:** Next.js (App Router) + TypeScript + Tailwind CSS, versões estáveis atuais, com npm.
+- **Motivo:** Solicitado pelo responsável do projeto; stack moderna, amplamente documentada e compatível com hospedagem na Vercel.
+- **Impacto:** Banco, autenticação e hospedagem continuam a definir (PEN-019).
+- **Status:** Ativa

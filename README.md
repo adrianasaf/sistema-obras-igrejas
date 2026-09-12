@@ -8,8 +8,8 @@ Centralizar solicitações, aprovações, orçamentos, execução, materiais, es
 O sistema será **privado** e exigirá login e senha.
 
 ## Status atual
-**Fase 1 — Etapa 1 concluída:** fundação documental e organizacional.
-Ainda **não há** código de aplicação, banco de dados, autenticação ou deploy. As tecnologias serão definidas na próxima etapa.
+**Fase 1 em andamento.**
+Site base em Next.js + TypeScript + Tailwind CSS com a interface do módulo Obras (dados demonstrativos). Ainda **não há** banco de dados, autenticação ou deploy.
 
 ## Antes de trabalhar
 Leia **[CLAUDE.md](CLAUDE.md)** — regras operacionais permanentes do projeto (o que consultar, onde registrar decisões e pendências, o que não fazer).
@@ -38,3 +38,10 @@ Leia **[CLAUDE.md](CLAUDE.md)** — regras operacionais permanentes do projeto (
 6. **Fase 6** — Estoque
 7. **Fase 7** — Financeiro
 8. **Fase 8** — Relatórios, indicadores e evolução do sistema
+
+## Executar localmente
+```bash
+npm install
+npm run dev
+```
+Acesse http://localhost:3000.
