@@ -69,3 +69,16 @@ Próximo passo:
 - **Decisões:** DEC-006 (Supabase como autenticação e futuro banco).
 - **Pendências:** configurar o projeto no Supabase (URL, chave, desativar cadastro público, criar primeiro usuário) e o deploy na Vercel.
 - **Próximo passo:** validar o login com o projeto Supabase real e publicar.
+
+## Entrada 005
+- **Data:** 2026-09-12
+- **Etapa:** Fase 1 — Infraestrutura online (Vercel, Neon, Clerk)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - Supabase substituído: autenticação agora com **Clerk** (`@clerk/nextjs`, login em `/login`, rotas internas protegidas em `src/proxy.ts`, logout no menu lateral).
+  - Banco **Neon PostgreSQL** conectado pela integração da Vercel (`DATABASE_URL`); conexão em `src/lib/db.ts` e verificação em `/api/saude`. Nenhuma tabela criada ainda.
+  - Projeto vinculado à **Vercel** e publicado em https://sistema-obras-igrejas.vercel.app (domínio temporário).
+  - Variáveis de ambiente configuradas na Vercel (Production/Preview/Development) e em `.env.local` (não versionado); `.env.example` documenta os nomes.
+- **Decisões:** DEC-007 (substitui DEC-006).
+- **Pendências:** GitHub ainda não conectado; no painel do Clerk, manter *Sign-up mode: Restricted* e desativar o login com Google se não for desejado; instância Clerk ainda em modo de desenvolvimento (chaves `pk_test`/`sk_test`).
+- **Próximo passo:** criar o primeiro usuário no Clerk e validar o login em produção.

@@ -68,4 +68,13 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Decisão:** Usar Supabase Auth via `@supabase/ssr` no Next.js (sessão em cookies, validada com `getUser()` no proxy e no layout). Usuários criados apenas pelo administrador no painel do Supabase. Chaves lidas de variáveis de ambiente (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`).
 - **Motivo:** Solicitado pelo responsável; integra autenticação e banco Postgres em um só serviço.
 - **Impacto:** O banco de dados das obras (etapa futura) deverá usar o mesmo projeto Supabase. Permissões por cargo ainda PENDENTE (PEN-002, PEN-011).
+- **Status:** Substituída por DEC-007
+
+## DEC-007
+- **Data:** 2026-09-12
+- **Título:** Infraestrutura: Vercel + Neon PostgreSQL + Clerk (substitui Supabase)
+- **Contexto:** O responsável optou por não usar Supabase.
+- **Decisão:** Hospedagem na Vercel; banco Neon PostgreSQL criado pela integração da Vercel; autenticação com Clerk (e-mail e senha, sem cadastro público). Todas as credenciais somente em variáveis de ambiente.
+- **Motivo:** Escolha do responsável; integração nativa Vercel↔Neon simplifica configuração.
+- **Impacto:** DEC-006 fica **Substituída por DEC-007**. Código Supabase removido. Tabelas das obras e permissões por cargo continuam pendentes.
 - **Status:** Ativa

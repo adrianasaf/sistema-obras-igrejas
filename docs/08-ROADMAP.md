@@ -8,14 +8,14 @@ O roadmap poderá ser refinado ao longo do projeto. Alterações relevantes deve
 - [x] Etapa 1 — Estrutura do projeto e documentação inicial
 - [x] Git (GitHub pendente)
 - [x] Aplicação web (Next.js + TypeScript + Tailwind)
-- [ ] Banco de dados
-- [x] Autenticação (login e senha) — Supabase Auth
+- [x] Banco de dados — Neon PostgreSQL (conexão; sem tabelas ainda)
+- [x] Autenticação (login e senha) — Clerk
 - [ ] Usuários e perfis
 - [ ] Cadastro de Região, Área, Polo e Igreja
 - [ ] Dashboard
 - [ ] Histórico de desenvolvimento (manutenção contínua)
 - [ ] Auditoria básica
-- [ ] Deploy
+- [x] Deploy — Vercel (https://sistema-obras-igrejas.vercel.app)
 
 ## Fase 2 — Solicitação de obras
 Igreja registra solicitações (reforma, ampliação, construção, manutenção) com prioridade Emergencial, P1, P2 ou P3.
