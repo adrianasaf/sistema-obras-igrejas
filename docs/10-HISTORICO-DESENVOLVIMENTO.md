@@ -82,3 +82,19 @@ Próximo passo:
 - **Decisões:** DEC-007 (substitui DEC-006).
 - **Pendências:** GitHub ainda não conectado; no painel do Clerk, manter *Sign-up mode: Restricted* e desativar o login com Google se não for desejado; instância Clerk ainda em modo de desenvolvimento (chaves `pk_test`/`sk_test`).
 - **Próximo passo:** criar o primeiro usuário no Clerk e validar o login em produção.
+
+## Entrada 006
+- **Data:** 2026-09-12
+- **Etapa:** Fase 1 — Interface principal (menu lateral, barra superior e dashboard)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - Nova estrutura visual administrativa em `src/components/app-shell.tsx` (substitui `src/components/sidebar.tsx`): menu lateral fixo em tablet e computador, sobreposto em celular.
+  - Menu lateral: Dashboard, Obras, Igrejas, Estoque e Histórico de Desenvolvimento.
+  - Barra superior fixa com o nome do sistema, o usuário logado (nome e e-mail, via Clerk) e a opção "Sair".
+  - Dashboard reformulado com oito cartões de resumo (Obras totais, Emergenciais, Prioridade 1, Prioridade 2, Prioridade 3, Em análise, Em execução, Concluídas) e as seções "Obras recentes", "Aguardando aprovação" e "Obras em andamento".
+  - Paleta única de prioridades e status em `src/lib/cores.ts`, usada pelos crachás e pelos cartões, para que a mesma prioridade tenha sempre a mesma cor.
+  - Telas `/igrejas` e `/estoque` criadas apenas como espaço na navegação (componente `modulo-previsto.tsx`), sem dados e sem regras.
+  - Dados demonstrativos de `src/lib/obras-mock.ts` ampliados (13 obras fictícias) para os indicadores terem números visíveis.
+- **Decisões:** nenhuma nova decisão institucional. Os indicadores são calculados sobre os dados demonstrativos; a apuração no banco fica para etapa futura.
+- **Pendências:** nenhuma nova. O agrupamento "Aguardando aprovação" usa os status provisórios (Solicitada e Em análise) e será revisto quando o fluxo de aprovação for definido (PEN-004).
+- **Próximo passo:** cadastro de Região, Área, Polo e Igreja.

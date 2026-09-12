@@ -1,65 +1,180 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BadgePrioridade, BadgeStatus } from "@/components/badges";
-import { APP_SUBTITLE } from "@/lib/app";
-import { OBRAS, formatarData } from "@/lib/obras-mock";
+import { CORES_PRIORIDADE, CORES_STATUS } from "@/lib/cores";
+import { OBRAS, formatarData, type Obra } from "@/lib/obras-mock";
 
-const HIERARQUIA = ["Região", "Área", "Polo", "Igreja"];
+export const metadata: Metadata = { title: "Dashboard" };
 
-// Módulos previstos no roadmap (docs/08-ROADMAP.md). Apenas informativo.
-const MODULOS = [
-  { titulo: "Estrutura administrativa", descricao: "Cadastro de Região, Área, Polo e Igreja." },
-  { titulo: "Aprovações e Presbitério", descricao: "Fluxo de aprovações hierárquicas, análise e orçamentos." },
-  { titulo: "Execução em cinco fases", descricao: "Acompanhamento da obra, materiais, estoque e fotos." },
-  { titulo: "Financeiro", descricao: "Controle dos valores e gastos de cada obra." },
-  { titulo: "Relatórios e auditoria", descricao: "Indicadores e registro de quem fez o quê e quando." },
+// Indicadores calculados sobre os dados DEMONSTRATIVOS de src/lib/obras-mock.ts.
+// A apuração no banco será feita em etapa futura (docs/08-ROADMAP.md).
+const contar = (filtro: (o: Obra) => boolean) => OBRAS.filter(filtro).length;
+
+const CARTOES = [
+  {
+    rotulo: "Obras totais",
+    total: OBRAS.length,
+    barra: "bg-brand",
+    texto: "text-brand",
+    href: "/obras",
+  },
+  {
+    rotulo: "Emergenciais",
+    total: contar((o) => o.prioridade === "Emergencial"),
+    ...CORES_PRIORIDADE.Emergencial,
+    href: "/obras",
+  },
+  {
+    rotulo: "Prioridade 1",
+    total: contar((o) => o.prioridade === "Prioridade 1"),
+    ...CORES_PRIORIDADE["Prioridade 1"],
+    href: "/obras",
+  },
+  {
+    rotulo: "Prioridade 2",
+    total: contar((o) => o.prioridade === "Prioridade 2"),
+    ...CORES_PRIORIDADE["Prioridade 2"],
+    href: "/obras",
+  },
+  {
+    rotulo: "Prioridade 3",
+    total: contar((o) => o.prioridade === "Prioridade 3"),
+    ...CORES_PRIORIDADE["Prioridade 3"],
+    href: "/obras",
+  },
+  {
+    rotulo: "Em análise",
+    total: contar((o) => o.status === "Em análise"),
+    ...CORES_STATUS["Em análise"],
+    href: "/obras",
+  },
+  {
+    rotulo: "Em execução",
+    total: contar((o) => o.status === "Em execução"),
+    ...CORES_STATUS["Em execução"],
+    href: "/obras",
+  },
+  {
+    rotulo: "Concluídas",
+    total: contar((o) => o.status === "Concluída"),
+    ...CORES_STATUS.Concluída,
+    href: "/obras",
+  },
 ];
 
-export default function Dashboard() {
-  const recentes = [...OBRAS]
-    .sort((a, b) => b.data.localeCompare(a.data))
-    .slice(0, 4);
+const porData = (a: Obra, b: Obra) => b.data.localeCompare(a.data);
 
-  const totalPorStatus = OBRAS.reduce<Record<string, number>>((acc, o) => {
-    acc[o.status] = (acc[o.status] ?? 0) + 1;
-    return acc;
-  }, {});
+export default function Dashboard() {
+  const recentes = [...OBRAS].sort(porData).slice(0, 5);
+
+  // "Aguardando aprovação": solicitações ainda sem decisão. Os estágios oficiais
+  // de aprovação estão PENDENTES DE DEFINIÇÃO (docs/11-PENDENCIAS.md, PEN-004).
+  const aguardando = [...OBRAS]
+    .filter((o) => o.status === "Solicitada" || o.status === "Em análise")
+    .sort(porData);
+
+  const andamento = [...OBRAS]
+    .filter((o) => o.status === "Em execução")
+    .sort(porData);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-brand">
           Dashboard
         </h1>
-        <p className="mt-1 text-sm text-muted">{APP_SUBTITLE}</p>
+        <p className="mt-1 text-sm text-muted">
+          Visão geral das obras das igrejas. Dados demonstrativos.
+        </p>
       </div>
 
+      {/* Cartões de resumo */}
       <section aria-labelledby="resumo">
         <h2 id="resumo" className="sr-only">
-          Resumo das obras (dados demonstrativos)
+          Resumo das obras
         </h2>
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {Object.entries(totalPorStatus).map(([status, total]) => (
-            <li
-              key={status}
-              className="rounded-lg border border-border bg-surface p-4"
-            >
-              <p className="text-xs text-muted">{status}</p>
-              <p className="mt-1 text-2xl font-semibold">{total}</p>
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:gap-4">
+          {CARTOES.map((c) => (
+            <li key={c.rotulo}>
+              <Link
+                href={c.href}
+                className="flex h-full overflow-hidden rounded-lg border border-border bg-surface transition-shadow hover:shadow-md"
+              >
+                <span aria-hidden="true" className={`w-1.5 shrink-0 ${c.barra}`} />
+                <span className="flex min-w-0 flex-1 flex-col justify-between p-4">
+                  <span className="truncate text-xs font-medium text-muted">
+                    {c.rotulo}
+                  </span>
+                  <span
+                    className={`mt-2 text-3xl leading-none font-semibold tabular-nums ${c.texto}`}
+                  >
+                    {c.total}
+                  </span>
+                </span>
+              </Link>
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-xs text-muted">Dados demonstrativos.</p>
+        <p className="mt-3 text-xs text-muted">
+          Indicadores demonstrativos; ainda não calculados a partir do banco de
+          dados.
+        </p>
       </section>
 
-      <section className="rounded-lg border border-border bg-surface">
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <h2 className="font-semibold text-brand">Solicitações recentes</h2>
-          <Link href="/obras" className="text-sm text-brand hover:underline">
-            Ver todas
-          </Link>
+      {/* Obras recentes */}
+      <Painel
+        titulo="Obras recentes"
+        descricao="Últimas solicitações registradas."
+        vazio="Nenhuma obra registrada."
+        obras={recentes}
+      />
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Painel
+          titulo="Aguardando aprovação"
+          descricao="Solicitadas ou em análise."
+          vazio="Nada aguardando aprovação."
+          obras={aguardando}
+        />
+        <Painel
+          titulo="Obras em andamento"
+          descricao="Obras em execução."
+          vazio="Nenhuma obra em execução."
+          obras={andamento}
+        />
+      </div>
+    </div>
+  );
+}
+
+function Painel({
+  titulo,
+  descricao,
+  vazio,
+  obras,
+}: {
+  titulo: string;
+  descricao: string;
+  vazio: string;
+  obras: Obra[];
+}) {
+  return (
+    <section className="overflow-hidden rounded-lg border border-border bg-surface">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-4">
+        <div>
+          <h2 className="font-semibold text-brand">{titulo}</h2>
+          <p className="text-xs text-muted">{descricao}</p>
         </div>
+        <span className="rounded-full bg-background px-2.5 py-0.5 text-xs font-medium text-muted tabular-nums">
+          {obras.length}
+        </span>
+      </div>
+
+      {obras.length === 0 ? (
+        <p className="px-5 py-6 text-sm text-muted">{vazio}</p>
+      ) : (
         <ul className="divide-y divide-border">
-          {recentes.map((o) => (
+          {obras.map((o) => (
             <li key={o.id}>
               <Link
                 href={`/obras/${o.id}`}
@@ -67,11 +182,11 @@ export default function Dashboard() {
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{o.titulo}</p>
-                  <p className="text-xs text-muted">
+                  <p className="truncate text-xs text-muted">
                     {o.igreja} · {o.tipo} · {formatarData(o.data)}
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <BadgePrioridade valor={o.prioridade} />
                   <BadgeStatus valor={o.status} />
                 </div>
@@ -79,49 +194,7 @@ export default function Dashboard() {
             </li>
           ))}
         </ul>
-      </section>
-
-      <section>
-        <h2 className="font-semibold text-brand">Estrutura administrativa</h2>
-        <p className="mt-1 text-sm text-muted">
-          Cada igreja pertence a um polo, cada polo a uma área e cada área a
-          uma região.
-        </p>
-        <ol className="mt-4 flex flex-wrap items-center gap-2">
-          {HIERARQUIA.map((nivel, i) => (
-            <li key={nivel} className="flex items-center gap-2">
-              <span className="rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium">
-                {nivel}
-              </span>
-              {i < HIERARQUIA.length - 1 && (
-                <span aria-hidden="true" className="text-muted">
-                  →
-                </span>
-              )}
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section>
-        <h2 className="font-semibold text-brand">Módulos previstos</h2>
-        <p className="mt-1 text-sm text-muted">
-          Serão disponibilizados gradualmente conforme o roadmap do projeto.
-        </p>
-        <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {MODULOS.map((m) => (
-            <li
-              key={m.titulo}
-              className="rounded-lg border border-border bg-surface p-5"
-            >
-              <h3 className="font-medium">{m.titulo}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                {m.descricao}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </div>
+      )}
+    </section>
   );
 }

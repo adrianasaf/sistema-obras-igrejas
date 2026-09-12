@@ -109,6 +109,102 @@ export const OBRAS: Obra[] = [
     descricao: "Pintura externa da fachada e muros, concluída.",
     fotos: [{ id: "f1", legenda: "Fachada após a pintura" }],
   },
+  {
+    id: "2026-0006",
+    igreja: "Igreja Exemplo Alto da Serra",
+    tipo: "Manutenção",
+    prioridade: "Emergencial",
+    data: "2026-09-08",
+    status: "Em análise",
+    titulo: "Queda de energia no quadro elétrico",
+    descricao:
+      "O quadro elétrico apresenta superaquecimento e desarme constante dos disjuntores, impedindo o uso do som e da climatização nos cultos.",
+    fotos: [{ id: "f1", legenda: "Quadro elétrico atual" }],
+  },
+  {
+    id: "2026-0007",
+    igreja: "Igreja Exemplo Jardim Sul",
+    tipo: "Reforma",
+    prioridade: "Prioridade 1",
+    data: "2026-09-06",
+    status: "Solicitada",
+    titulo: "Substituição do piso do templo",
+    descricao:
+      "Piso com peças soltas e trincadas em toda a área central, com risco de queda durante a circulação.",
+    fotos: [],
+  },
+  {
+    id: "2026-0008",
+    igreja: "Igreja Exemplo Vila Nova",
+    tipo: "Ampliação",
+    prioridade: "Prioridade 2",
+    data: "2026-09-04",
+    status: "Em análise",
+    titulo: "Ampliação do estacionamento",
+    descricao:
+      "Proposta de ampliação da área de estacionamento em terreno vizinho já pertencente à igreja.",
+    fotos: [],
+  },
+  {
+    id: "2026-0009",
+    igreja: "Igreja Exemplo Riacho Doce",
+    tipo: "Manutenção",
+    prioridade: "Prioridade 3",
+    data: "2026-08-22",
+    status: "Aprovada",
+    titulo: "Revisão da calçada externa",
+    descricao:
+      "Nivelamento e reparo de trechos da calçada em frente ao templo.",
+    fotos: [],
+  },
+  {
+    id: "2026-0010",
+    igreja: "Igreja Exemplo Bela Vista",
+    tipo: "Construção",
+    prioridade: "Prioridade 1",
+    data: "2026-08-10",
+    status: "Em execução",
+    titulo: "Construção do salão de reuniões",
+    descricao:
+      "Novo salão anexo ao templo para reuniões e atividades de ensino. Obra na fase de estrutura.",
+    fotos: [{ id: "f1", legenda: "Estrutura em execução" }],
+  },
+  {
+    id: "2026-0011",
+    igreja: "Igreja Exemplo Campo Verde",
+    tipo: "Reforma",
+    prioridade: "Prioridade 2",
+    data: "2026-07-30",
+    status: "Em execução",
+    titulo: "Reforma da cobertura lateral",
+    descricao:
+      "Troca da estrutura de madeira e das telhas da cobertura lateral de acesso ao templo.",
+    fotos: [{ id: "f1", legenda: "Cobertura desmontada" }],
+  },
+  {
+    id: "2026-0012",
+    igreja: "Igreja Exemplo Morada Nova",
+    tipo: "Manutenção",
+    prioridade: "Prioridade 3",
+    data: "2026-07-12",
+    status: "Concluída",
+    titulo: "Troca das luminárias internas",
+    descricao:
+      "Substituição das luminárias internas por modelos de LED, concluída e entregue.",
+    fotos: [],
+  },
+  {
+    id: "2026-0013",
+    igreja: "Igreja Exemplo Serra Branca",
+    tipo: "Reforma",
+    prioridade: "Prioridade 2",
+    data: "2026-06-18",
+    status: "Concluída",
+    titulo: "Reforma da secretaria",
+    descricao:
+      "Pintura, elétrica e mobiliário da sala da secretaria, concluída.",
+    fotos: [],
+  },
 ];
 
 export function buscarObra(id: string): Obra | undefined {
