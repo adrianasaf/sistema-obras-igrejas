@@ -1,4 +1,10 @@
 import type { Metadata } from "next";
+import {
+  podeAcessarArea,
+  podeDecidirEtapa,
+  type Perfil,
+} from "@/lib/permissoes";
+import { exigirAcesso } from "@/lib/sessao";
 import { LinkVoltar } from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -50,12 +56,18 @@ export async function generateMetadata({
 export default async function DetalheObraPage({
   params,
 }: PageProps<"/obras/[id]">) {
+  const sessao = await exigirAcesso("obras");
   const { id } = await params;
   const obra = buscarObra(id);
   if (!obra) notFound();
 
   const detalhe = detalheDemonstrativo(obra);
   const valores = valoresDemonstrativos(obra);
+
+  // Abas conforme o perfil: Orçamentos é do Presbitério (e do Administrador);
+  // Execução e Conclusão, por ora, só do Administrador (PEN-026).
+  const verOrcamentos = podeAcessarArea(sessao.perfil, "orcamentos");
+  const verExecucao = podeAcessarArea(sessao.perfil, "execucao");
 
   // Fluxo de aprovação: dados reais (banco). Se o banco não responder, a tela
   // continua abrindo e avisa — as demais abas não dependem dele.
@@ -87,29 +99,38 @@ export default async function DetalheObraPage({
                 obraId={obra.id}
                 dados={aprovacoes}
                 erroBanco={erroBanco}
+                perfil={sessao.perfil}
               />
             ),
           },
-          {
-            id: "orcamentos",
-            rotulo: "Orçamentos",
-            conteudo: (
-              <OrcamentosPainel
-                orcamentos={detalhe.orcamentos}
-                valorAprovado={valores.aprovado}
-              />
-            ),
-          },
-          {
-            id: "execucao",
-            rotulo: "Execução",
-            conteudo: <Execucao fases={detalhe.fases} />,
-          },
-          {
-            id: "conclusao",
-            rotulo: "Conclusão",
-            conteudo: <Conclusao conclusao={detalhe.conclusao} />,
-          },
+          ...(verOrcamentos
+            ? [
+                {
+                  id: "orcamentos",
+                  rotulo: "Orçamentos",
+                  conteudo: (
+                    <OrcamentosPainel
+                      orcamentos={detalhe.orcamentos}
+                      valorAprovado={valores.aprovado}
+                    />
+                  ),
+                },
+              ]
+            : []),
+          ...(verExecucao
+            ? [
+                {
+                  id: "execucao",
+                  rotulo: "Execução",
+                  conteudo: <Execucao fases={detalhe.fases} />,
+                },
+                {
+                  id: "conclusao",
+                  rotulo: "Conclusão",
+                  conteudo: <Conclusao conclusao={detalhe.conclusao} />,
+                },
+              ]
+            : []),
         ]}
       />
 
@@ -259,10 +280,12 @@ function Aprovacoes({
   obraId,
   dados,
   erroBanco,
+  perfil,
 }: {
   obraId: string;
   dados: Aprovacoes | null;
   erroBanco: boolean;
+  perfil: Perfil;
 }) {
   if (!dados) {
     return (
@@ -278,6 +301,9 @@ function Aprovacoes({
 
   const { fluxo, decisoes } = dados;
   const encerrado = fluxoEncerrado(fluxo.situacao);
+  // O painel de decisão só aparece para o perfil da etapa atual — e a Server
+  // Action confere de novo, no servidor.
+  const podeDecidir = podeDecidirEtapa(perfil, fluxo.etapaAtual);
 
   return (
     <div className="space-y-6">
@@ -297,7 +323,19 @@ function Aprovacoes({
       </Cartao>
 
       {/* Decisão da etapa atual */}
+      {!encerrado && !podeDecidir && (
+        <Cartao titulo={`Decisão — ${nivelDaEtapa(fluxo.etapaAtual)}`}>
+          <p className="text-sm text-muted">
+            Esta etapa é decidida pelo perfil{" "}
+            <span className="font-medium">{nivelDaEtapa(fluxo.etapaAtual)}</span>
+            . Seu perfil ({perfil}) acompanha o andamento, mas não registra a
+            decisão desta etapa.
+          </p>
+        </Cartao>
+      )}
+
       {!encerrado &&
+        podeDecidir &&
         (fluxo.situacao === "Em correção" ? (
           <Cartao
             titulo="Correção solicitada"

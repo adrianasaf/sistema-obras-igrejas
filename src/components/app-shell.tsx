@@ -4,32 +4,43 @@ import { useClerk } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import type { Area } from "@/lib/permissoes";
 
 // Menu lateral, em grupos. Novos módulos entram aqui conforme o roadmap.
 const GRUPOS = [
   {
     titulo: null,
     itens: [
-      { href: "/", rotulo: "Dashboard", icone: "▦" },
-      { href: "/obras", rotulo: "Obras", icone: "▣" },
+      { href: "/", rotulo: "Dashboard", icone: "▦", area: "dashboard" },
+      { href: "/obras", rotulo: "Obras", icone: "▣", area: "obras" },
     ],
   },
   {
     titulo: "Estrutura administrativa",
     itens: [
-      { href: "/regioes", rotulo: "Regiões", icone: "◎" },
-      { href: "/areas", rotulo: "Áreas", icone: "◇" },
-      { href: "/polos", rotulo: "Polos", icone: "◈" },
-      { href: "/igrejas", rotulo: "Igrejas", icone: "⌂" },
+      { href: "/regioes", rotulo: "Regiões", icone: "◎", area: "estrutura" },
+      { href: "/areas", rotulo: "Áreas", icone: "◇", area: "estrutura" },
+      { href: "/polos", rotulo: "Polos", icone: "◈", area: "estrutura" },
+      { href: "/igrejas", rotulo: "Igrejas", icone: "⌂", area: "estrutura" },
     ],
   },
   {
     titulo: null,
     itens: [
-      { href: "/usuarios", rotulo: "Usuários", icone: "◍" },
-      { href: "/estoque", rotulo: "Estoque", icone: "☰" },
-      { href: "/historico", rotulo: "Histórico de Desenvolvimento", icone: "◷" },
-      { href: "/configuracoes", rotulo: "Configurações", icone: "⚙" },
+      { href: "/usuarios", rotulo: "Usuários", icone: "◍", area: "usuarios" },
+      { href: "/estoque", rotulo: "Estoque", icone: "☰", area: "estoque" },
+      {
+        href: "/historico",
+        rotulo: "Histórico de Desenvolvimento",
+        icone: "◷",
+        area: "historico",
+      },
+      {
+        href: "/configuracoes",
+        rotulo: "Configurações",
+        icone: "⚙",
+        area: "configuracoes",
+      },
     ],
   },
 ] as const;
@@ -44,6 +55,8 @@ export function AppShell({
   versao,
   usuarioNome,
   usuarioEmail,
+  perfil,
+  areas,
   children,
 }: {
   nome: string;
@@ -51,6 +64,8 @@ export function AppShell({
   versao: string;
   usuarioNome: string;
   usuarioEmail: string;
+  perfil: string;
+  areas: Area[];
   children: ReactNode;
 }) {
   const pathname = usePathname();
@@ -63,14 +78,20 @@ export function AppShell({
       aria-label="Menu principal"
       className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-3"
     >
-      {GRUPOS.map((grupo, indice) => (
-        <div key={grupo.titulo ?? `grupo-${indice}`} className="flex flex-col gap-1">
+      {GRUPOS.map((grupo, indice) => {
+        const itens = grupo.itens.filter((item) => areas.includes(item.area));
+        if (itens.length === 0) return null;
+        return (
+          <div
+            key={grupo.titulo ?? `grupo-${indice}`}
+            className="flex flex-col gap-1"
+          >
           {grupo.titulo && (
             <p className="px-3 pt-1 pb-1 text-[11px] font-semibold tracking-wide text-white/40 uppercase">
               {grupo.titulo}
             </p>
           )}
-          {grupo.itens.map((item) => {
+            {itens.map((item) => {
             const atual = ativo(pathname, item.href);
             return (
               <Link
@@ -91,8 +112,9 @@ export function AppShell({
               </Link>
             );
           })}
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </nav>
   );
 
@@ -195,6 +217,9 @@ export function AppShell({
                         title={usuarioEmail}
                       >
                         {usuarioEmail}
+                      </p>
+                      <p className="mt-1 text-xs font-medium text-brand">
+                        {perfil}
                       </p>
                     </div>
                     <form

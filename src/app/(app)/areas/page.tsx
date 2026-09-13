@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { BadgeCadastro } from "@/components/badges";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import {
@@ -12,7 +13,8 @@ import { AREAS, buscarRegiao, polosDaArea } from "@/lib/estrutura-mock";
 
 export const metadata: Metadata = { title: "Áreas" };
 
-export default function AreasPage() {
+export default async function AreasPage() {
+  await exigirAcesso("estrutura");
   const areas = [...AREAS].sort((a, b) => a.codigo.localeCompare(b.codigo));
 
   return (

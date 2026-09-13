@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
   LinkVoltar,
@@ -7,7 +8,8 @@ import { FormularioIgreja } from "@/components/estrutura/formularios";
 
 export const metadata: Metadata = { title: "Nova Igreja" };
 
-export default function NovaIgrejaPage() {
+export default async function NovaIgrejaPage() {
+  await exigirAcesso("estrutura");
   return (
     <div className="space-y-6">
       <div className="space-y-3">

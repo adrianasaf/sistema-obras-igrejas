@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
   LinkVoltar,
@@ -12,6 +13,7 @@ export const metadata: Metadata = { title: "Editar Igreja" };
 export default async function EditarIgrejaPage({
   params,
 }: PageProps<"/igrejas/[id]/editar">) {
+  await exigirAcesso("estrutura");
   const { id } = await params;
   const igreja = buscarIgreja(id);
   if (!igreja) notFound();

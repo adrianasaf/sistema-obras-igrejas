@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { notFound } from "next/navigation";
 import { BadgeCadastro } from "@/components/badges";
 import {
@@ -23,6 +24,7 @@ export async function generateMetadata({
 }
 
 export default async function AreaPage({ params }: PageProps<"/areas/[id]">) {
+  await exigirAcesso("estrutura");
   const { id } = await params;
   const area = buscarArea(id);
   if (!area) notFound();

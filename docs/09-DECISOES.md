@@ -112,3 +112,18 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Regras informadas pelo responsável do projeto.
 - **Impacto:** Duas tabelas novas (`fluxo_aprovacao`, `decisoes_aprovacao`), criadas pela migração `scripts/001-fluxo-aprovacao.sql`. As solicitações em si continuam vindo dos dados demonstrativos (`src/lib/obras-mock.ts`): o fluxo é identificado pelo número da solicitação, sem chave estrangeira, até as obras irem para o banco. **PENDENTE DE DEFINIÇÃO:** quais perfis podem decidir em cada etapa (PEN-023) — hoje qualquer usuário autenticado pode decidir, e fica registrado quem foi; quem pode reenviar após correção e se uma reprovação pode ser reaberta (PEN-024); prazos e alçadas (PEN-004). O status "Aprovada para execução" depende da etapa de orçamentos, ainda não implementada.
 - **Status:** Ativa
+
+## DEC-011
+- **Data:** 2026-09-13
+- **Título:** Perfis e permissões (perfil vindo do Clerk)
+- **Contexto:** Implementação de perfis e permissões, sem alterar o banco de dados.
+- **Decisão:** O perfil do usuário é lido do **Clerk**, em `publicMetadata.perfil` (definido no Clerk Dashboard). A estrutura central de permissões fica em `src/lib/permissoes.ts`, com áreas do sistema e a matriz perfil → áreas:
+  - **Administrador:** todas as áreas.
+  - **Pastor Local, Coordenador de Polo, Coordenador de Área, Coordenador de Região, Responsável COMBENS:** Dashboard e Obras/Solicitações.
+  - **Presbitério:** Dashboard, Obras/Solicitações e Orçamentos.
+  - **Aprovações:** cada perfil decide apenas a etapa do seu nível (Pastor Local 1, Coordenador de Polo 2, Coordenador da Área 3, Coordenador da Região 4, Responsável COMBENS 5, Presbitério 6); o Administrador pode decidir qualquer etapa.
+  - **Usuário sem perfil definido** não acessa nenhuma área: é levado à página `/sem-permissao`.
+  - O **Dashboard** é liberado a todos os perfis por ser a tela inicial após o login (decisão de navegação, não institucional — ver PEN-026).
+- **Motivo:** Regras iniciais informadas pelo responsável do projeto.
+- **Impacto:** A proteção é feita no servidor em três camadas: cada página interna chama `exigirAcesso(area)`; o proxy (`src/proxy.ts`) confere a área quando o perfil está publicado no token da sessão; e as Server Actions do fluxo de aprovação conferem perfil e etapa antes de gravar. Esconder itens de menu é apenas consequência, não a proteção. **PENDENTE DE DEFINIÇÃO:** vínculo por Região/Área/Polo/Igreja (PEN-025) — nesta etapa, um Coordenador de Polo pode decidir a etapa 2 de **qualquer** solicitação; e quem acessa Execução/Conclusão, Estoque, Histórico e Configurações além do Administrador (PEN-026). PEN-023 fica parcialmente resolvida (perfil ↔ etapa).
+- **Status:** Ativa

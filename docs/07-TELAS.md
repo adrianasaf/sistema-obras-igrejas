@@ -29,6 +29,7 @@
 | Tela | Rota | Situação |
 |---|---|---|
 | Login | `/login` | Funcional (Clerk) |
+| Acesso não autorizado | `/sem-permissao` | Funcional: perfil sem acesso à área, ou usuário sem perfil definido |
 | Dashboard | `/` | Interface: cartões de resumo, valores estimado/aprovado e listas de obras |
 | Obras (lista) | `/obras` | Interface: tabela/cartões, filtros por prioridade e status, busca |
 | Nova solicitação | `/obras/nova` | Interface: formulário com valores estimados, "Salvar rascunho" e "Enviar solicitação" (não gravam) |

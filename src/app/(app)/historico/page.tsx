@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { ReactNode } from "react";
@@ -22,6 +23,7 @@ const ARQUIVO = path.join(
 );
 
 export default async function HistoricoPage() {
+  await exigirAcesso("historico");
   const markdown = await readFile(ARQUIVO, "utf8");
   const versoes = [...VERSOES].sort((a, b) => b.data.localeCompare(a.data));
   const atual = versoes[0];

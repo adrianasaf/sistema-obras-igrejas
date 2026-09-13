@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import Link from "next/link";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { OBRAS } from "@/lib/obras-mock";
@@ -7,7 +8,8 @@ import { ListaObras } from "./lista";
 
 export const metadata: Metadata = { title: "Obras" };
 
-export default function ObrasPage() {
+export default async function ObrasPage() {
+  await exigirAcesso("obras");
   const obras = [...OBRAS].sort((a, b) => b.data.localeCompare(a.data));
 
   return (

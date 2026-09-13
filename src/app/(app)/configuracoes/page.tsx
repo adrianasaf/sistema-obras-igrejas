@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { APP_NAME, APP_SUBTITLE, APP_VERSION } from "@/lib/app";
 import { cartao, tituloSecao } from "@/lib/ui";
@@ -20,7 +21,8 @@ const INSTITUCIONAIS = [
   { rotulo: "Uso", valor: "Interno, acesso restrito" },
 ];
 
-export default function ConfiguracoesPage() {
+export default async function ConfiguracoesPage() {
+  await exigirAcesso("configuracoes");
   return (
     <div className="space-y-6">
       <CabecalhoPagina

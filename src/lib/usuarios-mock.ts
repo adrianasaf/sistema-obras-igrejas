@@ -13,16 +13,9 @@ import {
   type StatusCadastro,
 } from "@/lib/estrutura-mock";
 
-export const PERFIS = [
-  "Administrador",
-  "Pastor Local",
-  "Coordenador de Polo",
-  "Coordenador de Área",
-  "Coordenador de Região",
-  "Responsável COMBENS",
-  "Presbitério",
-] as const;
-export type Perfil = (typeof PERFIS)[number];
+// Os perfis são definidos na estrutura central de permissões.
+export { PERFIS, type Perfil } from "@/lib/permissoes";
+import type { Perfil } from "@/lib/permissoes";
 
 // Nível da estrutura a que cada perfil é vinculado nesta interface.
 // "nenhum" = perfil de abrangência geral, sem vínculo a um único registro.

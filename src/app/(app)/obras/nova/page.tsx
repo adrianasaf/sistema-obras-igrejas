@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
   LinkVoltar,
@@ -7,7 +8,8 @@ import { FormularioSolicitacao } from "./formulario";
 
 export const metadata: Metadata = { title: "Nova Solicitação" };
 
-export default function NovaSolicitacaoPage() {
+export default async function NovaSolicitacaoPage() {
+  await exigirAcesso("obras");
   return (
     <div className="space-y-6">
       <div className="space-y-3">

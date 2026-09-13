@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { USUARIOS } from "@/lib/usuarios-mock";
 import { PainelUsuarios } from "./painel";
 
 export const metadata: Metadata = { title: "Usuários" };
 
-export default function UsuariosPage() {
+export default async function UsuariosPage() {
+  await exigirAcesso("usuarios");
   const usuarios = [...USUARIOS].sort((a, b) =>
     a.nome.localeCompare(b.nome, "pt-BR"),
   );

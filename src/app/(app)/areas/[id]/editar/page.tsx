@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
   LinkVoltar,
@@ -12,6 +13,7 @@ export const metadata: Metadata = { title: "Editar Área" };
 export default async function EditarAreaPage({
   params,
 }: PageProps<"/areas/[id]/editar">) {
+  await exigirAcesso("estrutura");
   const { id } = await params;
   const area = buscarArea(id);
   if (!area) notFound();

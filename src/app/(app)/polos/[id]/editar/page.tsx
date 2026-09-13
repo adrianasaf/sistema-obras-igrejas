@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
   LinkVoltar,
@@ -12,6 +13,7 @@ export const metadata: Metadata = { title: "Editar Polo" };
 export default async function EditarPoloPage({
   params,
 }: PageProps<"/polos/[id]/editar">) {
+  await exigirAcesso("estrutura");
   const { id } = await params;
   const polo = buscarPolo(id);
   if (!polo) notFound();

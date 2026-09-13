@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import Link from "next/link";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { cartao, tituloSecao } from "@/lib/ui";
@@ -77,7 +78,8 @@ const TOTAL_APROVADO = VALORES.reduce((t, v) => t + (v.aprovado ?? 0), 0);
 
 const porData = (a: Obra, b: Obra) => b.data.localeCompare(a.data);
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  await exigirAcesso("dashboard");
   const recentes = [...OBRAS].sort(porData).slice(0, 5);
 
   // "Aguardando aprovação": solicitações ainda sem decisão. Os estágios oficiais

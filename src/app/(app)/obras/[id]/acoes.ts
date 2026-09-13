@@ -1,8 +1,9 @@
 "use server";
 
-import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { DECISOES, type Decisao } from "@/lib/aprovacao";
+import { podeDecidirEtapa } from "@/lib/permissoes";
+import { sessaoAtual } from "@/lib/sessao";
 import {
   ErroFluxo,
   registrarDecisao,
@@ -12,21 +13,23 @@ import { buscarObra } from "@/lib/obras-mock";
 
 export type Resultado = { ok: boolean; mensagem: string };
 
-// Identifica quem está decidindo. Quais perfis podem decidir em cada etapa
-// ainda não está definido (PEN-023): por ora qualquer usuário autenticado
-// pode registrar a decisão, e fica registrado quem foi.
-async function usuarioAtual() {
-  const user = await currentUser();
-  if (!user) throw new ErroFluxo("Sessão expirada. Entre novamente.");
-  const nome =
-    [user.firstName, user.lastName].filter(Boolean).join(" ") ||
-    user.primaryEmailAddress?.emailAddress ||
-    "Usuário";
-  return {
-    id: user.id,
-    nome,
-    email: user.primaryEmailAddress?.emailAddress,
-  };
+// Identifica quem está decidindo e confere a permissão no servidor: cada
+// perfil só decide a etapa do seu nível (DEC-011). O vínculo administrativo
+// (região/área/polo/igreja) ainda não é verificado (PEN-025).
+async function autorizar(etapa?: number) {
+  const sessao = await sessaoAtual();
+  if (!sessao) throw new ErroFluxo("Sessão expirada. Entre novamente.");
+  if (!sessao.perfil) {
+    throw new ErroFluxo(
+      "Seu usuário não tem perfil de acesso definido. Fale com o administrador.",
+    );
+  }
+  if (etapa !== undefined && !podeDecidirEtapa(sessao.perfil, etapa)) {
+    throw new ErroFluxo(
+      `Seu perfil (${sessao.perfil}) não pode registrar a decisão desta etapa.`,
+    );
+  }
+  return { id: sessao.id, nome: sessao.nome, email: sessao.email };
 }
 
 export async function registrarDecisaoAction(
@@ -48,7 +51,7 @@ export async function registrarDecisaoAction(
       );
     }
 
-    const usuario = await usuarioAtual();
+    const usuario = await autorizar(etapa);
     const fluxo = await registrarDecisao({
       obraId,
       etapa,
@@ -73,7 +76,7 @@ export async function reenviarAction(
 
   try {
     if (!buscarObra(obraId)) throw new ErroFluxo("Solicitação não encontrada.");
-    const usuario = await usuarioAtual();
+    const usuario = await autorizar();
     await reenviarAposCorrecao({ obraId, comentario, usuario });
 
     revalidatePath(`/obras/${obraId}`);

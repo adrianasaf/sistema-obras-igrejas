@@ -216,3 +216,21 @@ Próximo passo:
 - **Decisões:** DEC-010.
 - **Pendências:** novas PEN-023 (quais perfis decidem em cada etapa) e PEN-024 (quem reenvia após correção; reabertura de reprovação). O status "Aprovada para execução" depende da etapa de orçamentos, ainda não implementada.
 - **Próximo passo:** aplicar a migração no Neon e validar o fluxo em produção; orçamentos e decisão do Presbitério sobre valores continuam pendentes.
+
+## Entrada 014
+- **Data:** 2026-09-13
+- **Etapa:** Perfis e permissões (Clerk)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - Estrutura central em `src/lib/permissoes.ts`: sete perfis, nove áreas do sistema, matriz perfil → áreas, mapeamento rota → área e a etapa do fluxo que cada perfil decide. Módulo puro, sem banco.
+  - `src/lib/sessao.ts` lê o perfil do Clerk (`publicMetadata.perfil`) e expõe as guardas `exigirPerfil` e `exigirAcesso(area)`.
+  - **Proteção em três camadas, toda no servidor:** cada uma das 24 páginas internas chama `exigirAcesso`; o proxy (`src/proxy.ts`) confere a área da rota quando o perfil está no token da sessão; e as Server Actions do fluxo de aprovação conferem perfil e etapa antes de gravar. Digitar a URL direto não dá acesso.
+  - Menu lateral mostra somente as áreas permitidas (grupos vazios desaparecem) e o perfil aparece no menu da conta.
+  - Aba **Orçamentos** só aparece para Presbitério e Administrador; **Execução** e **Conclusão**, por ora, só para Administrador (PEN-026). Na aba Aprovações, quem não é o perfil da etapa atual vê o andamento e um aviso, sem o painel de decisão.
+  - Nova página `/sem-permissao` ("Acesso não autorizado"), acessível a qualquer usuário autenticado, informando o perfil atual e a área negada — ou que o usuário ainda não tem perfil.
+  - Os perfis de `src/lib/usuarios-mock.ts` passaram a vir da estrutura central (fonte única).
+  - Nenhuma alteração no banco, nenhuma migração, nenhum SQL executado. Nenhum desenho de tela alterado.
+- **Testes executados:** 71 verificações da matriz de permissões (`node --experimental-strip-types`), todas passaram: mapeamento de rotas, rota desconhecida negada até para Administrador, acesso completo do Administrador, bloqueio de Usuários/Estrutura/Estoque para os demais perfis, Orçamentos só para Presbitério e Administrador, cada perfil decidindo apenas a etapa do seu nível (e nenhuma outra), e usuário sem perfil sem acesso a nada. Build, tipos e lint limpos. **Não testado aqui:** o comportamento em produção com usuários reais do Clerk (esta sessão não tem as chaves).
+- **Decisões:** DEC-011. PEN-023 passa a **Parcial**.
+- **Pendências:** novas PEN-025 (vínculo por Região/Área/Polo/Igreja) e PEN-026 (quais perfis acessam Execução/Conclusão, Estoque, Histórico, Configurações e se o Dashboard fica visível a todos).
+- **Próximo passo:** definir os perfis dos usuários no Clerk Dashboard e validar em produção.

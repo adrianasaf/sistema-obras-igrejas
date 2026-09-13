@@ -24,3 +24,27 @@ PENDENTE DE DEFINIÇÃO. Será construída na Fase 1 (usuários/perfis) e refina
 ## Regras gerais (previstas)
 - Um usuário enxerga apenas o escopo ao qual está vinculado (sua igreja, seu polo, sua área, sua região) — a confirmar: PENDENTE DE DEFINIÇÃO.
 - Um usuário pode ter mais de um perfil ou vínculo? PENDENTE DE DEFINIÇÃO.
+
+## Implementação atual (DEC-011)
+
+O perfil vem do **Clerk**, em `publicMetadata.perfil`. A matriz de permissões está em `src/lib/permissoes.ts` (módulo único, sem banco).
+
+| Perfil | Áreas liberadas | Etapa que decide |
+|---|---|---|
+| Administrador | todas | qualquer |
+| Pastor Local | Dashboard, Obras | 1 |
+| Coordenador de Polo | Dashboard, Obras | 2 |
+| Coordenador de Área | Dashboard, Obras | 3 |
+| Coordenador de Região | Dashboard, Obras | 4 |
+| Responsável COMBENS | Dashboard, Obras | 5 |
+| Presbitério | Dashboard, Obras, Orçamentos | 6 |
+| (sem perfil definido) | nenhuma | nenhuma |
+
+Como a proteção é aplicada, no servidor:
+1. `exigirAcesso(area)` no início de cada página interna — redireciona para `/sem-permissao`;
+2. `src/proxy.ts` confere a área da rota quando o perfil está no token da sessão do Clerk;
+3. as Server Actions de aprovação conferem perfil e etapa antes de gravar.
+
+O menu lateral mostra apenas as áreas permitidas, mas isso é consequência: digitar a URL direto não dá acesso.
+
+**Ainda não implementado:** vínculo por Região/Área/Polo/Igreja (PEN-025).

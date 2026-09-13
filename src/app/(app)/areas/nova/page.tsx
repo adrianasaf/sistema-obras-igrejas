@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
   LinkVoltar,
@@ -7,7 +8,8 @@ import { FormularioArea } from "@/components/estrutura/formularios";
 
 export const metadata: Metadata = { title: "Nova Área" };
 
-export default function NovaAreaPage() {
+export default async function NovaAreaPage() {
+  await exigirAcesso("estrutura");
   return (
     <div className="space-y-6">
       <div className="space-y-3">

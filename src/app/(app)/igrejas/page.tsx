@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { BadgeCadastro } from "@/components/badges";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import {
@@ -12,7 +13,8 @@ import { IGREJAS, caminhoDaIgreja } from "@/lib/estrutura-mock";
 
 export const metadata: Metadata = { title: "Igrejas" };
 
-export default function IgrejasPage() {
+export default async function IgrejasPage() {
+  await exigirAcesso("estrutura");
   const igrejas = [...IGREJAS].sort((a, b) =>
     a.nome.localeCompare(b.nome, "pt-BR"),
   );

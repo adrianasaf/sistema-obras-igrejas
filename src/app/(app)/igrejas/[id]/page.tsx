@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { notFound } from "next/navigation";
 import { BadgeCadastro, BadgePrioridade, BadgeStatus } from "@/components/badges";
 import {
@@ -25,6 +26,7 @@ export async function generateMetadata({
 export default async function IgrejaPage({
   params,
 }: PageProps<"/igrejas/[id]">) {
+  await exigirAcesso("estrutura");
   const { id } = await params;
   const igreja = buscarIgreja(id);
   if (!igreja) notFound();

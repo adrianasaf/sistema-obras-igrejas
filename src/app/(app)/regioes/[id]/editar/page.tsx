@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
   LinkVoltar,
@@ -12,6 +13,7 @@ export const metadata: Metadata = { title: "Editar Região" };
 export default async function EditarRegiaoPage({
   params,
 }: PageProps<"/regioes/[id]/editar">) {
+  await exigirAcesso("estrutura");
   const { id } = await params;
   const regiao = buscarRegiao(id);
   if (!regiao) notFound();

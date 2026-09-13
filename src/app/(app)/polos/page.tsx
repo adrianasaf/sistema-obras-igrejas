@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { BadgeCadastro } from "@/components/badges";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import {
@@ -12,7 +13,8 @@ import { POLOS, caminhoDoPolo, igrejasDoPolo } from "@/lib/estrutura-mock";
 
 export const metadata: Metadata = { title: "Polos" };
 
-export default function PolosPage() {
+export default async function PolosPage() {
+  await exigirAcesso("estrutura");
   const polos = [...POLOS].sort((a, b) => a.codigo.localeCompare(b.codigo));
 
   return (

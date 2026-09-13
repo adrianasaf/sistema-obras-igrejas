@@ -25,6 +25,8 @@ Questões institucionais e técnicas ainda **não decididas**. Não devem ser re
 | PEN-019 | Tecnologias: aplicação web, banco, autenticação, hospedagem | 02, 06 | Aberta (Etapa 2) |
 | PEN-020 | Conteúdo do dashboard inicial | 07 | Aberta |
 | PEN-021 | Significado da sigla COMBENS e atribuições do "Responsável COMBENS" no fluxo | 03, 04 | Aberta |
-| PEN-023 | Quais perfis podem decidir em cada etapa do fluxo de aprovação (hoje qualquer usuário autenticado decide, com registro de quem foi) | 03, 04 | Aberta |
+| PEN-023 | Quais perfis podem decidir em cada etapa do fluxo de aprovação | 03, 04 | Parcial — perfil ↔ etapa definido em DEC-011; falta o vínculo administrativo (PEN-025) |
 | PEN-024 | Quem pode reenviar uma solicitação após "Correção solicitada" e se uma reprovação pode ser reaberta | 03 | Aberta |
+| PEN-025 | Vínculo do usuário com Região/Área/Polo/Igreja nas permissões (hoje o perfil decide a etapa de qualquer solicitação) | 04, 05 | Aberta |
+| PEN-026 | Quais perfis, além do Administrador, acessam Execução/Conclusão, Estoque, Histórico e Configurações; e se o Dashboard deve mesmo ser visível a todos | 04, 07 | Aberta |
 | PEN-022 | Usuários: se um usuário pode ter mais de um perfil ou mais de um vínculo, e qual a forma oficial dos nomes dos cargos ("Coordenador do Polo" ou "Coordenador de Polo") | 04 | Aberta |

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { exigirAcesso } from "@/lib/sessao";
 import { BadgeEstoque } from "@/components/badges";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CartaoLista, Tabela } from "@/components/tabela";
@@ -12,7 +13,8 @@ import { AcoesEstoque } from "./acoes";
 
 export const metadata: Metadata = { title: "Estoque" };
 
-export default function EstoquePage() {
+export default async function EstoquePage() {
+  await exigirAcesso("estoque");
   const materiais = [...MATERIAIS].sort((a, b) =>
     a.nome.localeCompare(b.nome, "pt-BR"),
   );
