@@ -69,6 +69,8 @@ O nível do vínculo vem do perfil:
 | Responsável CONBENS | — | Todas (decide qualquer obra que chegue à etapa 4) |
 | Presbitério | — | Todas, **apenas visualização** |
 
+O mesmo escopo vale para o módulo de Orçamento: lançam cotações e croqui a igreja solicitante e os coordenadores de Polo, Área e Região daquela obra, mais Administrador e Responsável CONBENS (confirmado pelo responsável em 13/09/2026). O Presbitério apenas visualiza.
+
 O escopo é aplicado em `src/lib/escopo.ts` e vale em dois pontos, sempre no servidor:
 1. **Listagem de obras** — a consulta já filtra pelo vínculo (quem não tem escopo não recebe a linha).
 2. **Decisões do fluxo** — além de a etapa ter de ser a do seu nível, a obra precisa estar no seu escopo. A tela de detalhes também redireciona para "Acesso não autorizado" quando a solicitação está fora da abrangência, então a URL direta não dá acesso.
