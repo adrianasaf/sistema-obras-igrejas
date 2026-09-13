@@ -86,7 +86,7 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Decisão:** A linha do tempo de aprovações exibe, nesta ordem: **Pastor Local → Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS → Presbitério**. Cada nível pode representar quatro situações: **Aguardando, Aprovado, Reprovado, Correção solicitada**.
 - **Motivo:** Sequência e situações informadas pelo responsável do projeto.
 - **Impacto:** Atende parcialmente PEN-002 (nomes dos responsáveis) e PEN-004 (ordem dos níveis). Continuam **PENDENTES DE DEFINIÇÃO**: alçadas por valor ou prioridade, prazos, quem pode agir em cada nível, o que acontece após "Reprovado" ou "Correção solicitada" (PEN-005) e o significado da sigla COMBENS (PEN-021). Por ora, apenas interface: nenhuma regra é executada pelo sistema.
-- **Status:** Ativa
+- **Status:** Substituída por DEC-013
 
 ## DEC-009
 - **Data:** 2026-09-12
@@ -135,4 +135,19 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Decisão:** Regiões, áreas, polos e igrejas passam a viver no banco (migração 002), com chave estrangeira entre os níveis e código único por nível. As telas de Regiões, Áreas, Polos e Igrejas passam a ler e gravar de verdade. Os dados fictícios usados até agora foram carregados como **migração 003**, separada, para poderem ser removidos com um comando quando os dados reais entrarem. As migrações ficam versionadas em `src/lib/migracoes.ts` e são aplicadas pela tela **Configurações → Banco de dados** (só Administrador), com registro na tabela `migracoes` para não rodarem duas vezes.
 - **Motivo:** Solicitado pelo responsável ("vamos deixar tudo organizado"), que confirmou que os dados atuais são de teste.
 - **Impacto:** O id de cada registro é derivado do código (ex.: código `R01` → id `r-r01`), para as URLs continuarem legíveis. As obras continuam em dados de demonstração no código — a migração das obras é o passo seguinte, e só então o `fluxo_aprovacao` ganha chave estrangeira para a obra. A tela de Usuários continua com usuários fictícios, mas o vínculo administrativo já usa os registros reais do banco.
+- **Status:** Ativa
+
+## DEC-013
+- **Data:** 2026-09-13
+- **Título:** Correção do fluxo de aprovação: quatro etapas internas e resultado do SGI registrado à parte
+- **Contexto:** Limpeza/correção institucional confirmada com o responsável. O fluxo implementado em DEC-008 e DEC-010 tinha seis etapas, com "Pastor Local" como primeira e "Presbitério" como última — ambas incorretas.
+- **Decisão:**
+  - O fluxo interno de aprovação tem **quatro etapas**: **Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS**.
+  - **Pastor Local não é etapa de aprovação:** ele solicita, ou delega a solicitação a outra pessoa. Em qualquer caso a solicitação segue direto para o Coordenador do Polo, sem aprovação do pastor.
+  - **Presbitério não decide dentro do sistema.** Depois da aprovação da CONBENS, alguém da equipe da CONBENS leva o pedido ao **SGI** (sistema externo, oficial da Igreja Cristã Maranata). O resultado (aprovado ou reprovado, e o valor aprovado quando aprovado) é **registrado manualmente** no sistema, em campo próprio — não como etapa do fluxo.
+  - Depois da aprovação da CONBENS, é a **igreja solicitante** (não a CONBENS) que monta o orçamento de material (3 cotações), o de mão de obra (3 cotações) e o **Croqui** da obra. O módulo de Orçamento será feito em etapa futura; neste bloco o fluxo apenas fica pronto para receber isso.
+  - A **prioridade** (Emergencial, P1, P2, P3) é definida pelo **pastor responsável da CONBENS**, não por quem abre a solicitação. O campo saiu do formulário de Nova Solicitação.
+  - **CONBENS = Comissão de Bens e Construções** (resolve PEN-021).
+- **Motivo:** Correção informada e confirmada pelo responsável do projeto.
+- **Impacto:** DEC-008 fica **Substituída por DEC-013** (a sequência de seis níveis não existe). DEC-010 permanece Ativa quanto às regras do fluxo (avanço só após aprovação, reprovação encerra, correção devolve sem encerrar, histórico preservado, sem pular etapas), mas passa a valer sobre quatro etapas. DEC-011 continua Ativa com a renumeração das etapas por perfil. No banco, a migração 004 ajusta as restrições de etapa (1..4) e acrescenta as colunas do resultado do SGI; os registros de teste do fluxo são apagados, porque a numeração das etapas mudou de significado. Resolve PEN-003, PEN-004, PEN-007, PEN-008 e PEN-021. Continuam abertas PEN-006 (significado operacional de cada prioridade) e PEN-009 (nome e conteúdo das cinco fases de execução).
 - **Status:** Ativa

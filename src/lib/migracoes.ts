@@ -148,4 +148,33 @@ export const MIGRACOES: Migracao[] = [
        on conflict (id) do nothing`,
     ],
   },
+  {
+    id: "004",
+    titulo: "Fluxo com quatro etapas e resultado do SGI",
+    descricao:
+      "Ajusta as etapas para 1..4 (DEC-013) e acrescenta as colunas do resultado do SGI. Apaga os registros de teste do fluxo, porque a numeração das etapas mudou de significado.",
+    comandos: [
+      // Os registros anteriores usavam a numeração de seis etapas: mantê-los
+      // tornaria o histórico incorreto.
+      `delete from decisoes_aprovacao`,
+      `delete from fluxo_aprovacao`,
+      `alter table fluxo_aprovacao drop constraint if exists fluxo_aprovacao_etapa_atual_check`,
+      `alter table fluxo_aprovacao
+         add constraint fluxo_aprovacao_etapa_atual_check
+         check (etapa_atual between 1 and 4)`,
+      `alter table decisoes_aprovacao drop constraint if exists decisoes_aprovacao_etapa_check`,
+      `alter table decisoes_aprovacao
+         add constraint decisoes_aprovacao_etapa_check
+         check (etapa between 1 and 4)`,
+      // Resultado do SGI: fora das etapas do fluxo, registrado manualmente.
+      `alter table fluxo_aprovacao
+         add column if not exists sgi_situacao text
+           check (sgi_situacao in ('Aguardando SGI', 'Aprovado no SGI', 'Reprovado no SGI'))`,
+      `alter table fluxo_aprovacao
+         add column if not exists sgi_valor_aprovado numeric(14,2)`,
+      `alter table fluxo_aprovacao add column if not exists sgi_data date`,
+      `alter table fluxo_aprovacao add column if not exists sgi_registrado_por text`,
+      `alter table fluxo_aprovacao add column if not exists sgi_registrado_em timestamptz`,
+    ],
+  },
 ];

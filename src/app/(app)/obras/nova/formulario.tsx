@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PRIORIDADES, TIPOS_OBRA } from "@/lib/obras-mock";
+import { TIPOS_OBRA } from "@/lib/obras-mock";
 import {
   botaoContorno,
   botaoPrimario,
@@ -14,7 +14,8 @@ import {
 
 type Preview = { nome: string; url: string };
 
-// As igrejas vêm do cadastro real (banco), pela página.
+// As igrejas vêm do cadastro real (banco), pela página. A prioridade não é
+// informada aqui: quem define é o pastor responsável da COMBENS (DEC-013).
 export function FormularioSolicitacao({
   igrejas,
 }: {
@@ -65,7 +66,7 @@ export function FormularioSolicitacao({
           </select>
         </div>
 
-        <div>
+        <div className="sm:col-span-2">
           <label htmlFor="tipo" className={classeRotulo}>
             Tipo da obra
           </label>
@@ -76,22 +77,6 @@ export function FormularioSolicitacao({
             {TIPOS_OBRA.map((t) => (
               <option key={t} value={t}>
                 {t}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="prioridade" className={classeRotulo}>
-            Prioridade
-          </label>
-          <select id="prioridade" name="prioridade" required className={`${classeCampo} mt-1`} defaultValue="">
-            <option value="" disabled>
-              Selecione a prioridade
-            </option>
-            {PRIORIDADES.map((p) => (
-              <option key={p} value={p}>
-                {p}
               </option>
             ))}
           </select>

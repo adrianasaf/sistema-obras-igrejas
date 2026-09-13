@@ -41,6 +41,7 @@ O SQL fica em `src/lib/migracoes.ts` (fonte única, versionada) e é aplicado pe
 | 001 | Fluxo de aprovação (`fluxo_aprovacao`, `decisoes_aprovacao`) |
 | 002 | Estrutura administrativa (`regioes`, `areas`, `polos`, `igrejas`) |
 | 003 | Dados de teste da estrutura administrativa (4 regiões, 7 áreas, 12 polos, 16 igrejas) |
+| 004 | Fluxo com quatro etapas (DEC-013) e colunas do resultado do SGI |
 
 ## Tabelas do fluxo de aprovação (migração 001)
 
@@ -85,3 +86,19 @@ truncate igrejas, polos, areas, regioes cascade
 ```
 
 Isso apaga **toda** a estrutura administrativa, inclusive o que tiver sido cadastrado pelas telas — use antes de começar o cadastro real. O registro da migração 003 permanece na tabela `migracoes`; para permitir recarregar os dados de teste depois, apague a linha: `delete from migracoes where id = '003'`.
+
+## Resultado do SGI (migração 004)
+
+O SGI é o sistema externo oficial da Igreja Cristã Maranata. Depois da aprovação da COMBENS, a equipe da COMBENS leva o pedido até lá e o resultado é registrado **manualmente** aqui — fora das etapas do fluxo. As colunas ficam em `fluxo_aprovacao`:
+
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `sgi_situacao` | text | `Aguardando SGI`, `Aprovado no SGI` ou `Reprovado no SGI`. Nulo é lido como "Aguardando SGI". |
+| `sgi_valor_aprovado` | numeric(14,2) | Valor aprovado no SGI, quando aprovado |
+| `sgi_data` | date | Data do resultado |
+| `sgi_registrado_por` | text | Quem registrou aqui (rastreabilidade, RN-12) |
+| `sgi_registrado_em` | timestamptz | Quando foi registrado aqui |
+
+A tela desse registro será feita em etapa futura; nesta etapa existe apenas a estrutura de dados e a leitura.
+
+A migração 004 também **apaga os registros de teste** de `fluxo_aprovacao` e `decisoes_aprovacao`: a numeração das etapas mudou de significado (a antiga etapa 2 era o Coordenador do Polo; agora é a etapa 1), e manter as linhas antigas deixaria o histórico incorreto.

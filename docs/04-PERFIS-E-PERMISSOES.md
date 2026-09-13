@@ -32,12 +32,12 @@ O perfil vem do **Clerk**, em `publicMetadata.perfil`. A matriz de permissões e
 | Perfil | Áreas liberadas | Etapa que decide |
 |---|---|---|
 | Administrador | todas | qualquer |
-| Pastor Local | Dashboard, Obras | 1 |
-| Coordenador de Polo | Dashboard, Obras | 2 |
-| Coordenador de Área | Dashboard, Obras | 3 |
-| Coordenador de Região | Dashboard, Obras | 4 |
-| Responsável COMBENS | Dashboard, Obras | 5 |
-| Presbitério | Dashboard, Obras, Orçamentos | 6 |
+| Pastor Local | Dashboard, Obras | **nenhuma** — solicita ou delega (DEC-013) |
+| Coordenador de Polo | Dashboard, Obras | 1 |
+| Coordenador de Área | Dashboard, Obras | 2 |
+| Coordenador de Região | Dashboard, Obras | 3 |
+| Responsável COMBENS | Dashboard, Obras | 4 |
+| Presbitério | Dashboard, Obras, Orçamentos | **nenhuma** — resultado vem do SGI (DEC-013); manter ou remover o perfil é PEN-027 |
 | (sem perfil definido) | nenhuma | nenhuma |
 
 Como a proteção é aplicada, no servidor:

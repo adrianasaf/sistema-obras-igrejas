@@ -57,16 +57,20 @@ export const AREAS_DO_PERFIL: Record<Perfil, readonly Area[]> = {
   Presbitério: [...AREAS_COMUNS, "orcamentos"],
 };
 
-// Etapa do fluxo de aprovação que cada perfil decide (1 a 6, na ordem de
-// DEC-008). `null` = não decide etapa nenhuma; Administrador decide todas.
+// Etapa do fluxo de aprovação que cada perfil decide (1 a 4, na ordem de
+// DEC-013). `null` = não decide etapa nenhuma; Administrador decide todas.
+//
+// "Pastor Local" apenas solicita (ou delega) e não aprova. "Presbitério" não
+// decide no sistema: o resultado vem do SGI, registrado à parte — se esse
+// perfil deve continuar existindo é PENDENTE DE DEFINIÇÃO (PEN-027).
 export const ETAPA_DO_PERFIL: Record<Perfil, number | null> = {
   Administrador: null, // tratado por `podeDecidirEtapa`
-  "Pastor Local": 1,
-  "Coordenador de Polo": 2,
-  "Coordenador de Área": 3,
-  "Coordenador de Região": 4,
-  "Responsável COMBENS": 5,
-  Presbitério: 6,
+  "Pastor Local": null,
+  "Coordenador de Polo": 1,
+  "Coordenador de Área": 2,
+  "Coordenador de Região": 3,
+  "Responsável COMBENS": 4,
+  Presbitério: null,
 };
 
 // Prefixo de rota → área. A ordem importa: o primeiro prefixo que casar vale.

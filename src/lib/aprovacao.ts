@@ -1,17 +1,18 @@
 // Definições do fluxo de aprovação das solicitações de obras.
 //
-// Sequência e situações informadas pelo responsável do projeto (DEC-008) e
-// regras do fluxo registradas em DEC-010. PENDENTE DE DEFINIÇÃO: quem pode
-// decidir em cada etapa (PEN-023), quem reenvia após correção e se uma
-// reprovação pode ser reaberta (PEN-024), além de prazos e alçadas (PEN-004).
+// Sequência corrigida em DEC-013: quatro etapas internas. O Pastor Local
+// apenas solicita (ou delega) e não aprova; o Presbitério não decide no
+// sistema — depois da aprovação da COMBENS o pedido vai ao SGI (sistema
+// externo) e o resultado é registrado à parte (ver `ResultadoSgi`).
+//
+// Regras do fluxo em DEC-010. PENDENTE DE DEFINIÇÃO: quem reenvia após
+// correção e se uma reprovação pode ser reaberta (PEN-024).
 
 export const NIVEIS_APROVACAO = [
-  "Pastor Local",
   "Coordenador do Polo",
   "Coordenador da Área",
   "Coordenador da Região",
   "Responsável COMBENS",
-  "Presbitério",
 ] as const;
 export type NivelAprovacao = (typeof NIVEIS_APROVACAO)[number];
 
@@ -62,7 +63,7 @@ export function rotuloSituacao(
   situacao: SituacaoFluxo,
   etapaAtual: number,
 ): string {
-  if (situacao === "Aprovada") return "Aprovada em todas as etapas";
+  if (situacao === "Aprovada") return "Aprovada pela COMBENS";
   if (situacao === "Reprovada") return "Reprovada";
   if (situacao === "Em correção") return "Correção solicitada";
   return `Aguardando ${nivelDaEtapa(etapaAtual)}`;
@@ -82,6 +83,27 @@ export function situacaoComoAprovacao(
 export function fluxoEncerrado(situacao: SituacaoFluxo): boolean {
   return situacao === "Aprovada" || situacao === "Reprovada";
 }
+
+/* ------------------------------------------------------- resultado do SGI */
+
+// Depois da aprovação da COMBENS, o pedido é levado ao SGI (sistema externo,
+// oficial da Igreja Cristã Maranata) por alguém da equipe da COMBENS. O
+// resultado é registrado manualmente no sistema, fora das etapas do fluxo.
+// A tela desse registro será feita em etapa futura.
+export const SITUACOES_SGI = [
+  "Aguardando SGI",
+  "Aprovado no SGI",
+  "Reprovado no SGI",
+] as const;
+export type SituacaoSgi = (typeof SITUACOES_SGI)[number];
+
+export type ResultadoSgi = {
+  situacao: SituacaoSgi;
+  valorAprovado: number | null;
+  data: string | null; // ISO (AAAA-MM-DD)
+  registradoPor: string | null;
+  registradoEm: string | null;
+};
 
 export type EstadoFluxo = { etapaAtual: number; situacao: SituacaoFluxo };
 

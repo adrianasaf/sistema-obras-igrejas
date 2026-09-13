@@ -251,3 +251,20 @@ Próximo passo:
 - **Decisões:** DEC-012.
 - **Pendências:** nenhuma nova. Próximos: obras no banco (com FK para igreja e para o fluxo) e o vínculo do usuário com a estrutura (PEN-025).
 - **Próximo passo:** aplicar as migrações 002 e 003 pela tela de migrações e conferir os cadastros em produção.
+
+## Entrada 016
+- **Data:** 2026-09-13
+- **Etapa:** Correção institucional do fluxo de aprovação (quatro etapas + SGI)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - **DEC-013 registrada antes do código.** DEC-008 passou a **Substituída por DEC-013**.
+  - `src/lib/aprovacao.ts`: `NIVEIS_APROVACAO` passou a ter **quatro** níveis (Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS) e `TOTAL_ETAPAS` passou a 4. Saíram "Pastor Local" e "Presbitério". O rótulo de fluxo concluído passou de "Aprovada em todas as etapas" para "Aprovada pela COMBENS". Acrescentados os tipos do resultado do SGI (`SITUACOES_SGI`, `ResultadoSgi`).
+  - `src/lib/permissoes.ts`: etapas renumeradas — Coordenador de Polo 1, Coordenador de Área 2, Coordenador de Região 3, Responsável COMBENS 4. "Pastor Local" e "Presbitério" passaram a **não decidir etapa nenhuma**. Os dois perfis continuam existindo (nada foi removido por conta própria).
+  - **Migração 004:** restrições de etapa ajustadas para 1..4 nas duas tabelas e colunas do resultado do SGI em `fluxo_aprovacao` (`sgi_situacao`, `sgi_valor_aprovado`, `sgi_data`, `sgi_registrado_por`, `sgi_registrado_em`). A migração **apaga os registros de teste** do fluxo, porque a numeração das etapas mudou de significado. `obterFluxo` passou a ler o resultado do SGI; nenhuma tela nova foi criada.
+  - **Nova Solicitação:** campo de prioridade removido (quem define é o pastor responsável da COMBENS).
+  - Testes movidos para `testes/` com script `npm run testar`.
+  - **Não implementado neste bloco** (conforme instrução): módulo de Orçamento/Croqui, tela de registro do SGI, estoque, financeiro, fotos, usuários e estrutura administrativa.
+- **Testes executados:** `npm run testar` — fluxo (18 verificações) e permissões (60), todos passando: quatro etapas na ordem correta, ausência de Pastor Local e Presbitério como etapas, caminho completo concluindo na COMBENS, bloqueio de pulo de etapa, reprovação encerrando, correção e reenvio, e cada perfil decidindo somente a etapa do seu nível. Em Postgres 16 local: migrações 001→004 do zero; colunas do SGI criadas; etapa 5 e decisão na etapa 6 rejeitadas pelas novas restrições; situação de SGI inválida rejeitada; registro do resultado do SGI gravado e lido; e a 004 aplicada **sobre dados antigos de seis etapas**, removendo-os e instalando as restrições sem erro (é o caso da produção). Build, tipos e lint limpos.
+- **Decisões:** DEC-013; DEC-008 substituída.
+- **Pendências:** resolvidas PEN-003, PEN-004, PEN-007, PEN-008 e PEN-021. Abertas as novas PEN-027 (o perfil "Presbitério" deve ser removido ou virar só visualização?), PEN-028 (alçadas e prazos por etapa) e PEN-029 (grafia oficial: COMBENS ou CONBENS). Seguem abertas PEN-006 e PEN-009.
+- **Próximo passo:** aplicar a migração 004 pela tela Configurações → Banco de dados e refazer um teste do fluxo em produção.

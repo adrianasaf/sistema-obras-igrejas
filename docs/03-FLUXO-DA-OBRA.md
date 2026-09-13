@@ -2,50 +2,58 @@
 
 Visão macro do caminho de uma obra, com o que já se conhece. Os detalhes de cada etapa serão definidos nas fases correspondentes do roadmap.
 
-## Fluxo macro (conhecido)
+## Fluxo macro (DEC-013)
 ```
-1. Solicitação (Igreja)
+1. Solicitação (Igreja — Pastor Local ou pessoa por ele delegada)
       ↓
-2. Aprovações hierárquicas
+2. Coordenador do Polo        (etapa 1)
       ↓
-3. Análise pelo Presbitério
+3. Coordenador da Área        (etapa 2)
       ↓
-4. Orçamento
+4. Coordenador da Região      (etapa 3)
       ↓
-5. Execução (cinco fases)
+5. Responsável COMBENS        (etapa 4)
       ↓
-6. Conclusão
+6. SGI — sistema externo (fora do sistema): a equipe da COMBENS leva o pedido
+   e o resultado é registrado manualmente aqui
+      ↓
+7. Orçamentos e Croqui, montados pela IGREJA SOLICITANTE
+      ↓
+8. Execução (cinco fases)
+      ↓
+9. Conclusão
 ```
 
 ## 1. Solicitação
-- Feita pela igreja.
+- Feita pela igreja: o **Pastor Local** abre ou **delega** a alguém. Quando delega, a solicitação segue direto para o Coordenador do Polo — **não há aprovação do pastor** (DEC-013, resolve PEN-003).
 - Tipos de obra: reforma, ampliação, construção, manutenção.
-- Prioridade: Emergencial, P1, P2, P3.
-- Campos obrigatórios da solicitação: PENDENTE DE DEFINIÇÃO.
-- Quem pode abrir a solicitação na igreja: PENDENTE DE DEFINIÇÃO.
+- **A prioridade não é informada por quem abre**: quem define é o pastor responsável da COMBENS (DEC-013).
+- Campos obrigatórios da solicitação: PENDENTE DE DEFINIÇÃO (PEN-012).
 
-## 2. Aprovações hierárquicas
-- Níveis exibidos na interface, nesta ordem (DEC-008): Pastor Local → Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS → Presbitério.
-- Situações possíveis de cada aprovação (DEC-008): Aguardando, Aprovado, Reprovado, Correção solicitada.
-- Atribuições de cada cargo e o significado de COMBENS: PENDENTE DE DEFINIÇÃO (PEN-002, PEN-021).
-- Se há alçadas por valor ou prioridade e prazos para cada nível: PENDENTE DE DEFINIÇÃO (PEN-004).
-- Comportamento em caso de rejeição (devolve, encerra, permite correção): PENDENTE DE DEFINIÇÃO.
+## 2. Aprovações internas (quatro etapas)
+- Ordem (DEC-013, resolve PEN-004): **Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS**.
+- Situações de cada etapa: Aguardando, Aprovado, Reprovado, Correção solicitada.
+- A solicitação só avança após a aprovação da etapa atual; **não é possível pular etapas**; a reprovação encerra o fluxo; "Correção solicitada" devolve para ajuste sem encerrar, e a solicitação volta à mesma etapa após o reenvio (DEC-010).
+- Cada decisão registra usuário, data/hora e comentário. O histórico não é alterado nem apagado.
+- Quem pode reenviar após correção e se uma reprovação pode ser reaberta: PENDENTE DE DEFINIÇÃO (PEN-024).
+- Alçadas por valor ou prioridade e prazos: PENDENTE DE DEFINIÇÃO.
 
-## 3. Análise pelo Presbitério
-- O Presbitério analisa a solicitação aprovada.
-- Critérios de análise e resultados possíveis: PENDENTE DE DEFINIÇÃO.
+## 3. SGI (sistema externo)
+- Depois da aprovação da COMBENS, alguém da equipe da COMBENS leva o pedido ao **SGI**, sistema oficial da Igreja Cristã Maranata. **O Presbitério não decide dentro deste sistema** (DEC-013, resolve PEN-007).
+- O resultado volta para cá **registrado manualmente**: situação (Aguardando SGI, Aprovado no SGI, Reprovado no SGI), valor aprovado (quando aprovado) e data. É um campo próprio, **não** uma etapa do fluxo.
+- A tela desse registro será feita em etapa futura; a estrutura de dados já existe (migração 004).
 
-## 4. Orçamento
-- Elaboração de orçamento(s) para a obra.
-- Quantidade de orçamentos, quem elabora e quem aprova: PENDENTE DE DEFINIÇÃO.
+## 4. Orçamentos e Croqui
+- Depois da aprovação da COMBENS, quem monta é a **igreja solicitante** (DEC-013, resolve PEN-008): **3 cotações de material**, **3 cotações de mão de obra** e o **Croqui** da obra.
+- Módulo de Orçamento: etapa futura. Critérios de escolha entre as cotações: PENDENTE DE DEFINIÇÃO.
 
 ## 5. Execução em cinco fases
 - A execução é acompanhada em **cinco fases**.
-- Nome e conteúdo de cada fase: PENDENTE DE DEFINIÇÃO.
+- Nome e conteúdo de cada fase: PENDENTE DE DEFINIÇÃO (PEN-009).
 - Durante a execução: materiais, estoque, financeiro e fotos.
 
 ## 6. Conclusão
-- Critérios de encerramento da obra: PENDENTE DE DEFINIÇÃO.
+- Critérios de encerramento da obra: PENDENTE DE DEFINIÇÃO (PEN-010).
 
 ## Prioridades
 | Prioridade | Significado |
@@ -55,4 +63,4 @@ Visão macro do caminho de uma obra, com o que já se conhece. Os detalhes de ca
 | P2 | PENDENTE DE DEFINIÇÃO |
 | P3 | PENDENTE DE DEFINIÇÃO |
 
-Se a prioridade Emergencial altera o fluxo de aprovação: PENDENTE DE DEFINIÇÃO.
+Quem define a prioridade: o **pastor responsável da COMBENS** (DEC-013). O significado operacional de cada nível e se Emergencial altera o fluxo: PENDENTE DE DEFINIÇÃO (PEN-006).

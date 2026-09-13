@@ -17,7 +17,9 @@ import {
   proximoEstado,
   type Decisao,
   type RegistroDecisao,
+  type ResultadoSgi,
   type SituacaoFluxo,
+  type SituacaoSgi,
 } from "@/lib/aprovacao";
 
 export type Fluxo = {
@@ -25,6 +27,9 @@ export type Fluxo = {
   etapaAtual: number;
   situacao: SituacaoFluxo;
   atualizadoEm: string | null;
+  // Resultado do SGI (sistema externo), registrado manualmente fora das
+  // etapas do fluxo. A tela de registro será feita em etapa futura.
+  sgi: ResultadoSgi;
 };
 
 export type DecisaoRegistrada = {
@@ -45,16 +50,27 @@ export type Usuario = {
 };
 
 // Estado inicial de uma solicitação que ainda não teve nenhuma decisão.
+const SGI_VAZIO: ResultadoSgi = {
+  situacao: "Aguardando SGI",
+  valorAprovado: null,
+  data: null,
+  registradoPor: null,
+  registradoEm: null,
+};
+
 const INICIAL = (obraId: string): Fluxo => ({
   obraId,
   etapaAtual: 1,
   situacao: "Em andamento",
   atualizadoEm: null,
+  sgi: SGI_VAZIO,
 });
 
 export async function obterFluxo(obraId: string): Promise<Fluxo> {
   const linhas = await sql()`
-    select obra_id, etapa_atual, situacao, atualizado_em
+    select obra_id, etapa_atual, situacao, atualizado_em,
+           sgi_situacao, sgi_valor_aprovado, sgi_data,
+           sgi_registrado_por, sgi_registrado_em
       from fluxo_aprovacao
      where obra_id = ${obraId}
   `;
@@ -65,6 +81,20 @@ export async function obterFluxo(obraId: string): Promise<Fluxo> {
     etapaAtual: Number(linha.etapa_atual),
     situacao: linha.situacao as SituacaoFluxo,
     atualizadoEm: new Date(linha.atualizado_em as string).toISOString(),
+    sgi: {
+      situacao: (linha.sgi_situacao as SituacaoSgi | null) ?? "Aguardando SGI",
+      valorAprovado:
+        linha.sgi_valor_aprovado === null
+          ? null
+          : Number(linha.sgi_valor_aprovado),
+      data: (linha.sgi_data as string | null)
+        ? new Date(linha.sgi_data as string).toISOString().slice(0, 10)
+        : null,
+      registradoPor: (linha.sgi_registrado_por as string | null) ?? null,
+      registradoEm: (linha.sgi_registrado_em as string | null)
+        ? new Date(linha.sgi_registrado_em as string).toISOString()
+        : null,
+    },
   };
 }
 
