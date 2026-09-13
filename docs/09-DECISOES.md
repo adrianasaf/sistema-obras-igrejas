@@ -151,3 +151,16 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Correção informada e confirmada pelo responsável do projeto.
 - **Impacto:** DEC-008 fica **Substituída por DEC-013** (a sequência de seis níveis não existe). DEC-010 permanece Ativa quanto às regras do fluxo (avanço só após aprovação, reprovação encerra, correção devolve sem encerrar, histórico preservado, sem pular etapas), mas passa a valer sobre quatro etapas. DEC-011 continua Ativa com a renumeração das etapas por perfil. No banco, a migração 004 ajusta as restrições de etapa (1..4) e acrescenta as colunas do resultado do SGI; os registros de teste do fluxo são apagados, porque a numeração das etapas mudou de significado. Resolve PEN-003, PEN-004, PEN-007, PEN-008 e PEN-021. Continuam abertas PEN-006 (significado operacional de cada prioridade) e PEN-009 (nome e conteúdo das cinco fases de execução).
 - **Status:** Ativa
+
+## DEC-014
+- **Data:** 2026-09-13
+- **Título:** Grafia oficial CONBENS, perfil Presbitério como visualização e vínculo do usuário com a estrutura
+- **Contexto:** Três definições confirmadas pelo responsável, resolvendo PEN-025, PEN-027 e PEN-029.
+- **Decisão:**
+  - **Grafia oficial: CONBENS** (Comissão de Bens e Construções). O nível de aprovação passa a ser **"Responsável CONBENS"** e a grafia "COMBENS" sai do código, das telas e dos documentos vivos. Os registros históricos (`09-DECISOES.md` anteriores e `10-HISTORICO-DESENVOLVIMENTO.md`) **não são reescritos**, conforme o CLAUDE.md — ficam como foram escritos na época. Resolve PEN-029.
+  - **Perfil "Presbitério" é mantido, apenas como visualização:** não decide nenhuma etapa e não tem restrição de escopo. Resolve PEN-027.
+  - **Vínculo do usuário com a estrutura administrativa:** o perfil e o vínculo vêm do Clerk, em `publicMetadata` — `{ "perfil": "...", "vinculoId": "<id do registro>" }`. O nível do vínculo é determinado pelo perfil: Pastor Local → Igreja; Coordenador de Polo → Polo; Coordenador de Área → Área; Coordenador de Região → Região. **Administrador, Responsável CONBENS e Presbitério não têm vínculo: têm abrangência geral.**
+  - **Escopo aplicado em dois pontos:** na listagem de obras (cada usuário vê apenas as obras dentro do seu escopo) e nas decisões do fluxo (além de a etapa ter de ser a do seu nível, a obra precisa estar no seu escopo — um Coordenador de Polo só decide obras do seu polo). O Responsável CONBENS decide qualquer obra que chegue à etapa dele, como antes. Resolve PEN-025.
+- **Motivo:** Definições informadas pelo responsável do projeto.
+- **Impacto:** A grafia antiga continua sendo aceita na leitura do perfil vindo do Clerk (é normalizada para "Responsável CONBENS"), para os usuários já cadastrados não perderem acesso; ainda assim, vale atualizar o `publicMetadata` desses usuários. Uma migração nova atualiza o nome do nível já gravado em `decisoes_aprovacao`; as migrações já aplicadas não são reescritas. Um usuário de perfil com vínculo obrigatório e **sem** `vinculoId` no Clerk não enxerga nenhuma obra e não decide nada — é o comportamento seguro, e o administrador precisa preencher o vínculo. Não há tela de gestão de usuários nesta etapa (fica para depois).
+- **Status:** Ativa

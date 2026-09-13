@@ -286,3 +286,26 @@ Próximo passo:
 - **Decisões:** nenhuma nova.
 - **Pendências:** nenhuma nova. O Dashboard ainda usa dados demonstrativos — é o próximo candidato natural.
 - **Próximo passo:** aplicar a migração 005 pela tela Configurações → Banco de dados e registrar uma solicitação real.
+
+## Entrada 018
+- **Data:** 2026-09-13
+- **Etapa:** Grafia CONBENS, Presbitério como visualização e escopo do usuário por vínculo
+- **Versão:** 0.3.0
+- **Realizado:**
+  - **DEC-014 registrada antes do código.**
+  - **Bloco A — grafia:** "COMBENS" virou **"CONBENS"** em 17 arquivos de código e nos documentos vivos (03, 04, 05, 06, 08, 11). Os registros históricos (`09-DECISOES.md` anteriores e este histórico) **não foram reescritos**, conforme o CLAUDE.md. As migrações 001, 002 e 003, já aplicadas em produção, não foram tocadas; a **migração 006** atualiza o nome do nível gravado em `decisoes_aprovacao` (`Responsável COMBENS` → `Responsável CONBENS`). A leitura do perfil aceita a grafia antiga vinda do Clerk e a normaliza, para nenhum usuário perder acesso. Fecha PEN-029.
+  - **Presbitério:** mantido apenas como visualização — não decide etapa e não tem restrição de escopo. Fecha PEN-027.
+  - **Bloco B — vínculo e escopo (fecha PEN-025):**
+    - `src/lib/sessao.ts` passou a ler `publicMetadata.vinculoId` junto com o perfil.
+    - `src/lib/permissoes.ts` ganhou o nível de vínculo por perfil (fonte única) e `normalizarPerfil`.
+    - Novo `src/lib/escopo.ts`: `filtroDeEscopo` (para a consulta) e `temEscopoSobreObra` (para as ações), com Administrador, Responsável CONBENS e Presbitério em abrangência geral.
+    - **Listagem `/obras`:** a consulta filtra por igreja, polo, área ou região conforme o vínculo — o filtro é no SQL, não na tela.
+    - **Decisões do fluxo:** as Server Actions passaram a conferir o escopo além da etapa; um Coordenador de Polo só decide obras do seu polo. O reenvio após correção também exige escopo.
+    - **Detalhes da obra:** fora do escopo, a página redireciona para "Acesso não autorizado" — a URL direta não dá acesso. A Visão Geral passou a mostrar a cadeia real (polo · área · região).
+    - `obrasDaIgreja` também respeita o escopo do usuário.
+  - Não foi criada tela de gestão de usuários nem integração com a API do Clerk. Estoque, Orçamento, Execução, Financeiro e Configurações não foram tocados.
+  - `allowImportingTsExtensions` ligado no tsconfig para os módulos puros poderem ser carregados direto pelos testes.
+- **Testes executados:** `npm run testar` — três suítes, todas passando: fluxo (quatro etapas), permissões e o novo **escopo** (34 verificações): nível de vínculo por perfil; abrangência geral de Administrador, CONBENS e Presbitério; Coordenador de Polo/Área/Região alcançando apenas o seu registro e bloqueado fora dele; Pastor Local restrito à sua igreja; perfil com vínculo obrigatório e sem `vinculoId` sem acesso a nenhuma obra; e a combinação etapa + escopo nas decisões (CONBENS decidindo a etapa 4 de qualquer obra, Presbitério e Pastor Local sem decidir nada). Build, tipos e lint limpos. **Não testado aqui:** o caminho pela interface em produção.
+- **Decisões:** DEC-014.
+- **Pendências:** resolvidas PEN-025, PEN-027 e PEN-029. Seguem abertas PEN-006, PEN-009, PEN-024, PEN-026 e PEN-028.
+- **Próximo passo:** aplicar a migração 006, preencher `vinculoId` no Clerk para os perfis que exigem vínculo e validar em produção.

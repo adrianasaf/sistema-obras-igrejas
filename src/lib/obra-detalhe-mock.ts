@@ -14,7 +14,7 @@ export type ObraBase = {
   id: string;
   tipo: TipoObra;
   data: string;
-  aprovada: boolean; // fluxo aprovado pela COMBENS
+  aprovada: boolean; // fluxo aprovado pela CONBENS
 };
 
 export type Foto = { id: string; legenda: string };

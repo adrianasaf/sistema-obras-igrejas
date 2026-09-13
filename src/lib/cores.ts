@@ -265,7 +265,7 @@ export const CORES_PERFIL: Record<Perfil, Paleta> = {
     barra: "bg-violet-500",
     texto: "text-violet-700",
   },
-  "Responsável COMBENS": {
+  "Responsável CONBENS": {
     cracha: "border-amber-200 bg-amber-50 text-amber-800",
     ponto: "bg-amber-500",
     barra: "bg-amber-500",

@@ -16,7 +16,7 @@ import {
 type Preview = { nome: string; url: string };
 
 // As igrejas vêm do cadastro real (banco), pela página. A prioridade não é
-// informada aqui: quem define é o pastor responsável da COMBENS (DEC-013).
+// informada aqui: quem define é o pastor responsável da CONBENS (DEC-013).
 export function FormularioSolicitacao({
   igrejas,
 }: {

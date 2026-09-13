@@ -8,7 +8,7 @@ export const TIPOS_OBRA = [
 ] as const;
 export type TipoObra = (typeof TIPOS_OBRA)[number];
 
-// A prioridade é definida pelo pastor responsável da COMBENS (DEC-013) e por
+// A prioridade é definida pelo pastor responsável da CONBENS (DEC-013) e por
 // isso pode estar vazia na solicitação.
 export const PRIORIDADES = [
   "Emergencial",

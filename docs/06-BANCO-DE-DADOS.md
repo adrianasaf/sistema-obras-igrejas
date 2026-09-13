@@ -43,6 +43,7 @@ O SQL fica em `src/lib/migracoes.ts` (fonte única, versionada) e é aplicado pe
 | 003 | Dados de teste da estrutura administrativa (4 regiões, 7 áreas, 12 polos, 16 igrejas) |
 | 004 | Fluxo com quatro etapas (DEC-013) e colunas do resultado do SGI |
 | 005 | Solicitações de obras (`obras`) |
+| 006 | Grafia CONBENS no histórico de decisões (DEC-014) |
 
 ## Tabelas do fluxo de aprovação (migração 001)
 
@@ -90,7 +91,7 @@ Isso apaga **toda** a estrutura administrativa, inclusive o que tiver sido cadas
 
 ## Resultado do SGI (migração 004)
 
-O SGI é o sistema externo oficial da Igreja Cristã Maranata. Depois da aprovação da COMBENS, a equipe da COMBENS leva o pedido até lá e o resultado é registrado **manualmente** aqui — fora das etapas do fluxo. As colunas ficam em `fluxo_aprovacao`:
+O SGI é o sistema externo oficial da Igreja Cristã Maranata. Depois da aprovação da CONBENS, a equipe da CONBENS leva o pedido até lá e o resultado é registrado **manualmente** aqui — fora das etapas do fluxo. As colunas ficam em `fluxo_aprovacao`:
 
 | Coluna | Tipo | Observação |
 |---|---|---|
@@ -116,7 +117,7 @@ A migração 004 também **apaga os registros de teste** de `fluxo_aprovacao` e 
 | `descricao` | text | |
 | `data_solicitacao` | date | Padrão: data de hoje |
 | `responsavel_solicitacao` | text | Quem registrou. O vínculo com o cadastro de usuários depende de PEN-025. |
-| `prioridade` | text, **aceita vazio** | `Emergencial`, `Prioridade 1`, `Prioridade 2` ou `Prioridade 3`. Vazia até o pastor responsável da COMBENS definir (DEC-013). |
+| `prioridade` | text, **aceita vazio** | `Emergencial`, `Prioridade 1`, `Prioridade 2` ou `Prioridade 3`. Vazia até o pastor responsável da CONBENS definir (DEC-013). |
 | `criado_em` | timestamptz | |
 
 Índices em `obras (igreja_id)` e `obras (data_solicitacao desc)`.

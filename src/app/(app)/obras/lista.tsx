@@ -25,7 +25,7 @@ import { botaoAcao } from "@/lib/ui";
 
 // Filtros e busca funcionam sobre as solicitações já carregadas na tela (a
 // consulta ao banco é feita pela página). A prioridade pode estar vazia: quem
-// define é o pastor responsável da COMBENS (DEC-013).
+// define é o pastor responsável da CONBENS (DEC-013).
 export function ListaObras({ obras }: { obras: Obra[] }) {
   const [busca, setBusca] = useState("");
   type FiltroPrioridade = Prioridade | "Todas" | "Não definida";

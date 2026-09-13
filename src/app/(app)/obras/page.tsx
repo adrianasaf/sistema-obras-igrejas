@@ -9,8 +9,8 @@ import { ListaObras } from "./lista";
 export const metadata: Metadata = { title: "Obras" };
 
 export default async function ObrasPage() {
-  await exigirAcesso("obras");
-  const obras = await listarObras();
+  const sessao = await exigirAcesso("obras");
+  const obras = await listarObras(sessao);
 
   return (
     <div className="space-y-6">

@@ -2,7 +2,7 @@
 //
 // Sequência corrigida em DEC-013: quatro etapas internas. O Pastor Local
 // apenas solicita (ou delega) e não aprova; o Presbitério não decide no
-// sistema — depois da aprovação da COMBENS o pedido vai ao SGI (sistema
+// sistema — depois da aprovação da CONBENS o pedido vai ao SGI (sistema
 // externo) e o resultado é registrado à parte (ver `ResultadoSgi`).
 //
 // Regras do fluxo em DEC-010. PENDENTE DE DEFINIÇÃO: quem reenvia após
@@ -12,7 +12,7 @@ export const NIVEIS_APROVACAO = [
   "Coordenador do Polo",
   "Coordenador da Área",
   "Coordenador da Região",
-  "Responsável COMBENS",
+  "Responsável CONBENS",
 ] as const;
 export type NivelAprovacao = (typeof NIVEIS_APROVACAO)[number];
 
@@ -63,7 +63,7 @@ export function rotuloSituacao(
   situacao: SituacaoFluxo,
   etapaAtual: number,
 ): string {
-  if (situacao === "Aprovada") return "Aprovada pela COMBENS";
+  if (situacao === "Aprovada") return "Aprovada pela CONBENS";
   if (situacao === "Reprovada") return "Reprovada";
   if (situacao === "Em correção") return "Correção solicitada";
   return `Aguardando ${nivelDaEtapa(etapaAtual)}`;
@@ -86,8 +86,8 @@ export function fluxoEncerrado(situacao: SituacaoFluxo): boolean {
 
 /* ------------------------------------------------------- resultado do SGI */
 
-// Depois da aprovação da COMBENS, o pedido é levado ao SGI (sistema externo,
-// oficial da Igreja Cristã Maranata) por alguém da equipe da COMBENS. O
+// Depois da aprovação da CONBENS, o pedido é levado ao SGI (sistema externo,
+// oficial da Igreja Cristã Maranata) por alguém da equipe da CONBENS. O
 // resultado é registrado manualmente no sistema, fora das etapas do fluxo.
 // A tela desse registro será feita em etapa futura.
 export const SITUACOES_SGI = [

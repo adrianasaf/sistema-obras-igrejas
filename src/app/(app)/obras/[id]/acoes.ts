@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { DECISOES, type Decisao } from "@/lib/aprovacao";
+import { motivoSemEscopo, temEscopoSobreObra } from "@/lib/escopo";
 import { podeDecidirEtapa } from "@/lib/permissoes";
 import { sessaoAtual } from "@/lib/sessao";
 import {
@@ -13,10 +14,10 @@ import { buscarObra } from "@/lib/obras-db";
 
 export type Resultado = { ok: boolean; mensagem: string };
 
-// Identifica quem está decidindo e confere a permissão no servidor: cada
-// perfil só decide a etapa do seu nível (DEC-011). O vínculo administrativo
-// (região/área/polo/igreja) ainda não é verificado (PEN-025).
-async function autorizar(etapa?: number) {
+// Identifica quem está agindo e confere, no servidor: perfil definido, etapa
+// do seu nível (DEC-011) e escopo sobre a obra (DEC-014) — um Coordenador de
+// Polo só decide obras do seu polo.
+async function autorizar(obraId: string, etapa?: number) {
   const sessao = await sessaoAtual();
   if (!sessao) throw new ErroFluxo("Sessão expirada. Entre novamente.");
   if (!sessao.perfil) {
@@ -29,6 +30,13 @@ async function autorizar(etapa?: number) {
       `Seu perfil (${sessao.perfil}) não pode registrar a decisão desta etapa.`,
     );
   }
+
+  const obra = await buscarObra(obraId);
+  if (!obra) throw new ErroFluxo("Solicitação não encontrada.");
+  if (!temEscopoSobreObra(sessao, obra)) {
+    throw new ErroFluxo(motivoSemEscopo(sessao));
+  }
+
   return { id: sessao.id, nome: sessao.nome, email: sessao.email };
 }
 
@@ -42,8 +50,6 @@ export async function registrarDecisaoAction(
   const comentario = String(dados.get("comentario") ?? "");
 
   try {
-    if (!(await buscarObra(obraId)))
-      throw new ErroFluxo("Solicitação não encontrada.");
     if (!DECISOES.includes(decisao)) throw new ErroFluxo("Decisão inválida.");
     if (!Number.isInteger(etapa)) throw new ErroFluxo("Etapa inválida.");
     if (decisao !== "Aprovado" && !comentario.trim()) {
@@ -52,7 +58,7 @@ export async function registrarDecisaoAction(
       );
     }
 
-    const usuario = await autorizar(etapa);
+    const usuario = await autorizar(obraId, etapa);
     const fluxo = await registrarDecisao({
       obraId,
       etapa,
@@ -76,9 +82,7 @@ export async function reenviarAction(
   const comentario = String(dados.get("comentario") ?? "");
 
   try {
-    if (!(await buscarObra(obraId)))
-      throw new ErroFluxo("Solicitação não encontrada.");
-    const usuario = await autorizar();
+    const usuario = await autorizar(obraId);
     await reenviarAposCorrecao({ obraId, comentario, usuario });
 
     revalidatePath(`/obras/${obraId}`);

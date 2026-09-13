@@ -36,7 +36,7 @@ O perfil vem do **Clerk**, em `publicMetadata.perfil`. A matriz de permissões e
 | Coordenador de Polo | Dashboard, Obras | 1 |
 | Coordenador de Área | Dashboard, Obras | 2 |
 | Coordenador de Região | Dashboard, Obras | 3 |
-| Responsável COMBENS | Dashboard, Obras | 4 |
+| Responsável CONBENS | Dashboard, Obras | 4 |
 | Presbitério | Dashboard, Obras, Orçamentos | **nenhuma** — resultado vem do SGI (DEC-013); manter ou remover o perfil é PEN-027 |
 | (sem perfil definido) | nenhuma | nenhuma |
 
@@ -48,3 +48,29 @@ Como a proteção é aplicada, no servidor:
 O menu lateral mostra apenas as áreas permitidas, mas isso é consequência: digitar a URL direto não dá acesso.
 
 **Ainda não implementado:** vínculo por Região/Área/Polo/Igreja (PEN-025).
+
+## Vínculo com a estrutura administrativa (DEC-014)
+
+Perfil e vínculo ficam no Clerk, em **Public metadata**:
+
+```json
+{ "perfil": "Coordenador de Polo", "vinculoId": "p1" }
+```
+
+O nível do vínculo vem do perfil:
+
+| Perfil | Nível do vínculo | Escopo |
+|---|---|---|
+| Pastor Local | Igreja | Obras da sua igreja |
+| Coordenador de Polo | Polo | Obras do seu polo |
+| Coordenador de Área | Área | Obras da sua área |
+| Coordenador de Região | Região | Obras da sua região |
+| Administrador | — | Todas |
+| Responsável CONBENS | — | Todas (decide qualquer obra que chegue à etapa 4) |
+| Presbitério | — | Todas, **apenas visualização** |
+
+O escopo é aplicado em `src/lib/escopo.ts` e vale em dois pontos, sempre no servidor:
+1. **Listagem de obras** — a consulta já filtra pelo vínculo (quem não tem escopo não recebe a linha).
+2. **Decisões do fluxo** — além de a etapa ter de ser a do seu nível, a obra precisa estar no seu escopo. A tela de detalhes também redireciona para "Acesso não autorizado" quando a solicitação está fora da abrangência, então a URL direta não dá acesso.
+
+Um perfil que exige vínculo e está **sem** `vinculoId` não enxerga nenhuma obra e não decide nada — é o comportamento seguro; o administrador precisa preencher o vínculo no Clerk. A gestão de usuários pelo sistema (criar, convidar, alterar perfil) fica para etapa futura.

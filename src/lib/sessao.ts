@@ -5,7 +5,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import {
-  ehPerfil,
+  normalizarPerfil,
   podeAcessarArea,
   type Area,
   type Perfil,
@@ -16,22 +16,28 @@ export type SessaoUsuario = {
   nome: string;
   email: string;
   perfil: Perfil | null;
+  // Id do registro da estrutura a que o usuário está vinculado (DEC-014).
+  // Vazio para perfis de abrangência geral.
+  vinculoId: string | null;
 };
 
-// O perfil é definido no Clerk (Dashboard → Users → Public metadata):
-//   { "perfil": "Coordenador de Área" }
+// Perfil e vínculo são definidos no Clerk (Users → Public metadata):
+//   { "perfil": "Coordenador de Área", "vinculoId": "a1" }
+// O vínculo só é usado pelos perfis que têm nível (ver NIVEL_VINCULO_DO_PERFIL).
 export async function sessaoAtual(): Promise<SessaoUsuario | null> {
   const user = await currentUser();
   if (!user) return null;
 
-  const bruto = (user.publicMetadata as Record<string, unknown> | null)?.perfil;
+  const metadados = (user.publicMetadata as Record<string, unknown> | null) ?? {};
   const email = user.primaryEmailAddress?.emailAddress ?? "";
+  const vinculo = metadados.vinculoId;
 
   return {
     id: user.id,
     nome: [user.firstName, user.lastName].filter(Boolean).join(" ") || email,
     email,
-    perfil: ehPerfil(bruto) ? bruto : null,
+    perfil: normalizarPerfil(metadados.perfil),
+    vinculoId: typeof vinculo === "string" && vinculo.trim() ? vinculo.trim() : null,
   };
 }
 

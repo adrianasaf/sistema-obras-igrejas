@@ -181,7 +181,7 @@ export const MIGRACOES: Migracao[] = [
     id: "005",
     titulo: "Solicitações de obras",
     descricao:
-      "Tabela `obras` com a solicitação em si. O status não fica aqui: vem do fluxo de aprovação. A prioridade é definida depois pela COMBENS (DEC-013), por isso aceita vazio.",
+      "Tabela `obras` com a solicitação em si. O status não fica aqui: vem do fluxo de aprovação. A prioridade é definida depois pela CONBENS (DEC-013), por isso aceita vazio.",
     comandos: [
       `create table if not exists obras (
          id                      text        primary key,
@@ -199,6 +199,17 @@ export const MIGRACOES: Migracao[] = [
        )`,
       `create index if not exists obras_igreja_idx on obras (igreja_id)`,
       `create index if not exists obras_data_idx on obras (data_solicitacao desc)`,
+    ],
+  },
+  {
+    id: "006",
+    titulo: "Grafia CONBENS no histórico de decisões",
+    descricao:
+      "Atualiza o nome do nível gravado em decisoes_aprovacao de \"Responsável COMBENS\" para \"Responsável CONBENS\" (DEC-014). As migrações já aplicadas não são reescritas.",
+    comandos: [
+      `update decisoes_aprovacao
+          set nivel = 'Responsável CONBENS'
+        where nivel = 'Responsável COMBENS'`,
     ],
   },
 ];

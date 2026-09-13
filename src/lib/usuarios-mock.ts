@@ -2,7 +2,7 @@
 // permissões aplicadas, gravação nem relação com o Clerk (autenticação).
 //
 // PENDENTE DE DEFINIÇÃO: o que cada perfil pode fazer e ver (PEN-011), as
-// atribuições de cada cargo (PEN-002) e o papel do Responsável COMBENS
+// atribuições de cada cargo (PEN-002) e o papel do Responsável CONBENS
 // (PEN-021). Os nomes dos perfis seguem os níveis registrados em DEC-008.
 
 import type { StatusCadastro } from "@/lib/estrutura-tipos";
@@ -21,7 +21,7 @@ export const VINCULO_DO_PERFIL: Record<Perfil, NivelVinculo> = {
   "Coordenador de Polo": "polo",
   "Coordenador de Área": "area",
   "Coordenador de Região": "regiao",
-  "Responsável COMBENS": "nenhum",
+  "Responsável CONBENS": "nenhum",
   Presbitério: "nenhum",
 };
 
@@ -54,7 +54,7 @@ export const USUARIOS: Usuario[] = [
   { id: "u08", nome: "Irmão Exemplo Dantas", email: "dantas@exemplo.org.br", perfil: "Coordenador de Área", vinculoId: "a3", status: "Ativo", ultimoAcesso: "2026-09-08T09:03" },
   { id: "u09", nome: "Irmão Exemplo Alves", email: "alves@exemplo.org.br", perfil: "Coordenador de Região", vinculoId: "r1", status: "Ativo", ultimoAcesso: "2026-09-12T06:45" },
   { id: "u10", nome: "Irmão Exemplo Cunha", email: "cunha@exemplo.org.br", perfil: "Coordenador de Região", vinculoId: "r3", status: "Inativo" },
-  { id: "u11", nome: "Irmão Exemplo Nunes", email: "nunes@exemplo.org.br", perfil: "Responsável COMBENS", status: "Ativo", ultimoAcesso: "2026-09-11T11:27" },
+  { id: "u11", nome: "Irmão Exemplo Nunes", email: "nunes@exemplo.org.br", perfil: "Responsável CONBENS", status: "Ativo", ultimoAcesso: "2026-09-11T11:27" },
   { id: "u12", nome: "Secretaria do Presbitério", email: "presbiterio@exemplo.org.br", perfil: "Presbitério", status: "Ativo", ultimoAcesso: "2026-09-05T15:18" },
   { id: "u13", nome: "Carlos Exemplo Pinto", email: "carlos.exemplo@exemplo.org.br", perfil: "Administrador", status: "Ativo", ultimoAcesso: "2026-09-03T17:55" },
 ];

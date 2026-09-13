@@ -1,6 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { areaDaRota, ehPerfil, podeAcessarArea } from "@/lib/permissoes";
+import {
+  areaDaRota,
+  normalizarPerfil,
+  podeAcessarArea,
+} from "@/lib/permissoes";
 
 // Rotas acessíveis sem autenticação. Todo o resto exige usuário logado.
 const rotaPublica = createRouteMatcher(["/login(.*)", "/api/saude"]);
@@ -22,7 +26,7 @@ export default clerkMiddleware(async (auth, request) => {
   // Sem o claim, a verificação fica só nas páginas e nas Server Actions.
   const metadados = (sessionClaims as { metadata?: { perfil?: unknown } } | null)
     ?.metadata;
-  const perfil = ehPerfil(metadados?.perfil) ? metadados.perfil : null;
+  const perfil = normalizarPerfil(metadados?.perfil);
   if (!perfil) return;
 
   const rota = new URL(request.url).pathname;

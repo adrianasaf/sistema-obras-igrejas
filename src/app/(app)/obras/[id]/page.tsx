@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { temEscopoSobreObra } from "@/lib/escopo";
 import {
   podeAcessarArea,
   podeDecidirEtapa,
@@ -6,7 +7,7 @@ import {
 } from "@/lib/permissoes";
 import { exigirAcesso } from "@/lib/sessao";
 import { LinkVoltar } from "@/components/cabecalho-pagina";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { Abas } from "@/components/abas";
 import {
@@ -54,6 +55,9 @@ export default async function DetalheObraPage({
   const { id } = await params;
   const obra = await buscarObra(id);
   if (!obra) notFound();
+
+  // Fora do escopo do usuário, a solicitação não é acessível nem pela URL.
+  if (!temEscopoSobreObra(sessao, obra)) redirect("/sem-permissao?area=obras");
 
   // As abas de Orçamentos, Execução e Conclusão continuam demonstrativas até
   // os respectivos módulos existirem; recebem apenas o básico da obra real.
@@ -242,7 +246,10 @@ function VisaoGeral({ obra }: { obra: Obra }) {
         <dl className="space-y-3">
           <Linha rotulo="Igreja solicitante" valor={obra.igrejaNome} />
           <Linha rotulo="Cidade" valor={obra.cidade} />
-          <Linha rotulo="Polo / Área / Região" valor="Ver cadastro da igreja" />
+          <Linha
+            rotulo="Polo / Área / Região"
+            valor={`${obra.poloNome} · ${obra.areaNome} · ${obra.regiaoNome}`}
+          />
           <Linha rotulo="Tipo da obra" valor={obra.tipo} />
           <Linha
             rotulo="Prioridade"

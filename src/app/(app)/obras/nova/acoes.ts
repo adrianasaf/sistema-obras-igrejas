@@ -8,7 +8,7 @@ import { exigirAcesso } from "@/lib/sessao";
 export type Resultado = { ok: boolean; mensagem: string; id?: string };
 
 // Grava a solicitação e abre o fluxo de aprovação. A prioridade não é
-// informada aqui: quem define é o pastor responsável da COMBENS (DEC-013).
+// informada aqui: quem define é o pastor responsável da CONBENS (DEC-013).
 export async function criarSolicitacaoAction(
   _anterior: Resultado | null,
   dados: FormData,

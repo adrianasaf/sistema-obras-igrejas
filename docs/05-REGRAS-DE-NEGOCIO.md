@@ -12,18 +12,18 @@ Somente regras já conhecidas. Nenhuma regra administrativa da igreja deve ser i
 | ID | Regra |
 |---|---|
 | RN-03 | Os tipos de obra são: reforma, ampliação, construção e manutenção. |
-| RN-04 | Toda obra tem uma prioridade: Emergencial, P1, P2 ou P3. **Quem define é o pastor responsável da COMBENS**, não quem abre a solicitação (DEC-013). Significado de cada nível: PENDENTE (PEN-006). |
+| RN-04 | Toda obra tem uma prioridade: Emergencial, P1, P2 ou P3. **Quem define é o pastor responsável da CONBENS**, não quem abre a solicitação (DEC-013). Significado de cada nível: PENDENTE (PEN-006). |
 | RN-05 | Toda obra nasce de uma solicitação feita por uma Igreja. O **Pastor Local** abre ou delega a alguém; quando delega, a solicitação segue direto para o Coordenador do Polo, **sem aprovação do pastor** (DEC-013). |
 | RN-06 | A execução da obra é acompanhada em cinco fases. Nomes e conteúdo das fases: PENDENTE DE DEFINIÇÃO (PEN-009). |
 
 ## Aprovações
 | ID | Regra |
 |---|---|
-| RN-07 | O fluxo interno tem **quatro etapas**, nesta ordem: Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS (DEC-013). |
+| RN-07 | O fluxo interno tem **quatro etapas**, nesta ordem: Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável CONBENS (DEC-013). |
 | RN-08 | Em cada etapa a decisão é Aprovar, Reprovar ou Solicitar correção. Só avança após a aprovação da etapa atual; **não é possível pular etapas**; a reprovação encerra o fluxo; "Correção solicitada" devolve para ajuste sem encerrar e volta à mesma etapa depois do reenvio (DEC-010). |
 | RN-09 | Toda decisão registra usuário, data/hora e comentário; o comentário é obrigatório em reprovação e em pedido de correção. O histórico não é alterado nem apagado. |
-| RN-10 | **O Presbitério não decide no sistema.** Depois da aprovação da COMBENS, a equipe da COMBENS leva o pedido ao **SGI** (sistema externo, oficial da Igreja Cristã Maranata) e o resultado — situação, valor aprovado e data — é registrado manualmente aqui, em campo próprio, fora das etapas do fluxo (DEC-013). |
-| RN-11 | Depois da aprovação da COMBENS, a **igreja solicitante** monta 3 cotações de material, 3 cotações de mão de obra e o Croqui da obra (DEC-013). Módulo de Orçamento: etapa futura. |
+| RN-10 | **O Presbitério não decide no sistema.** Depois da aprovação da CONBENS, a equipe da CONBENS leva o pedido ao **SGI** (sistema externo, oficial da Igreja Cristã Maranata) e o resultado — situação, valor aprovado e data — é registrado manualmente aqui, em campo próprio, fora das etapas do fluxo (DEC-013). |
+| RN-11 | Depois da aprovação da CONBENS, a **igreja solicitante** monta 3 cotações de material, 3 cotações de mão de obra e o Croqui da obra (DEC-013). Módulo de Orçamento: etapa futura. |
 
 ## Rastreabilidade e auditoria
 | ID | Regra |

@@ -28,12 +28,12 @@ export async function generateMetadata({
 export default async function IgrejaPage({
   params,
 }: PageProps<"/igrejas/[id]">) {
-  await exigirAcesso("estrutura");
+  const sessao = await exigirAcesso("estrutura");
   const { id } = await params;
   const igreja = await buscarIgreja(id);
   if (!igreja) notFound();
 
-  const obras = await obrasDaIgreja(igreja.id);
+  const obras = await obrasDaIgreja(igreja.id, sessao);
 
   return (
     <div className="space-y-6">

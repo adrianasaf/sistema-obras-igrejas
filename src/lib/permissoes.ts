@@ -13,7 +13,7 @@ export const PERFIS = [
   "Coordenador de Polo",
   "Coordenador de Área",
   "Coordenador de Região",
-  "Responsável COMBENS",
+  "Responsável CONBENS",
   "Presbitério",
 ] as const;
 export type Perfil = (typeof PERFIS)[number];
@@ -53,7 +53,7 @@ export const AREAS_DO_PERFIL: Record<Perfil, readonly Area[]> = {
   "Coordenador de Polo": AREAS_COMUNS,
   "Coordenador de Área": AREAS_COMUNS,
   "Coordenador de Região": AREAS_COMUNS,
-  "Responsável COMBENS": AREAS_COMUNS,
+  "Responsável CONBENS": AREAS_COMUNS,
   Presbitério: [...AREAS_COMUNS, "orcamentos"],
 };
 
@@ -69,9 +69,35 @@ export const ETAPA_DO_PERFIL: Record<Perfil, number | null> = {
   "Coordenador de Polo": 1,
   "Coordenador de Área": 2,
   "Coordenador de Região": 3,
-  "Responsável COMBENS": 4,
+  "Responsável CONBENS": 4,
   Presbitério: null,
 };
+
+// Nível da estrutura a que cada perfil é vinculado (DEC-014).
+// "nenhum" = abrangência geral, sem vínculo a um registro específico.
+export type NivelVinculo = "nenhum" | "regiao" | "area" | "polo" | "igreja";
+
+export const NIVEL_VINCULO_DO_PERFIL: Record<Perfil, NivelVinculo> = {
+  Administrador: "nenhum",
+  "Pastor Local": "igreja",
+  "Coordenador de Polo": "polo",
+  "Coordenador de Área": "area",
+  "Coordenador de Região": "regiao",
+  "Responsável CONBENS": "nenhum",
+  Presbitério: "nenhum",
+};
+
+export const ROTULO_VINCULO: Record<NivelVinculo, string> = {
+  nenhum: "Sem vínculo",
+  regiao: "Região",
+  area: "Área",
+  polo: "Polo",
+  igreja: "Igreja",
+};
+
+export function nivelVinculoDoPerfil(perfil: Perfil): NivelVinculo {
+  return NIVEL_VINCULO_DO_PERFIL[perfil];
+}
 
 // Prefixo de rota → área. A ordem importa: o primeiro prefixo que casar vale.
 const ROTAS: { prefixo: string; area: Area }[] = [
@@ -96,6 +122,16 @@ export function areaDaRota(rota: string): Area | null {
 
 export function ehPerfil(valor: unknown): valor is Perfil {
   return typeof valor === "string" && (PERFIS as readonly string[]).includes(valor);
+}
+
+// Aceita a grafia antiga ("COMBENS") gravada no Clerk antes de DEC-014 e
+// devolve o perfil correspondente, ou null se não for um perfil conhecido.
+export function normalizarPerfil(valor: unknown): Perfil | null {
+  if (typeof valor !== "string") return null;
+  const texto = valor.trim();
+  const corrigido =
+    texto === "Responsável COMBENS" ? "Responsável CONBENS" : texto;
+  return ehPerfil(corrigido) ? corrigido : null;
 }
 
 export function areasDoPerfil(perfil: Perfil): readonly Area[] {

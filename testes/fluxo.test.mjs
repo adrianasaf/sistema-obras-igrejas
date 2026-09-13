@@ -10,7 +10,7 @@ const ok = (c, m) => { console.log((c ? "  ok  " : "FALHOU") + " | " + m); if (!
 
 ok(TOTAL_ETAPAS === 4, "o fluxo tem 4 etapas: " + TOTAL_ETAPAS);
 ok(NIVEIS_APROVACAO.join(" → ") ===
-   "Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável COMBENS",
+   "Coordenador do Polo → Coordenador da Área → Coordenador da Região → Responsável CONBENS",
    "ordem dos níveis: " + NIVEIS_APROVACAO.join(" → "));
 ok(!NIVEIS_APROVACAO.includes("Pastor Local"), "Pastor Local não é etapa de aprovação");
 ok(!NIVEIS_APROVACAO.includes("Presbitério"), "Presbitério não é etapa de aprovação");
@@ -22,7 +22,7 @@ for (let etapa = 1; etapa <= TOTAL_ETAPAS; etapa++) {
   estado = proximoEstado(etapa, "Aprovado");
 }
 ok(estado.situacao === "Aprovada", "após a COMBENS aprovar, fluxo = Aprovada");
-ok(rotuloSituacao("Aprovada", 4) === "Aprovada pela COMBENS", "rótulo de concluída: " + rotuloSituacao("Aprovada", 4));
+ok(rotuloSituacao("Aprovada", 4) === "Aprovada pela CONBENS", "rótulo de concluída: " + rotuloSituacao("Aprovada", 4));
 ok(impedimentoParaDecidir(estado, 4) !== null, "fluxo concluído não aceita nova decisão");
 
 // Não pular etapas.
@@ -44,7 +44,7 @@ ok(impedimentoParaReenviar(estado) === null, "em correção, pode reenviar");
 ok(impedimentoParaReenviar({ etapaAtual: 3, situacao: "Em andamento" }) !== null, "fora de correção, reenvio é rejeitado");
 
 // Rótulos e SGI.
-ok(rotuloSituacao("Em andamento", 4) === "Aguardando Responsável COMBENS", "rótulo da etapa 4");
+ok(rotuloSituacao("Em andamento", 4) === "Aguardando Responsável CONBENS", "rótulo da etapa 4");
 ok(SITUACOES_SGI.length === 3 && SITUACOES_SGI[0] === "Aguardando SGI", "situações do SGI: " + SITUACOES_SGI.join(", "));
 
 console.log(falhas === 0 ? "\nFLUXO: TODOS OS TESTES PASSARAM" : `\nFLUXO: ${falhas} FALHA(S)`);

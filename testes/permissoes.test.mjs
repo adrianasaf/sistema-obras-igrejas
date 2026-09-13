@@ -28,7 +28,7 @@ for (const perfil of PERFIS.filter((p) => p !== "Administrador")) {
 
 // Etapas renumeradas (DEC-013): 4 etapas, sem Pastor Local e sem Presbitério.
 const etapas = { "Coordenador de Polo": 1, "Coordenador de Área": 2,
-                 "Coordenador de Região": 3, "Responsável COMBENS": 4 };
+                 "Coordenador de Região": 3, "Responsável CONBENS": 4 };
 for (const [perfil, etapa] of Object.entries(etapas)) {
   ok(etapaDoPerfil(perfil) === etapa, `${perfil} decide a etapa ${etapa}`);
   for (let outra = 1; outra <= 4; outra++)
