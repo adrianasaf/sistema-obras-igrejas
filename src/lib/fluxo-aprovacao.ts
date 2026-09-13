@@ -8,6 +8,7 @@
 //  - "Correção solicitada" mantém a etapa e não encerra o fluxo;
 //  - o histórico de decisões nunca é alterado nem apagado.
 
+import { consultaAuditoria } from "@/lib/auditoria";
 import { sql } from "@/lib/db";
 import {
   REENVIO,
@@ -246,6 +247,14 @@ async function aplicar({
          and situacao = ${situacaoEsperada}
       returning obra_id
     `,
+    consultaAuditoria(banco, {
+      usuarioId: usuario.id,
+      usuarioNome: usuario.nome,
+      acao: decisao,
+      entidade: "aprovacao",
+      entidadeId: obraId,
+      detalhe: `Etapa ${etapaEsperada} — ${nivel}${texto ? `: ${texto}` : ""}`,
+    }),
   ]);
 
   const gravou = Array.isArray(resultado[1]) && resultado[1].length > 0;
@@ -297,6 +306,15 @@ export async function registrarResultadoSgi({
       "O resultado do SGI só pode ser registrado depois da aprovação de todas as etapas.",
     );
   }
+
+  await consultaAuditoria(sql(), {
+    usuarioId: usuario.id,
+    usuarioNome: usuario.nome,
+    acao: "Registrou resultado do SGI",
+    entidade: "sgi",
+    entidadeId: obraId,
+    detalhe: `${situacao}${valor !== null ? ` · valor aprovado ${valor}` : ""}`,
+  });
 
   return obterFluxo(obraId);
 }

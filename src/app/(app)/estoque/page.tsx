@@ -4,34 +4,30 @@ import { BadgeEstoque } from "@/components/badges";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CartaoLista, Tabela } from "@/components/tabela";
 import { cartao } from "@/lib/ui";
-import {
-  MATERIAIS,
-  formatarQuantidade,
-  statusMaterial,
-} from "@/lib/estoque-mock";
-import { AcoesEstoque } from "./acoes";
+import { listarIgrejas } from "@/lib/estrutura-db";
+import { formatarQuantidade, listarMateriais } from "@/lib/estoque-db";
+import { AcoesEstoque } from "./acoes-estoque";
 
 export const metadata: Metadata = { title: "Estoque" };
 
 export default async function EstoquePage() {
   await exigirAcesso("estoque");
-  const materiais = [...MATERIAIS].sort((a, b) =>
-    a.nome.localeCompare(b.nome, "pt-BR"),
-  );
+  const [materiais, igrejas] = await Promise.all([
+    listarMateriais(),
+    listarIgrejas(),
+  ]);
 
-  const emFalta = materiais.filter((m) => statusMaterial(m) === "Em falta");
-  const abaixo = materiais.filter(
-    (m) => statusMaterial(m) === "Abaixo do mínimo",
-  );
+  const emFalta = materiais.filter((m) => m.status === "Em falta");
+  const abaixo = materiais.filter((m) => m.status === "Abaixo do mínimo");
 
   return (
     <div className="space-y-6">
       <CabecalhoPagina
         titulo="Estoque"
-        descricao="Materiais e saldos. Dados demonstrativos."
+        descricao="Materiais de todas as igrejas e do estoque geral."
       />
 
-      <AcoesEstoque />
+      <AcoesEstoque materiais={materiais} igrejas={igrejas} />
 
       {/* Resumo */}
       <ul className="grid grid-cols-3 gap-3">
@@ -48,6 +44,7 @@ export default async function EstoquePage() {
       <Tabela
         colunas={[
           "Material",
+          "Igreja",
           "Categoria",
           "Unidade",
           { rotulo: "Quantidade atual", direita: true },
@@ -58,6 +55,7 @@ export default async function EstoquePage() {
         {materiais.map((m) => (
           <tr key={m.id} className="hover:bg-background">
             <td className="px-4 py-3 font-medium">{m.nome}</td>
+            <td className="px-4 py-3">{m.igrejaNome}</td>
             <td className="px-4 py-3">{m.categoria}</td>
             <td className="px-4 py-3">{m.unidade}</td>
             <td className="px-4 py-3 text-right tabular-nums">
@@ -67,7 +65,7 @@ export default async function EstoquePage() {
               {formatarQuantidade(m.minimo)}
             </td>
             <td className="px-4 py-3">
-              <BadgeEstoque valor={statusMaterial(m)} />
+              <BadgeEstoque valor={m.status} />
             </td>
           </tr>
         ))}
@@ -79,8 +77,8 @@ export default async function EstoquePage() {
           <CartaoLista
             key={m.id}
             titulo={m.nome}
-            subtitulo={m.categoria}
-            cracha={<BadgeEstoque valor={statusMaterial(m)} />}
+            subtitulo={`${m.igrejaNome} · ${m.categoria}`}
+            cracha={<BadgeEstoque valor={m.status} />}
             dados={[
               { rotulo: "Unidade", valor: m.unidade },
               { rotulo: "Quantidade atual", valor: formatarQuantidade(m.quantidade) },
@@ -91,8 +89,9 @@ export default async function EstoquePage() {
       </ul>
 
       <p className="text-xs text-muted">
-        Tela demonstrativa: o módulo de estoque está previsto para a Fase 6 do
-        roadmap. Nenhuma movimentação é registrada.
+        Todos os materiais ficam visíveis a quem acessa esta área, para
+        permitir o remanejamento entre igrejas. A saída de estoque será
+        liberada quando as cinco fases da execução forem definidas.
       </p>
     </div>
   );

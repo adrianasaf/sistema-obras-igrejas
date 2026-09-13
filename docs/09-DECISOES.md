@@ -164,3 +164,12 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Definições informadas pelo responsável do projeto.
 - **Impacto:** A grafia antiga continua sendo aceita na leitura do perfil vindo do Clerk (é normalizada para "Responsável CONBENS"), para os usuários já cadastrados não perderem acesso; ainda assim, vale atualizar o `publicMetadata` desses usuários. Uma migração nova atualiza o nome do nível já gravado em `decisoes_aprovacao`; as migrações já aplicadas não são reescritas. Um usuário de perfil com vínculo obrigatório e **sem** `vinculoId` no Clerk não enxerga nenhuma obra e não decide nada — é o comportamento seguro, e o administrador precisa preencher o vínculo. Não há tela de gestão de usuários nesta etapa (fica para depois).
 - **Status:** Ativa
+
+## DEC-015
+- **Data:** 2026-09-13
+- **Título:** Estoque organizado por igreja, com visibilidade ampla
+- **Contexto:** Definição das regras de estoque, informada pelo responsável (resolve PEN-014).
+- **Decisão:** Cada material pertence a **uma igreja específica** ou ao **estoque geral** (sem igreja vinculada). A **visibilidade é ampla**: qualquer usuário com acesso à área "estoque" vê os materiais de todas as igrejas, justamente para permitir o remanejamento entre elas. Não há filtro por escopo/vínculo nesta área.
+- **Motivo:** Informado pelo responsável do projeto.
+- **Impacto:** A tela de Estoque lista materiais de todas as igrejas, com o nome da igreja (ou "Estoque geral") em cada linha. **Saída de estoque não é implementada agora:** depende da definição das cinco fases de execução (PEN-009), então o botão fica desabilitado com aviso. Quem pode acessar a área estoque continua definido em DEC-011 (hoje, apenas Administrador — PEN-026 segue aberta).
+- **Status:** Ativa

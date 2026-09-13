@@ -25,6 +25,13 @@ Somente regras já conhecidas. Nenhuma regra administrativa da igreja deve ser i
 | RN-10 | **O Presbitério não decide no sistema.** Depois da aprovação da CONBENS, a equipe da CONBENS leva o pedido ao **SGI** (sistema externo, oficial da Igreja Cristã Maranata) e o resultado — situação, valor aprovado e data — é registrado manualmente aqui, em campo próprio, fora das etapas do fluxo (DEC-013). |
 | RN-11 | Depois da aprovação da CONBENS, a **igreja solicitante** monta 3 cotações de material, 3 cotações de mão de obra e o Croqui da obra (DEC-013). Módulo de Orçamento: etapa futura. |
 
+## Estoque
+| ID | Regra |
+|---|---|
+| RN-15 | Cada material pertence a uma igreja ou ao estoque geral (sem igreja vinculada) — DEC-015. |
+| RN-16 | Todos que acessam a área de estoque veem os materiais de todas as igrejas, para permitir remanejamento (DEC-015). |
+| RN-17 | A entrada de material soma na quantidade atual e gera uma movimentação com quem registrou. A **saída** aguarda a definição das cinco fases (PEN-009). |
+
 ## Rastreabilidade e auditoria
 | ID | Regra |
 |---|---|

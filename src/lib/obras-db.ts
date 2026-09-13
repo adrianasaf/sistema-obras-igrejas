@@ -4,6 +4,7 @@
 // aprovação (src/lib/fluxo-aprovacao.ts). A prioridade pode estar vazia:
 // quem define é o pastor responsável da CONBENS (DEC-013).
 
+import { consultaAuditoria } from "@/lib/auditoria";
 import { sql } from "@/lib/db";
 import {
   corStatusGeral,
@@ -136,6 +137,7 @@ export type NovaObra = {
   titulo: string;
   descricao: string;
   responsavel: string;
+  usuarioId?: string;
 };
 
 // Grava a solicitação e abre o fluxo de aprovação na etapa 1 (Coordenador do
@@ -162,6 +164,14 @@ export async function criarObra(dados: NovaObra): Promise<string> {
         banco`insert into fluxo_aprovacao (obra_id, etapa_atual, situacao)
               values (${proximo}, 1, 'Em andamento')
               on conflict (obra_id) do nothing`,
+        consultaAuditoria(banco, {
+          usuarioId: dados.usuarioId ?? null,
+          usuarioNome: dados.responsavel,
+          acao: "Registrou solicitação",
+          entidade: "obra",
+          entidadeId: proximo,
+          detalhe: `${dados.tipo} · ${dados.titulo}`,
+        }),
       ]);
       return proximo;
     } catch (erro) {

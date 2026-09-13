@@ -250,4 +250,59 @@ export const MIGRACOES: Migracao[] = [
        )`,
     ],
   },
+  {
+    id: "008",
+    titulo: "Estoque de materiais e entradas",
+    descricao:
+      "Materiais por igreja ou de estoque geral (DEC-015) e as movimentações de entrada. Saída depende da definição das fases de execução (PEN-009).",
+    comandos: [
+      `create table if not exists materiais (
+         id                text        primary key,
+         nome              text        not null,
+         categoria         text        not null,
+         unidade           text        not null,
+         quantidade_atual  numeric(14,3) not null default 0,
+         estoque_minimo    numeric(14,3) not null default 0,
+         igreja_id         text        references igrejas (id),
+         criado_em         timestamptz not null default now(),
+         atualizado_em     timestamptz not null default now()
+       )`,
+      `create index if not exists materiais_igreja_idx on materiais (igreja_id)`,
+      `create table if not exists movimentacoes_estoque (
+         id              bigserial   primary key,
+         material_id     text        not null references materiais (id),
+         tipo            text        not null default 'entrada' check (tipo in ('entrada')),
+         quantidade      numeric(14,3) not null check (quantidade > 0),
+         fornecedor      text,
+         valor_unitario  numeric(14,2),
+         valor_total     numeric(14,2),
+         data            date        not null default current_date,
+         responsavel_id  text,
+         responsavel     text,
+         criado_em       timestamptz not null default now()
+       )`,
+      `create index if not exists movimentacoes_material_idx
+         on movimentacoes_estoque (material_id, id desc)`,
+    ],
+  },
+  {
+    id: "009",
+    titulo: "Auditoria",
+    descricao:
+      "Registro central das ações relevantes: quem fez, o quê, em qual registro e quando (RN-12).",
+    comandos: [
+      `create table if not exists auditoria (
+         id           bigserial   primary key,
+         usuario_id   text,
+         usuario_nome text        not null,
+         acao         text        not null,
+         entidade     text        not null,
+         entidade_id  text,
+         detalhe      text,
+         criado_em    timestamptz not null default now()
+       )`,
+      `create index if not exists auditoria_recente_idx on auditoria (id desc)`,
+      `create index if not exists auditoria_entidade_idx on auditoria (entidade, id desc)`,
+    ],
+  },
 ];

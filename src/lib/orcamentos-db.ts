@@ -5,6 +5,7 @@
 // categoria e uma única selecionada por categoria — os dois limites também são
 // garantidos por índices únicos no banco (migração 007).
 
+import { consultaAuditoria } from "@/lib/auditoria";
 import { sql } from "@/lib/db";
 
 export class ErroOrcamento extends Error {}
@@ -159,7 +160,9 @@ export async function salvarCotacao(dados: DadosCotacao): Promise<void> {
     );
   }
 
-  await sql()`
+  const banco = sql();
+  await banco.transaction([
+    banco`
     insert into orcamentos_obra
       (obra_id, categoria, numero, fornecedor_prestador, valor,
        data_cotacao, validade, observacoes, status, criado_por)
@@ -176,7 +179,17 @@ export async function salvarCotacao(dados: DadosCotacao): Promise<void> {
            -- Uma cotação já selecionada continua selecionada ao ser editada.
            status = case when orcamentos_obra.status = 'Selecionado'
                          then 'Selecionado' else excluded.status end,
-           atualizado_em = now()`;
+           atualizado_em = now()`,
+    consultaAuditoria(banco, {
+      usuarioNome: dados.usuario,
+      acao: "Lançou cotação",
+      entidade: "orcamento",
+      entidadeId: dados.obraId,
+      detalhe: `${dados.categoria} nº ${dados.numero}${
+        dados.fornecedor ? ` · ${dados.fornecedor}` : ""
+      }${dados.valor !== null ? ` · ${dados.valor}` : ""}`,
+    }),
+  ]);
 }
 
 // Marca uma cotação como selecionada e desmarca as demais da categoria.
@@ -184,6 +197,7 @@ export async function selecionarCotacao(
   obraId: string,
   categoria: CategoriaOrcamento,
   numero: number,
+  usuario = "—",
 ): Promise<void> {
   const banco = sql();
   const atual = await banco`
@@ -205,6 +219,13 @@ export async function selecionarCotacao(
     banco`update orcamentos_obra set status = 'Selecionado', atualizado_em = now()
            where obra_id = ${obraId} and categoria = ${categoria}
              and numero = ${numero}`,
+    consultaAuditoria(banco, {
+      usuarioNome: usuario,
+      acao: "Selecionou cotação",
+      entidade: "orcamento",
+      entidadeId: obraId,
+      detalhe: `${categoria} nº ${numero}`,
+    }),
   ]);
 }
 
@@ -216,7 +237,9 @@ export async function salvarCroqui(dados: {
   arquivoUrl: string;
   usuario: string;
 }): Promise<void> {
-  await sql()`
+  const banco = sql();
+  await banco.transaction([
+    banco`
     insert into croquis_obra (obra_id, descricao, arquivo_url, enviado_por)
     values (${dados.obraId}, ${dados.descricao || null},
             ${dados.arquivoUrl || null}, ${dados.usuario})
@@ -224,5 +247,13 @@ export async function salvarCroqui(dados: {
        set descricao = excluded.descricao,
            arquivo_url = excluded.arquivo_url,
            enviado_por = excluded.enviado_por,
-           enviado_em = now()`;
+           enviado_em = now()`,
+    consultaAuditoria(banco, {
+      usuarioNome: dados.usuario,
+      acao: "Registrou croqui",
+      entidade: "croqui",
+      entidadeId: dados.obraId,
+      detalhe: dados.arquivoUrl || dados.descricao || null,
+    }),
+  ]);
 }

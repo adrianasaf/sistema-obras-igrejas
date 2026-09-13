@@ -29,6 +29,7 @@ const GRUPOS = [
     itens: [
       { href: "/usuarios", rotulo: "Usuários", icone: "◍", area: "usuarios" },
       { href: "/estoque", rotulo: "Estoque", icone: "☰", area: "estoque" },
+      { href: "/auditoria", rotulo: "Auditoria", icone: "⎘", area: "auditoria" },
       {
         href: "/historico",
         rotulo: "Histórico de Desenvolvimento",

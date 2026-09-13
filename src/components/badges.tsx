@@ -9,7 +9,7 @@ import {
   CORES_PRIORIDADE,
   CORES_STATUS,
 } from "@/lib/cores";
-import type { StatusMaterial } from "@/lib/estoque-mock";
+import type { StatusMaterial } from "@/lib/estoque-db";
 import {
   statusFeminino,
   type StatusCadastro,

@@ -1,6 +1,7 @@
 // Acesso ao banco para a estrutura administrativa (Região → Área → Polo →
 // Igreja). Só roda no servidor. Os tipos continuam em estrutura-tipos.ts.
 
+import { consultaAuditoria } from "@/lib/auditoria";
 import { sql } from "@/lib/db";
 import type {
   Area,
@@ -115,7 +116,7 @@ export async function buscarIgreja(id: string) {
 function idDoCodigo(prefixo: string, codigo: string): string {
   const limpo = codigo
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]/g, "");
   if (!limpo) throw new ErroCadastro("Informe um código válido.");
@@ -128,61 +129,8 @@ export type DadosRegiao = {
   status: StatusCadastro;
   responsavel: string;
 };
-
-export async function criarRegiao(dados: DadosRegiao): Promise<string> {
-  const id = idDoCodigo("r", dados.codigo);
-  await sql()`
-    insert into regioes (id, codigo, nome, status, responsavel)
-    values (${id}, ${dados.codigo}, ${dados.nome}, ${dados.status}, ${dados.responsavel})`;
-  return id;
-}
-
-export async function atualizarRegiao(id: string, dados: DadosRegiao) {
-  await sql()`
-    update regioes set codigo = ${dados.codigo}, nome = ${dados.nome},
-           status = ${dados.status}, responsavel = ${dados.responsavel},
-           atualizado_em = now()
-     where id = ${id}`;
-}
-
 export type DadosArea = DadosRegiao & { regiaoId: string };
-
-export async function criarArea(dados: DadosArea): Promise<string> {
-  const id = idDoCodigo("a", dados.codigo);
-  await sql()`
-    insert into areas (id, codigo, nome, status, responsavel, regiao_id)
-    values (${id}, ${dados.codigo}, ${dados.nome}, ${dados.status},
-            ${dados.responsavel}, ${dados.regiaoId})`;
-  return id;
-}
-
-export async function atualizarArea(id: string, dados: DadosArea) {
-  await sql()`
-    update areas set codigo = ${dados.codigo}, nome = ${dados.nome},
-           status = ${dados.status}, responsavel = ${dados.responsavel},
-           regiao_id = ${dados.regiaoId}, atualizado_em = now()
-     where id = ${id}`;
-}
-
 export type DadosPolo = DadosRegiao & { areaId: string };
-
-export async function criarPolo(dados: DadosPolo): Promise<string> {
-  const id = idDoCodigo("p", dados.codigo);
-  await sql()`
-    insert into polos (id, codigo, nome, status, responsavel, area_id)
-    values (${id}, ${dados.codigo}, ${dados.nome}, ${dados.status},
-            ${dados.responsavel}, ${dados.areaId})`;
-  return id;
-}
-
-export async function atualizarPolo(id: string, dados: DadosPolo) {
-  await sql()`
-    update polos set codigo = ${dados.codigo}, nome = ${dados.nome},
-           status = ${dados.status}, responsavel = ${dados.responsavel},
-           area_id = ${dados.areaId}, atualizado_em = now()
-     where id = ${id}`;
-}
-
 export type DadosIgreja = {
   codigo: string;
   nome: string;
@@ -191,19 +139,128 @@ export type DadosIgreja = {
   poloId: string;
 };
 
-export async function criarIgreja(dados: DadosIgreja): Promise<string> {
-  const id = idDoCodigo("i", dados.codigo);
-  await sql()`
-    insert into igrejas (id, codigo, nome, status, cidade, polo_id)
-    values (${id}, ${dados.codigo}, ${dados.nome}, ${dados.status},
-            ${dados.cidade}, ${dados.poloId})`;
+export type Autor = { id?: string | null; nome: string };
+
+// Cada gravação vai junto com a linha de auditoria, na mesma transação (RN-12).
+function auditar(
+  banco: ReturnType<typeof sql>,
+  autor: Autor,
+  acao: string,
+  id: string,
+  detalhe: string,
+) {
+  return consultaAuditoria(banco, {
+    usuarioId: autor.id ?? null,
+    usuarioNome: autor.nome,
+    acao,
+    entidade: "estrutura",
+    entidadeId: id,
+    detalhe,
+  });
+}
+
+export async function criarRegiao(
+  dados: DadosRegiao,
+  autor: Autor,
+): Promise<string> {
+  const id = idDoCodigo("r", dados.codigo);
+  const banco = sql();
+  await banco.transaction([
+    banco`insert into regioes (id, codigo, nome, status, responsavel)
+          values (${id}, ${dados.codigo}, ${dados.nome}, ${dados.status},
+                  ${dados.responsavel})`,
+    auditar(banco, autor, "Cadastrou região", id, `${dados.codigo} · ${dados.nome}`),
+  ]);
   return id;
 }
 
-export async function atualizarIgreja(id: string, dados: DadosIgreja) {
-  await sql()`
-    update igrejas set codigo = ${dados.codigo}, nome = ${dados.nome},
-           status = ${dados.status}, cidade = ${dados.cidade},
-           polo_id = ${dados.poloId}, atualizado_em = now()
-     where id = ${id}`;
+export async function atualizarRegiao(
+  id: string,
+  dados: DadosRegiao,
+  autor: Autor,
+) {
+  const banco = sql();
+  await banco.transaction([
+    banco`update regioes set codigo = ${dados.codigo}, nome = ${dados.nome},
+                 status = ${dados.status}, responsavel = ${dados.responsavel},
+                 atualizado_em = now()
+           where id = ${id}`,
+    auditar(banco, autor, "Editou região", id, `${dados.codigo} · ${dados.nome} · ${dados.status}`),
+  ]);
+}
+
+export async function criarArea(dados: DadosArea, autor: Autor): Promise<string> {
+  const id = idDoCodigo("a", dados.codigo);
+  const banco = sql();
+  await banco.transaction([
+    banco`insert into areas (id, codigo, nome, status, responsavel, regiao_id)
+          values (${id}, ${dados.codigo}, ${dados.nome}, ${dados.status},
+                  ${dados.responsavel}, ${dados.regiaoId})`,
+    auditar(banco, autor, "Cadastrou área", id, `${dados.codigo} · ${dados.nome}`),
+  ]);
+  return id;
+}
+
+export async function atualizarArea(id: string, dados: DadosArea, autor: Autor) {
+  const banco = sql();
+  await banco.transaction([
+    banco`update areas set codigo = ${dados.codigo}, nome = ${dados.nome},
+                 status = ${dados.status}, responsavel = ${dados.responsavel},
+                 regiao_id = ${dados.regiaoId}, atualizado_em = now()
+           where id = ${id}`,
+    auditar(banco, autor, "Editou área", id, `${dados.codigo} · ${dados.nome} · ${dados.status}`),
+  ]);
+}
+
+export async function criarPolo(dados: DadosPolo, autor: Autor): Promise<string> {
+  const id = idDoCodigo("p", dados.codigo);
+  const banco = sql();
+  await banco.transaction([
+    banco`insert into polos (id, codigo, nome, status, responsavel, area_id)
+          values (${id}, ${dados.codigo}, ${dados.nome}, ${dados.status},
+                  ${dados.responsavel}, ${dados.areaId})`,
+    auditar(banco, autor, "Cadastrou polo", id, `${dados.codigo} · ${dados.nome}`),
+  ]);
+  return id;
+}
+
+export async function atualizarPolo(id: string, dados: DadosPolo, autor: Autor) {
+  const banco = sql();
+  await banco.transaction([
+    banco`update polos set codigo = ${dados.codigo}, nome = ${dados.nome},
+                 status = ${dados.status}, responsavel = ${dados.responsavel},
+                 area_id = ${dados.areaId}, atualizado_em = now()
+           where id = ${id}`,
+    auditar(banco, autor, "Editou polo", id, `${dados.codigo} · ${dados.nome} · ${dados.status}`),
+  ]);
+}
+
+export async function criarIgreja(
+  dados: DadosIgreja,
+  autor: Autor,
+): Promise<string> {
+  const id = idDoCodigo("i", dados.codigo);
+  const banco = sql();
+  await banco.transaction([
+    banco`insert into igrejas (id, codigo, nome, status, cidade, polo_id)
+          values (${id}, ${dados.codigo}, ${dados.nome}, ${dados.status},
+                  ${dados.cidade}, ${dados.poloId})`,
+    auditar(banco, autor, "Cadastrou igreja", id, `${dados.codigo} · ${dados.nome} · ${dados.cidade}`),
+  ]);
+  return id;
+}
+
+export async function atualizarIgreja(
+  id: string,
+  dados: DadosIgreja,
+  autor: Autor,
+) {
+  const banco = sql();
+  await banco.transaction([
+    banco`update igrejas set codigo = ${dados.codigo}, nome = ${dados.nome},
+                 status = ${dados.status}, cidade = ${dados.cidade},
+                 polo_id = ${dados.poloId}, atualizado_em = now()
+           where id = ${id}`,
+    auditar(banco, autor, "Editou igreja", id, `${dados.codigo} · ${dados.nome} · ${dados.status}`),
+  ]);
 }

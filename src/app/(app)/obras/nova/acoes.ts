@@ -34,6 +34,7 @@ export async function criarSolicitacaoAction(
       // Quem registrou a solicitação. O vínculo com o cadastro de usuários
       // depende de PEN-025; por ora fica o nome de quem estava logado.
       responsavel: sessao.nome || sessao.email,
+      usuarioId: sessao.id,
     });
 
     revalidatePath("/obras");

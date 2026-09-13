@@ -106,8 +106,8 @@ export async function selecionarCotacaoAction(
 ): Promise<Resultado> {
   const obraId = String(dados.get("obraId") ?? "");
   try {
-    await autorizar(obraId);
-    await selecionarCotacao(obraId, categoria(dados), numero(dados));
+    const { usuario } = await autorizar(obraId);
+    await selecionarCotacao(obraId, categoria(dados), numero(dados), usuario);
     revalidatePath(`/obras/${obraId}`);
     return { ok: true, mensagem: "Cotação selecionada." };
   } catch (erro) {

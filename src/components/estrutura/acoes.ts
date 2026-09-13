@@ -45,7 +45,8 @@ export async function salvarCadastroAction(
   dados: FormData,
 ): Promise<Resultado> {
   try {
-    await exigirAcesso("estrutura");
+    const sessao = await exigirAcesso("estrutura");
+    const autor = { id: sessao.id, nome: sessao.nome || sessao.email };
 
     const nivel = String(dados.get("nivel")) as Nivel;
     const id = String(dados.get("id") ?? "");
@@ -61,16 +62,16 @@ export async function salvarCadastroAction(
     let novoId = id;
 
     if (nivel === "regiao") {
-      if (editando) await atualizarRegiao(id, comuns);
-      else novoId = await criarRegiao(comuns);
+      if (editando) await atualizarRegiao(id, comuns, autor);
+      else novoId = await criarRegiao(comuns, autor);
     } else if (nivel === "area") {
       const area = { ...comuns, regiaoId: texto(dados, "regiao") };
-      if (editando) await atualizarArea(id, area);
-      else novoId = await criarArea(area);
+      if (editando) await atualizarArea(id, area, autor);
+      else novoId = await criarArea(area, autor);
     } else if (nivel === "polo") {
       const polo = { ...comuns, areaId: texto(dados, "area") };
-      if (editando) await atualizarPolo(id, polo);
-      else novoId = await criarPolo(polo);
+      if (editando) await atualizarPolo(id, polo, autor);
+      else novoId = await criarPolo(polo, autor);
     } else if (nivel === "igreja") {
       const igreja = {
         codigo: comuns.codigo,
@@ -79,8 +80,8 @@ export async function salvarCadastroAction(
         cidade: texto(dados, "cidade"),
         poloId: texto(dados, "polo"),
       };
-      if (editando) await atualizarIgreja(id, igreja);
-      else novoId = await criarIgreja(igreja);
+      if (editando) await atualizarIgreja(id, igreja, autor);
+      else novoId = await criarIgreja(igreja, autor);
     } else {
       throw new ErroCadastro("Cadastro desconhecido.");
     }

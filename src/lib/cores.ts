@@ -7,7 +7,7 @@
 // Toda a interface (crachás, cartões do dashboard, listas) usa estas classes,
 // para que a mesma prioridade tenha sempre a mesma cor em qualquer tela.
 
-import type { StatusMaterial } from "@/lib/estoque-mock";
+import type { StatusMaterial } from "@/lib/estoque-db";
 import type { StatusCadastro } from "@/lib/estrutura-tipos";
 import type { TipoAlteracao } from "@/lib/historico-mock";
 import type { Perfil } from "@/lib/usuarios-mock";

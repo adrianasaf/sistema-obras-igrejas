@@ -45,6 +45,8 @@ O SQL fica em `src/lib/migracoes.ts` (fonte única, versionada) e é aplicado pe
 | 005 | Solicitações de obras (`obras`) |
 | 006 | Grafia CONBENS no histórico de decisões (DEC-014) |
 | 007 | Orçamentos e croqui da obra |
+| 008 | Estoque de materiais e entradas (DEC-015) |
+| 009 | Auditoria |
 
 ## Tabelas do fluxo de aprovação (migração 001)
 
@@ -158,3 +160,42 @@ Dois índices únicos guardam as regras no banco, não só na aplicação:
 | `arquivo_url` | text | Link. O **upload de arquivo** será implementado em etapa futura. |
 | `enviado_por` | text | |
 | `enviado_em` | timestamptz | |
+
+## Estoque (migração 008)
+
+### `materiais`
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `id` | text (PK) | Derivado do nome |
+| `nome` / `categoria` / `unidade` | text | |
+| `quantidade_atual` | numeric(14,3) | Começa em 0 e sobe com as entradas |
+| `estoque_minimo` | numeric(14,3) | Base do status (Normal / Abaixo do mínimo / Em falta) |
+| `igreja_id` | text → `igrejas (id)`, **aceita vazio** | Vazio = **estoque geral** (DEC-015) |
+| `criado_em` / `atualizado_em` | timestamptz | |
+
+### `movimentacoes_estoque`
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `id` | bigserial (PK) | |
+| `material_id` | text → `materiais (id)` | |
+| `tipo` | text | Hoje apenas `entrada` — a **saída** depende das fases de execução (PEN-009) |
+| `quantidade` | numeric(14,3) | Precisa ser maior que zero |
+| `fornecedor` / `valor_unitario` / `valor_total` / `data` | | |
+| `responsavel_id` / `responsavel` | text | Quem registrou |
+
+A entrada soma na quantidade do material e grava a movimentação **na mesma transação**, junto com a linha de auditoria.
+
+## Auditoria (migração 009)
+
+### `auditoria`
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `id` | bigserial (PK) | |
+| `usuario_id` / `usuario_nome` | text | Quem fez |
+| `acao` | text | O que fez (ex.: "Aprovado", "Lançou cotação") |
+| `entidade` | text | `obra`, `aprovacao`, `sgi`, `orcamento`, `croqui`, `estrutura`, `material`, `estoque` |
+| `entidade_id` | text | Registro afetado (número da solicitação, id do material…) |
+| `detalhe` | text | Resumo legível da ação |
+| `criado_em` | timestamptz | |
+
+Cada Server Action que grava algo insere **uma linha aqui, na mesma transação** da ação — não há fila nem log assíncrono. A tela `/auditoria` (só Administrador) lista as 200 ações mais recentes, com filtro por tipo e busca por usuário. Os registros não são alterados nem apagados (RN-12, RN-13).

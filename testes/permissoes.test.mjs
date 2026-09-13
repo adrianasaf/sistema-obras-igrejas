@@ -14,6 +14,7 @@ const rotas = {
   "/igrejas": "estrutura", "/usuarios": "usuarios", "/estoque": "estoque",
   "/historico": "historico", "/configuracoes": "configuracoes",
   "/configuracoes/banco": "configuracoes",
+  "/auditoria": "auditoria",
 };
 for (const [rota, area] of Object.entries(rotas)) ok(areaDaRota(rota) === area, `rota ${rota} → ${area}`);
 ok(areaDaRota("/rota-inexistente") === null, "rota desconhecida → nenhuma área");

@@ -342,3 +342,22 @@ Próximo passo:
 - **Decisões:** nenhuma nova.
 - **Pendências:** nenhuma nova. Segue aberta PEN-005 (o que acontece após uma reprovação — aqui, a do SGI).
 - **Próximo passo:** registrar o resultado do SGI em uma obra aprovada, em produção. Nenhuma migração nova neste bloco.
+
+## Entrada 021
+- **Data:** 2026-09-13
+- **Etapa:** Estoque (materiais + entrada) e auditoria geral
+- **Versão:** 0.3.0
+- **Realizado:**
+  - **DEC-015 registrada antes do código** (estoque por igreja ou geral, com visibilidade ampla). Resolve **PEN-014**.
+  - **Migração 008:** `materiais` (com `igreja_id` aceitando vazio = estoque geral) e `movimentacoes_estoque` (hoje só `tipo = 'entrada'`, quantidade obrigatoriamente maior que zero).
+  - **Migração 009:** `auditoria` (usuário, ação, entidade, registro, detalhe, data/hora), com índices por recência e por entidade.
+  - `src/lib/estoque-db.ts`: lista materiais de todas as igrejas com o nome da igreja ou "Estoque geral" e o status calculado; cadastra e edita material; e registra entrada — somando na quantidade, gravando a movimentação e a auditoria **na mesma transação**.
+  - Server Actions em `src/app/(app)/estoque/acoes.ts`, todas conferindo `exigirAcesso("estoque")`.
+  - **Tela `/estoque`** passou a ler do banco, com a coluna "Igreja" na tabela e no cartão; os botões "Novo material" e "+ Entrada" abrem formulários que gravam de verdade. **"− Saída" segue desabilitada**, com aviso de que depende da definição das cinco fases (PEN-009). `src/lib/estoque-mock.ts` foi removido. Desenho da tela mantido.
+  - **Auditoria:** `src/lib/auditoria.ts` expõe a consulta de inserção para entrar nas transações já existentes. Passaram a registrar: solicitação criada, decisão do fluxo (com etapa, nível e comentário), resultado do SGI, cotação lançada e selecionada, croqui, cadastro e edição de região/área/polo/igreja, cadastro e edição de material e entrada de estoque. Nenhum mecanismo assíncrono — é um insert a mais em cada ação.
+  - **Nova tela `/auditoria`** (só Administrador, nova área "auditoria" nas permissões), reaproveitando `Tabela`, `CartaoLista` e os componentes de filtro: 200 ações mais recentes, filtro por tipo e busca por usuário/ação/registro. Item "Auditoria" no menu lateral, visível apenas para quem tem a área.
+  - **Não implementado:** saída de estoque, financeiro, fotos e relatórios.
+- **Testes executados:** Postgres 16 local, migrações 001→009 do zero. Material com igreja e material sem igreja (aparece como "Estoque geral"); duas entradas somando corretamente (50 + 10 = 60) com as movimentações gravadas; restrições conferidas (tipo "saida" rejeitado, quantidade zero rejeitada, igreja inexistente rejeitada); e **uma linha de auditoria por ação** — 9 ações registradas cobrindo obra, aprovação, SGI, orçamento, estrutura, material e estoque, com a contagem por entidade conferida. `npm run testar`: cinco suítes passando, com as permissões da nova área (`/auditoria` liberada só para Administrador e negada aos outros seis perfis). Build, tipos e lint limpos. **Não testado aqui:** o caminho pela interface em produção.
+- **Decisões:** DEC-015.
+- **Pendências:** resolvida PEN-014. Seguem abertas PEN-009 (fases — trava a saída de estoque), PEN-026 (quais perfis acessam estoque e auditoria além do Administrador) e as demais.
+- **Próximo passo:** aplicar as migrações 008 e 009 pela tela Configurações → Banco de dados, cadastrar um material e registrar uma entrada.

@@ -28,6 +28,7 @@ export const AREAS = [
   "usuarios",
   "estoque",
   "historico",
+  "auditoria",
   "configuracoes",
 ] as const;
 export type Area = (typeof AREAS)[number];
@@ -41,6 +42,7 @@ export const ROTULO_AREA: Record<Area, string> = {
   usuarios: "Usuários e perfis",
   estoque: "Estoque",
   historico: "Histórico de Desenvolvimento",
+  auditoria: "Auditoria",
   configuracoes: "Configurações",
 };
 
@@ -109,6 +111,7 @@ const ROTAS: { prefixo: string; area: Area }[] = [
   { prefixo: "/usuarios", area: "usuarios" },
   { prefixo: "/estoque", area: "estoque" },
   { prefixo: "/historico", area: "historico" },
+  { prefixo: "/auditoria", area: "auditoria" },
   { prefixo: "/configuracoes", area: "configuracoes" },
 ];
 

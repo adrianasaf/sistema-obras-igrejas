@@ -17,7 +17,7 @@ Questões institucionais e técnicas ainda **não decididas**. Não devem ser re
 | PEN-011 | Escopo de visibilidade por usuário (vê só sua igreja/polo/área/região?) e se um usuário pode ter mais de um vínculo | 04 | Aberta |
 | PEN-012 | Campos obrigatórios da solicitação de obra | 03 | Aberta |
 | PEN-013 | Fase em que as fotos serão implementadas e regras (quem envia, em quais momentos) | 02, 06 | Aberta |
-| PEN-014 | Regras de estoque (central ou por igreja/polo?) | 06 | Aberta |
+| PEN-014 | Regras de estoque (central ou por igreja/polo?) | 06 | **Resolvida (DEC-015)** — material pertence a uma igreja ou ao estoque geral; visibilidade ampla para permitir remanejamento |
 | PEN-015 | Regras financeiras (origem dos recursos, quem lança, quem aprova gastos) | 06 | Aberta |
 | PEN-016 | Forma de "exclusão" com rastro (exclusão lógica, arquivamento) | 05 | Aberta |
 | PEN-017 | Volume esperado: quantidade de regiões, áreas, polos, igrejas e usuários | 02 | Aberta |

@@ -38,8 +38,9 @@
 | Áreas | `/areas` | **Funcional (banco):** lista, cadastro, visualização e edição |
 | Polos | `/polos` | **Funcional (banco):** lista, cadastro, visualização e edição |
 | Igrejas | `/igrejas` | **Funcional (banco):** lista, cadastro, visualização e edição |
+| Auditoria | `/auditoria` | **Funcional (banco):** ações registradas, com filtro por tipo e busca por usuário (só Administrador) |
 | Usuários e perfis | `/usuarios` | Interface: lista, filtros, busca, cadastro/edição em modal e ativar/desativar (sem permissões reais) |
-| Estoque | `/estoque` | Interface: materiais, saldos e botões Entrada/Saída/Novo material (não movimentam) |
+| Estoque | `/estoque` | **Funcional (banco):** materiais de todas as igrejas e do estoque geral, cadastro/edição e entrada; **saída pendente** (PEN-009) |
 | Banco de dados | `/configuracoes/banco` | Funcional: aplica as migrações pendentes (só Administrador) |
 | Configurações | `/configuracoes` | Interface: dados do sistema, preferências de interface e informações institucionais (nada é salvo) |
 | Histórico de Desenvolvimento | `/historico` | Interface: linha do tempo de versões (demonstrativa) + documento real `docs/10-...` |

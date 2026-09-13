@@ -14,7 +14,7 @@ O roadmap poderá ser refinado ao longo do projeto. Alterações relevantes deve
 - [x] Cadastro de Região, Área, Polo e Igreja (banco: migração 002)
 - [ ] Dashboard
 - [ ] Histórico de desenvolvimento (manutenção contínua)
-- [ ] Auditoria básica
+- [x] Auditoria básica (tabela `auditoria` + tela `/auditoria`)
 - [x] Deploy — Vercel (https://sistema-obras-igrejas.vercel.app)
 
 ## Fase 2 — Solicitação de obras
@@ -30,7 +30,7 @@ Análise pelo Presbitério e gestão de orçamentos.
 Acompanhamento da obra em cinco fases, com materiais e fotos.
 
 ## Fase 6 — Estoque
-Controle de materiais e movimentações de estoque.
+Controle de materiais e movimentações de estoque. **Parcial:** cadastro de materiais e entradas prontos (migração 008, DEC-015); **saída** aguarda a definição das cinco fases de execução (PEN-009).
 
 ## Fase 7 — Financeiro
 Controle financeiro das obras.
