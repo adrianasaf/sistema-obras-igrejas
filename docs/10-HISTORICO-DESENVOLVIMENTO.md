@@ -326,3 +326,19 @@ Próximo passo:
 - **Decisões:** nenhuma nova.
 - **Pendências:** novas PEN-030 (critérios de escolha entre as cotações e quem confere antes do SGI) e PEN-031 (onde armazenar arquivos de croqui e fotos).
 - **Próximo passo:** aplicar a migração 007 e lançar as cotações de uma obra já aprovada, em produção.
+
+## Entrada 020
+- **Data:** 2026-09-13
+- **Etapa:** Registro do resultado do SGI
+- **Versão:** 0.3.0
+- **Realizado:**
+  - Regras puras em `src/lib/aprovacao.ts`: `impedimentoParaRegistrarSgi` (só com o fluxo aprovado e só para **Responsável CONBENS** e **Administrador**), `validarResultadoSgi` (valor aprovado obrigatório apenas quando "Aprovado no SGI"), `rotuloStatusGeral` e `corStatusGeral`.
+  - `registrarResultadoSgi` em `src/lib/fluxo-aprovacao.ts`: grava situação, valor, data e quem registrou nas colunas criadas na migração 004. O `UPDATE` exige `situacao = 'Aprovada'` na própria instrução, então o bloqueio vale mesmo com dois acessos simultâneos. Em "Reprovado no SGI" o valor é gravado como nulo.
+  - Server Action `src/app/(app)/obras/[id]/sgi-acoes.ts`, que confere sessão, existência da obra, perfil e situação do fluxo antes de gravar, e revalida a obra e a lista.
+  - Interface: seção **"Resultado do SGI"** dentro da aba Aprovações (que já existia), aparecendo somente depois da aprovação de todas as etapas — é onde o fluxo termina, então ficou junto. Mostra situação, valor aprovado, data e quem registrou; CONBENS e Administrador veem o formulário (e "Corrigir resultado" quando já registrado); os outros perfis veem só leitura. O campo de valor fica desabilitado quando a situação não é "Aprovado no SGI".
+  - **Status geral:** com "Aprovado no SGI", o crachá da obra e o campo "Status atual" passam a exibir **"Aprovada para execução"** — apenas rótulo, o módulo de Execução não foi criado. Com "Reprovado no SGI", a tela informa que o acompanhamento se encerra ali e não inventa reabertura. A lista `/obras` reflete o mesmo rótulo.
+  - **Não implementado:** execução em fases, estoque, financeiro e fotos.
+- **Testes executados:** `npm run testar` — cinco suítes, todas passando, incluindo a nova de **SGI** (28 verificações): bloqueio com fluxo em andamento, em correção e reprovado; apenas CONBENS e Administrador registrando, com os outros cinco perfis bloqueados e sem perfil também; valor obrigatório só em "Aprovado no SGI" (nulo e zero rejeitados, reprovado e aguardando aceitos sem valor); rótulos e cores do status geral. Em Postgres 16 local: o `UPDATE` guardado não altera nada em obra ainda em aprovação (0 linhas) e grava na obra aprovada (1 linha), com valor, data e responsável; e "Reprovado no SGI" deixa o valor nulo. Build, tipos e lint limpos. **Não testado aqui:** o caminho pela interface em produção.
+- **Decisões:** nenhuma nova.
+- **Pendências:** nenhuma nova. Segue aberta PEN-005 (o que acontece após uma reprovação — aqui, a do SGI).
+- **Próximo passo:** registrar o resultado do SGI em uma obra aprovada, em produção. Nenhuma migração nova neste bloco.

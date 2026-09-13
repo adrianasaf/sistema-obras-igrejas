@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "testar": "node --experimental-strip-types testes/fluxo.test.mjs && node --experimental-strip-types testes/permissoes.test.mjs && node --experimental-strip-types testes/escopo.test.mjs && node --experimental-strip-types testes/orcamentos.test.mjs"
+    "testar": "node --experimental-strip-types testes/fluxo.test.mjs && node --experimental-strip-types testes/permissoes.test.mjs && node --experimental-strip-types testes/escopo.test.mjs && node --experimental-strip-types testes/orcamentos.test.mjs && node --experimental-strip-types testes/sgi.test.mjs"
   },
   "dependencies": {
     "@clerk/localizations": "^4.16.1",

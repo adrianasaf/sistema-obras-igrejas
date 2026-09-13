@@ -37,7 +37,7 @@ O perfil vem do **Clerk**, em `publicMetadata.perfil`. A matriz de permissões e
 | Coordenador de Área | Dashboard, Obras | 2 |
 | Coordenador de Região | Dashboard, Obras | 3 |
 | Responsável CONBENS | Dashboard, Obras | 4 |
-| Presbitério | Dashboard, Obras, Orçamentos | **nenhuma** — resultado vem do SGI (DEC-013); manter ou remover o perfil é PEN-027 |
+| Presbitério | Dashboard, Obras, Orçamentos | **nenhuma** — resultado vem do SGI (DEC-013); mantido apenas como visualização (DEC-014) |
 | (sem perfil definido) | nenhuma | nenhuma |
 
 Como a proteção é aplicada, no servidor:
@@ -76,3 +76,7 @@ O escopo é aplicado em `src/lib/escopo.ts` e vale em dois pontos, sempre no ser
 2. **Decisões do fluxo** — além de a etapa ter de ser a do seu nível, a obra precisa estar no seu escopo. A tela de detalhes também redireciona para "Acesso não autorizado" quando a solicitação está fora da abrangência, então a URL direta não dá acesso.
 
 Um perfil que exige vínculo e está **sem** `vinculoId` não enxerga nenhuma obra e não decide nada — é o comportamento seguro; o administrador precisa preencher o vínculo no Clerk. A gestão de usuários pelo sistema (criar, convidar, alterar perfil) fica para etapa futura.
+
+## Registro do resultado do SGI
+
+Somente **Responsável CONBENS** e **Administrador** registram ou corrigem o resultado do SGI, e só depois da aprovação de todas as etapas (DEC-013). Os demais perfis veem o resultado como leitura. A regra está em `impedimentoParaRegistrarSgi` (`src/lib/aprovacao.ts`), usada pela tela e pela Server Action; o `UPDATE` no banco também exige que o fluxo esteja aprovado.

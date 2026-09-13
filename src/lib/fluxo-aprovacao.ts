@@ -11,6 +11,7 @@
 import { sql } from "@/lib/db";
 import {
   REENVIO,
+  validarResultadoSgi,
   impedimentoParaDecidir,
   impedimentoParaReenviar,
   nivelDaEtapa,
@@ -253,4 +254,49 @@ async function aplicar({
       "A situação da solicitação mudou enquanto a decisão era registrada. Recarregue a página e tente de novo.",
     );
   }
+}
+
+/* ----------------------------------------------------- resultado do SGI */
+
+// Registra (ou corrige) o resultado que veio do SGI. Só grava se o fluxo
+// interno estiver aprovado — a checagem vai no próprio UPDATE, para valer
+// mesmo com dois acessos simultâneos.
+export async function registrarResultadoSgi({
+  obraId,
+  situacao,
+  valorAprovado,
+  data,
+  usuario,
+}: {
+  obraId: string;
+  situacao: SituacaoSgi;
+  valorAprovado: number | null;
+  data: string | null;
+  usuario: Usuario;
+}): Promise<Fluxo> {
+  const invalido = validarResultadoSgi({ situacao, valorAprovado });
+  if (invalido) throw new ErroFluxo(invalido);
+
+  // Reprovado no SGI não tem valor aprovado.
+  const valor = situacao === "Aprovado no SGI" ? valorAprovado : null;
+
+  const linhas = await sql()`
+    update fluxo_aprovacao
+       set sgi_situacao = ${situacao},
+           sgi_valor_aprovado = ${valor},
+           sgi_data = ${data},
+           sgi_registrado_por = ${usuario.nome},
+           sgi_registrado_em = now(),
+           atualizado_em = now()
+     where obra_id = ${obraId}
+       and situacao = 'Aprovada'
+    returning obra_id`;
+
+  if (linhas.length === 0) {
+    throw new ErroFluxo(
+      "O resultado do SGI só pode ser registrado depois da aprovação de todas as etapas.",
+    );
+  }
+
+  return obterFluxo(obraId);
 }

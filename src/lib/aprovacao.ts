@@ -150,3 +150,72 @@ export function impedimentoParaReenviar(estado: EstadoFluxo): string | null {
     ? null
     : "Só é possível reenviar uma solicitação que está com correção solicitada.";
 }
+
+// Perfis que registram o resultado do SGI (DEC-013): a equipe da CONBENS leva
+// o pedido ao SGI, e o Administrador pode registrar em nome dela.
+export const PERFIS_SGI = ["Administrador", "Responsável CONBENS"] as const;
+
+// Impedimento para registrar o resultado do SGI, ou null se pode registrar.
+// O registro só abre depois da aprovação de todas as etapas.
+export function impedimentoParaRegistrarSgi(
+  perfil: string | null,
+  situacaoFluxo: SituacaoFluxo,
+): string | null {
+  if (!perfil) return "Seu usuário não tem perfil de acesso definido.";
+  if (situacaoFluxo !== "Aprovada") {
+    return "O resultado do SGI só pode ser registrado depois da aprovação de todas as etapas.";
+  }
+  if (!(PERFIS_SGI as readonly string[]).includes(perfil)) {
+    return `Seu perfil (${perfil}) não registra o resultado do SGI. Isso é feito pela CONBENS.`;
+  }
+  return null;
+}
+
+export function podeRegistrarSgi(
+  perfil: string | null,
+  situacaoFluxo: SituacaoFluxo,
+): boolean {
+  return impedimentoParaRegistrarSgi(perfil, situacaoFluxo) === null;
+}
+
+// Validação do resultado informado: o valor aprovado é obrigatório apenas
+// quando a situação é "Aprovado no SGI".
+export function validarResultadoSgi(dados: {
+  situacao: SituacaoSgi;
+  valorAprovado: number | null;
+}): string | null {
+  if (dados.situacao === "Aprovado no SGI") {
+    if (dados.valorAprovado === null) {
+      return "Informe o valor aprovado no SGI.";
+    }
+    if (!(dados.valorAprovado > 0)) {
+      return "O valor aprovado deve ser maior que zero.";
+    }
+  }
+  return null;
+}
+
+// Rótulo do status geral da obra, juntando fluxo interno e resultado do SGI.
+export function rotuloStatusGeral(
+  situacaoFluxo: SituacaoFluxo,
+  etapaAtual: number,
+  situacaoSgi: SituacaoSgi,
+): string {
+  if (situacaoFluxo !== "Aprovada") {
+    return rotuloSituacao(situacaoFluxo, etapaAtual);
+  }
+  if (situacaoSgi === "Aprovado no SGI") return "Aprovada para execução";
+  if (situacaoSgi === "Reprovado no SGI") return "Reprovada no SGI";
+  return "Aprovada pela CONBENS · aguardando SGI";
+}
+
+// Cor do status geral, reaproveitando a paleta das situações de aprovação.
+export function corStatusGeral(
+  situacaoFluxo: SituacaoFluxo,
+  situacaoSgi: SituacaoSgi,
+): SituacaoAprovacao {
+  if (situacaoFluxo !== "Aprovada") return situacaoComoAprovacao(situacaoFluxo);
+  if (situacaoSgi === "Aprovado no SGI") return "Aprovado";
+  if (situacaoSgi === "Reprovado no SGI") return "Reprovado";
+  return "Aguardando";
+}

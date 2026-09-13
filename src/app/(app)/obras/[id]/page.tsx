@@ -19,10 +19,11 @@ import {
 import { GaleriaFotos } from "@/components/galeria-fotos";
 import {
   NIVEIS_APROVACAO,
+  corStatusGeral,
   fluxoEncerrado,
   nivelDaEtapa,
-  rotuloSituacao,
-  situacaoComoAprovacao,
+  podeRegistrarSgi,
+  rotuloStatusGeral,
   type SituacaoAprovacao,
 } from "@/lib/aprovacao";
 import {
@@ -31,6 +32,7 @@ import {
   type Fluxo,
 } from "@/lib/fluxo-aprovacao";
 import { OrcamentosObra } from "@/components/orcamentos-obra";
+import { PainelSgi } from "@/components/painel-sgi";
 import { PainelDecisao, PainelReenvio } from "./painel-aprovacao";
 import { CORES_APROVACAO, CORES_FASE } from "@/lib/cores";
 import { cartao, tituloSecao } from "@/lib/ui";
@@ -118,6 +120,10 @@ export default async function DetalheObraPage({
                 dados={aprovacoes}
                 erroBanco={erroBanco}
                 perfil={sessao.perfil}
+                podeRegistrarSgi={podeRegistrarSgi(
+                  sessao.perfil,
+                  situacaoFluxo,
+                )}
               />
             ),
           },
@@ -193,10 +199,18 @@ function Cabecalho({ obra, fluxo }: { obra: Obra; fluxo?: Fluxo }) {
               </span>
             )}
             <BadgeAprovacao
-              valor={fluxo ? situacaoComoAprovacao(fluxo.situacao) : obra.statusCor}
+              valor={
+                fluxo
+                  ? corStatusGeral(fluxo.situacao, fluxo.sgi.situacao)
+                  : obra.statusCor
+              }
               rotulo={
                 fluxo
-                  ? rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)
+                  ? rotuloStatusGeral(
+                      fluxo.situacao,
+                      fluxo.etapaAtual,
+                      fluxo.sgi.situacao,
+                    )
                   : obra.statusRotulo
               }
             />
@@ -215,7 +229,11 @@ function Cabecalho({ obra, fluxo }: { obra: Obra; fluxo?: Fluxo }) {
             rotulo="Status atual"
             valor={
               fluxo
-                ? rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)
+                ? rotuloStatusGeral(
+                    fluxo.situacao,
+                    fluxo.etapaAtual,
+                    fluxo.sgi.situacao,
+                  )
                 : obra.statusRotulo
             }
           />
@@ -304,11 +322,13 @@ function Aprovacoes({
   dados,
   erroBanco,
   perfil,
+  podeRegistrarSgi: podeSgi,
 }: {
   obraId: string;
   dados: Aprovacoes | null;
   erroBanco: boolean;
   perfil: Perfil;
+  podeRegistrarSgi: boolean;
 }) {
   if (!dados) {
     return (
@@ -334,8 +354,12 @@ function Aprovacoes({
       <Cartao titulo="Situação da solicitação">
         <div className="flex flex-wrap items-center gap-3">
           <BadgeAprovacao
-            valor={situacaoComoAprovacao(fluxo.situacao)}
-            rotulo={rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)}
+            valor={corStatusGeral(fluxo.situacao, fluxo.sgi.situacao)}
+            rotulo={rotuloStatusGeral(
+              fluxo.situacao,
+              fluxo.etapaAtual,
+              fluxo.sgi.situacao,
+            )}
           />
           <p className="text-sm text-muted">
             Etapa {fluxo.etapaAtual} de {NIVEIS_APROVACAO.length}
@@ -378,6 +402,16 @@ function Aprovacoes({
             />
           </Cartao>
         ))}
+
+      {/* Resultado do SGI: aparece depois da aprovação de todas as etapas */}
+      {fluxo.situacao === "Aprovada" && (
+        <Cartao
+          titulo="Resultado do SGI"
+          descricao="Depois da aprovação da CONBENS, o pedido é levado ao SGI (sistema externo) e o resultado é registrado aqui."
+        >
+          <PainelSgi obraId={obraId} sgi={fluxo.sgi} podeRegistrar={podeSgi} />
+        </Cartao>
+      )}
 
       {/* Linha do tempo */}
       <Cartao

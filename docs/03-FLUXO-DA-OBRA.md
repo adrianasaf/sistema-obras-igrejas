@@ -41,7 +41,8 @@ Visão macro do caminho de uma obra, com o que já se conhece. Os detalhes de ca
 ## 3. SGI (sistema externo)
 - Depois da aprovação da CONBENS, alguém da equipe da CONBENS leva o pedido ao **SGI**, sistema oficial da Igreja Cristã Maranata. **O Presbitério não decide dentro deste sistema** (DEC-013, resolve PEN-007).
 - O resultado volta para cá **registrado manualmente**: situação (Aguardando SGI, Aprovado no SGI, Reprovado no SGI), valor aprovado (quando aprovado) e data. É um campo próprio, **não** uma etapa do fluxo.
-- A tela desse registro será feita em etapa futura; a estrutura de dados já existe (migração 004).
+- **Implementado:** o registro fica na aba **Aprovações** da obra, numa seção que só aparece depois da aprovação de todas as etapas. Quem registra ou corrige é o **Responsável CONBENS** ou o **Administrador**; os outros perfis veem o resultado somente como leitura. O valor aprovado é obrigatório apenas quando a situação é "Aprovado no SGI" (reprovado não tem valor).
+- Com o resultado "Aprovado no SGI", o status geral da obra passa a ser exibido como **"Aprovada para execução"** — é apenas rótulo: o módulo de Execução ainda não existe. Com "Reprovado no SGI", a tela informa que o acompanhamento se encerra ali; eventual reabertura **não está definida** (PEN-005).
 
 ## 4. Orçamentos e Croqui
 - Depois da aprovação da CONBENS, quem monta é a **igreja solicitante** (DEC-013, resolve PEN-008): **3 cotações de material**, **3 cotações de mão de obra** e o **Croqui** da obra.

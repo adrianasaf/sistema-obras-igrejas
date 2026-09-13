@@ -6,10 +6,11 @@
 
 import { sql } from "@/lib/db";
 import {
-  rotuloSituacao,
-  situacaoComoAprovacao,
+  corStatusGeral,
+  rotuloStatusGeral,
   type SituacaoAprovacao,
   type SituacaoFluxo,
+  type SituacaoSgi,
 } from "@/lib/aprovacao";
 import { filtroDeEscopo, type EscopoUsuario } from "@/lib/escopo";
 import type { Prioridade, TipoObra } from "@/lib/obras-tipos";
@@ -37,6 +38,7 @@ export type Obra = {
   // Situação vinda do fluxo de aprovação.
   situacao: SituacaoFluxo;
   etapaAtual: number;
+  situacaoSgi: SituacaoSgi;
   statusRotulo: string;
   statusCor: SituacaoAprovacao;
 };
@@ -49,7 +51,8 @@ const SELECT = `
          a.id as area_id, a.nome as area_nome,
          r.id as regiao_id, r.nome as regiao_nome,
          coalesce(f.situacao, 'Em andamento') as situacao,
-         coalesce(f.etapa_atual, 1) as etapa_atual
+         coalesce(f.etapa_atual, 1) as etapa_atual,
+         coalesce(f.sgi_situacao, 'Aguardando SGI') as sgi_situacao
     from obras o
     join igrejas i on i.id = o.igreja_id
     join polos p on p.id = i.polo_id
@@ -70,6 +73,7 @@ type Linha = Record<string, unknown>;
 function montar(l: Linha): Obra {
   const situacao = l.situacao as SituacaoFluxo;
   const etapaAtual = Number(l.etapa_atual);
+  const situacaoSgi = l.sgi_situacao as SituacaoSgi;
   return {
     id: l.id as string,
     igrejaId: l.igreja_id as string,
@@ -89,8 +93,9 @@ function montar(l: Linha): Obra {
     prioridade: (l.prioridade as Prioridade | null) ?? null,
     situacao,
     etapaAtual,
-    statusRotulo: rotuloSituacao(situacao, etapaAtual),
-    statusCor: situacaoComoAprovacao(situacao),
+    situacaoSgi,
+    statusRotulo: rotuloStatusGeral(situacao, etapaAtual, situacaoSgi),
+    statusCor: corStatusGeral(situacao, situacaoSgi),
   };
 }
 
