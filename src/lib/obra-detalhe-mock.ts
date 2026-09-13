@@ -19,34 +19,14 @@ export type ObraBase = {
 
 export type Foto = { id: string; legenda: string };
 
-// Valores de exemplo, derivados do número da solicitação. Serão substituídos
-// pelo módulo de Orçamento (etapa futura).
+// Custos de exemplo das fases de execução, derivados do número da solicitação.
+// Serão substituídos quando o módulo de Execução existir (PEN-009).
 function valoresDemonstrativos(obra: ObraBase) {
   const semente = Number(obra.id.slice(-4)) || 1;
   const fator = { Construção: 6, Ampliação: 3, Reforma: 2, Manutenção: 1 }[obra.tipo];
   const material = (8000 + semente * 350) * fator;
-  const maoDeObra = Math.round(material * 0.62);
-  const estimado = material + maoDeObra;
-  return {
-    material,
-    maoDeObra,
-    estimado,
-    aprovado: obra.aprovada ? Math.round(estimado * 0.95) : undefined,
-  };
+  return { estimado: material + Math.round(material * 0.62) };
 }
-
-export const CATEGORIAS_ORCAMENTO = ["Material", "Mão de obra"] as const;
-export type CategoriaOrcamento = (typeof CATEGORIAS_ORCAMENTO)[number];
-
-export type SituacaoOrcamento = "Não recebido" | "Recebido" | "Selecionado";
-
-export type Orcamento = {
-  rotulo: string;
-  situacao: SituacaoOrcamento;
-  fornecedor?: string;
-  valor?: number;
-  data?: string;
-};
 
 export type SituacaoFase = "Não iniciada" | "Em andamento" | "Concluída";
 
@@ -74,36 +54,9 @@ function somarDias(iso: string, dias: number): string {
 }
 
 export type DetalheObra = {
-  orcamentos: Record<CategoriaOrcamento, Orcamento[]>;
   fases: Fase[];
   conclusao: Conclusao;
 };
-
-function orcamentosDe(obra: ObraBase): Record<CategoriaOrcamento, Orcamento[]> {
-  // Só obras aprovadas ou adiante têm orçamentos de exemplo preenchidos.
-  const preenchido = obra.aprovada;
-
-  const valores = valoresDemonstrativos(obra);
-
-  const monta = (categoria: CategoriaOrcamento, base: number): Orcamento[] =>
-    [1, 2, 3].map((n) => {
-      if (!preenchido) {
-        return { rotulo: `Orçamento ${n}`, situacao: "Não recebido" as const };
-      }
-      return {
-        rotulo: `Orçamento ${n}`,
-        situacao: n === 1 ? ("Selecionado" as const) : ("Recebido" as const),
-        fornecedor: `${categoria === "Material" ? "Fornecedor" : "Prestador"} Exemplo ${n}`,
-        valor: Math.round(base * (1 + (n - 1) * 0.12)),
-        data: somarDias(obra.data, 14 + n),
-      };
-    });
-
-  return {
-    Material: monta("Material", valores.material),
-    "Mão de obra": monta("Mão de obra", valores.maoDeObra),
-  };
-}
 
 // Textos e materiais de exemplo por fase. O conteúdo real de cada fase da
 // execução está PENDENTE DE DEFINIÇÃO (PEN-009); aqui servem só de ilustração.
@@ -163,7 +116,6 @@ function conclusaoDe(): Conclusao {
 
 export function detalheDemonstrativo(obra: ObraBase): DetalheObra {
   return {
-    orcamentos: orcamentosDe(obra),
     fases: fasesDe(obra),
     conclusao: conclusaoDe(),
   };

@@ -12,10 +12,8 @@ import type { StatusCadastro } from "@/lib/estrutura-tipos";
 import type { TipoAlteracao } from "@/lib/historico-mock";
 import type { Perfil } from "@/lib/usuarios-mock";
 import type { SituacaoAprovacao } from "@/lib/aprovacao";
-import type {
-  SituacaoFase,
-  SituacaoOrcamento,
-} from "@/lib/obra-detalhe-mock";
+import type { SituacaoFase } from "@/lib/obra-detalhe-mock";
+import type { StatusCotacao } from "@/lib/orcamentos-db";
 import type { StatusObra } from "@/lib/obras-mock";
 import type { Prioridade } from "@/lib/obras-tipos";
 
@@ -137,7 +135,7 @@ export const CORES_FASE: Record<SituacaoFase, Paleta> = {
 };
 
 // Situações de cada orçamento recebido (aba Orçamentos).
-export const CORES_ORCAMENTO: Record<SituacaoOrcamento, Paleta> = {
+export const CORES_ORCAMENTO: Record<StatusCotacao, Paleta> = {
   "Não recebido": {
     cracha: "border-slate-200 bg-surface text-slate-600",
     ponto: "bg-slate-300",

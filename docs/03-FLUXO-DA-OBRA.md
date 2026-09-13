@@ -45,7 +45,8 @@ Visão macro do caminho de uma obra, com o que já se conhece. Os detalhes de ca
 
 ## 4. Orçamentos e Croqui
 - Depois da aprovação da CONBENS, quem monta é a **igreja solicitante** (DEC-013, resolve PEN-008): **3 cotações de material**, **3 cotações de mão de obra** e o **Croqui** da obra.
-- Módulo de Orçamento: etapa futura. Critérios de escolha entre as cotações: PENDENTE DE DEFINIÇÃO.
+- **Implementado (migração 007):** aba Orçamentos da obra, com até 3 cotações por categoria (fornecedor/prestador, valor, data, validade, observações e situação), seleção de uma cotação por categoria, resumo com menor valor e total, e o croqui (descrição e link — o upload de arquivo fica para etapa futura). O módulo só abre depois da aprovação da CONBENS, e quem lança é a igreja solicitante (ou Administrador e Responsável CONBENS).
+- Critérios de escolha entre as cotações (menor preço obriga?): PENDENTE DE DEFINIÇÃO (PEN-030).
 
 ## 5. Execução em cinco fases
 - A execução é acompanhada em **cinco fases**.

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { temEscopoSobreObra } from "@/lib/escopo";
+import { podeOrcar, temEscopoSobreObra } from "@/lib/escopo";
+import { obterOrcamento } from "@/lib/orcamentos-db";
 import {
   podeAcessarArea,
   podeDecidirEtapa,
@@ -29,7 +30,7 @@ import {
   type DecisaoRegistrada,
   type Fluxo,
 } from "@/lib/fluxo-aprovacao";
-import { OrcamentosPainel } from "@/components/orcamentos-painel";
+import { OrcamentosObra } from "@/components/orcamentos-obra";
 import { PainelDecisao, PainelReenvio } from "./painel-aprovacao";
 import { CORES_APROVACAO, CORES_FASE } from "@/lib/cores";
 import { cartao, tituloSecao } from "@/lib/ui";
@@ -84,6 +85,19 @@ export default async function DetalheObraPage({
     erroBanco = true;
   }
 
+  // Orçamentos (DEC-013): só liberados depois da aprovação da CONBENS, e o
+  // lançamento é da igreja solicitante (escopo) ou de perfil de abrangência
+  // geral. A Server Action confere as duas coisas de novo, no servidor.
+  const orcamento = verOrcamentos ? await obterOrcamento(obra.id) : null;
+  const situacaoFluxo = aprovacoes?.fluxo.situacao ?? "Em andamento";
+  const orcamentoLiberado = situacaoFluxo === "Aprovada";
+  const podeLancarOrcamento = podeOrcar(sessao, obra, situacaoFluxo);
+  const avisoOrcamento = orcamentoLiberado
+    ? podeLancarOrcamento
+      ? null
+      : "Você acompanha as cotações desta obra, mas o lançamento é da igreja solicitante."
+    : "A solicitação ainda está em aprovação. As cotações e o croqui poderão ser lançados depois da aprovação da CONBENS.";
+
   return (
     <div className="space-y-6">
       <Cabecalho obra={obra} fluxo={aprovacoes?.fluxo} />
@@ -112,12 +126,16 @@ export default async function DetalheObraPage({
                 {
                   id: "orcamentos",
                   rotulo: "Orçamentos",
-                  conteudo: (
-                    <OrcamentosPainel
-                      orcamentos={detalhe.orcamentos}
-                      valorAprovado={aprovacoes?.fluxo.sgi.valorAprovado ?? undefined}
+                  conteudo: orcamento ? (
+                    <OrcamentosObra
+                      obraId={obra.id}
+                      orcamento={orcamento}
+                      habilitado={orcamentoLiberado}
+                      podeEditar={podeLancarOrcamento}
+                      aviso={avisoOrcamento}
+                      valorAprovadoSgi={aprovacoes?.fluxo.sgi.valorAprovado ?? null}
                     />
-                  ),
+                  ) : null,
                 },
               ]
             : []),

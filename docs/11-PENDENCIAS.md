@@ -33,3 +33,5 @@ Questões institucionais e técnicas ainda **não decididas**. Não devem ser re
 | PEN-027 | O perfil "Presbitério" deve ser removido ou mantido? | 04 | **Resolvida (DEC-014)** — mantido, apenas como visualização: não decide nenhuma etapa e não tem restrição de escopo |
 | PEN-028 | Alçadas por valor ou prioridade e prazos de cada etapa do fluxo de quatro níveis | 03, 05 | Aberta |
 | PEN-029 | Grafia oficial da sigla: "CONBENS" (usada no sistema) ou "CONBENS" (usada pelo responsável ao definir Comissão de Bens e Construções) | 03, 04 | Aberta |
+| PEN-030 | Critérios de escolha entre as três cotações (o menor valor é obrigatório? precisa justificar outra escolha?) e quem confere o orçamento antes de ir ao SGI | 03, 05 | Aberta |
+| PEN-031 | Onde os arquivos de croqui e fotos serão armazenados (hoje o croqui aceita apenas descrição e link) | 02, 06 | Aberta |

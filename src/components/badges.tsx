@@ -17,10 +17,8 @@ import {
 import type { TipoAlteracao } from "@/lib/historico-mock";
 import type { Perfil } from "@/lib/usuarios-mock";
 import type { SituacaoAprovacao } from "@/lib/aprovacao";
-import type {
-  SituacaoFase,
-  SituacaoOrcamento,
-} from "@/lib/obra-detalhe-mock";
+import type { SituacaoFase } from "@/lib/obra-detalhe-mock";
+import type { StatusCotacao } from "@/lib/orcamentos-db";
 import type { StatusObra } from "@/lib/obras-mock";
 import type { Prioridade } from "@/lib/obras-tipos";
 
@@ -75,7 +73,7 @@ export function BadgeFase({ valor }: { valor: SituacaoFase }) {
   );
 }
 
-export function BadgeOrcamento({ valor }: { valor: SituacaoOrcamento }) {
+export function BadgeOrcamento({ valor }: { valor: StatusCotacao }) {
   const cor = CORES_ORCAMENTO[valor];
   return (
     <span className={`${base} ${cor.cracha}`}>

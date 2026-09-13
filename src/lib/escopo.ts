@@ -73,3 +73,37 @@ export function motivoSemEscopo(usuario: EscopoUsuario): string {
   }
   return "Esta solicitação está fora da sua abrangência.";
 }
+
+/* ------------------------------------------------------- orçamentos (DEC-013) */
+
+// O módulo de orçamento só abre depois da aprovação da CONBENS (situação
+// "Aprovada" no fluxo). Quem lança é a igreja solicitante — ou seja, quem tem
+// escopo sobre a obra — e os perfis de abrangência geral. O Presbitério
+// apenas visualiza (DEC-014).
+export function impedimentoParaOrcar(
+  usuario: EscopoUsuario,
+  obra: CadeiaObra,
+  situacaoFluxo: string,
+): string | null {
+  if (!usuario.perfil) {
+    return "Seu usuário não tem perfil de acesso definido.";
+  }
+  if (situacaoFluxo !== "Aprovada") {
+    return "A solicitação ainda está em aprovação: os orçamentos só podem ser lançados depois da aprovação da CONBENS.";
+  }
+  if (usuario.perfil === "Presbitério") {
+    return "O perfil Presbitério apenas visualiza os orçamentos.";
+  }
+  if (!temEscopoSobreObra(usuario, obra)) {
+    return motivoSemEscopo(usuario);
+  }
+  return null;
+}
+
+export function podeOrcar(
+  usuario: EscopoUsuario,
+  obra: CadeiaObra,
+  situacaoFluxo: string,
+): boolean {
+  return impedimentoParaOrcar(usuario, obra, situacaoFluxo) === null;
+}

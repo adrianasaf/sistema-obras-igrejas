@@ -309,3 +309,20 @@ Próximo passo:
 - **Decisões:** DEC-014.
 - **Pendências:** resolvidas PEN-025, PEN-027 e PEN-029. Seguem abertas PEN-006, PEN-009, PEN-024, PEN-026 e PEN-028.
 - **Próximo passo:** aplicar a migração 006, preencher `vinculoId` no Clerk para os perfis que exigem vínculo e validar em produção.
+
+## Entrada 019
+- **Data:** 2026-09-13
+- **Etapa:** Módulo de Orçamento (cotações de material e mão de obra + croqui)
+- **Versão:** 0.3.0
+- **Realizado:**
+  - **Migração 007:** `orcamentos_obra` (obra, categoria `material`/`mao_de_obra`, número 1..3, fornecedor/prestador, valor, data da cotação, validade, observações, situação, quem lançou) e `croquis_obra` (um por obra: descrição, link, quem enviou, quando). Duas regras ficaram garantidas por índice único no banco: **no máximo 3 cotações por categoria** e **uma única selecionada por categoria**.
+  - `src/lib/orcamentos-db.ts`: leitura das cotações e do croqui, cálculo de **menor valor de material**, **menor valor de mão de obra** e **total estimado** (pelas selecionadas), `salvarCotacao` (cria ou atualiza; cotação já selecionada continua selecionada ao ser editada), `selecionarCotacao` (desmarca a anterior e marca a nova, em transação) e `salvarCroqui`.
+  - **Regra de habilitação (DEC-013):** o módulo só abre quando o fluxo está `Aprovada` (aprovação da CONBENS). Antes disso a aba mostra aviso e não permite lançar. A regra ficou em uma função pura — `impedimentoParaOrcar` em `src/lib/escopo.ts` — usada tanto pela tela quanto pelas Server Actions.
+  - **Quem lança:** quem tem escopo sobre a obra (a igreja solicitante) e os perfis de abrangência geral (Administrador e Responsável CONBENS). **Presbitério apenas visualiza** (DEC-014). Nenhum outro perfil foi incluído.
+  - Server Actions em `src/app/(app)/obras/[id]/orcamentos-acoes.ts`: criar/editar cotação, selecionar cotação e registrar/atualizar croqui — todas conferindo perfil, escopo e habilitação antes de gravar.
+  - **Aba Orçamentos** passou a mostrar dados reais (`src/components/orcamentos-obra.tsx`), mantendo o desenho: dois blocos (Material e Mão de obra) com três cotações cada, botão de selecionar, resumo de valores e o croqui. O mock de orçamentos saiu de `obra-detalhe-mock.ts` e `orcamentos-painel.tsx` foi removido.
+  - **Não implementado** (conforme instrução): decisão do Presbitério/SGI sobre o valor e "aprovar valor diferente do solicitado" — o campo do SGI só é exibido como leitura. Estoque, Execução, Financeiro, Fotos, Usuários e o fluxo de aprovação não foram tocados.
+- **Testes executados:** Postgres 16 local, migrações 001→007 do zero: três cotações de material gravadas; quarta cotação, número repetido e categoria inválida rejeitados; duas selecionadas na mesma categoria rejeitadas pelo índice único; troca de selecionada funcionando como na Server Action; menor valor por categoria e total das selecionadas conferidos; croqui registrado e atualizado sem duplicar. `npm run testar` — quatro suítes, todas passando, incluindo a nova de **orçamentos** (12 verificações: bloqueio em obra em andamento, em correção e reprovada; liberação após a aprovação; igreja solicitante lança, outra igreja não; Administrador e CONBENS lançam; Presbitério só visualiza; coordenador do polo da obra lança, de outro polo não; sem perfil não lança). Build, tipos e lint limpos. **Não testado aqui:** o caminho pela interface em produção.
+- **Decisões:** nenhuma nova.
+- **Pendências:** novas PEN-030 (critérios de escolha entre as cotações e quem confere antes do SGI) e PEN-031 (onde armazenar arquivos de croqui e fotos).
+- **Próximo passo:** aplicar a migração 007 e lançar as cotações de uma obra já aprovada, em produção.

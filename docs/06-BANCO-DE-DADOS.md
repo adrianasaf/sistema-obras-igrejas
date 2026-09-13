@@ -44,6 +44,7 @@ O SQL fica em `src/lib/migracoes.ts` (fonte única, versionada) e é aplicado pe
 | 004 | Fluxo com quatro etapas (DEC-013) e colunas do resultado do SGI |
 | 005 | Solicitações de obras (`obras`) |
 | 006 | Grafia CONBENS no histórico de decisões (DEC-014) |
+| 007 | Orçamentos e croqui da obra |
 
 ## Tabelas do fluxo de aprovação (migração 001)
 
@@ -125,3 +126,35 @@ A migração 004 também **apaga os registros de teste** de `fluxo_aprovacao` e 
 **Não existe coluna de status:** o status da solicitação vem de `fluxo_aprovacao` (etapa atual e situação). Ao registrar uma solicitação, o sistema grava a obra e abre o fluxo na etapa 1 (Coordenador do Polo) na **mesma transação**.
 
 `fluxo_aprovacao.obra_id` ainda **não** tem chave estrangeira para `obras`: seria uma alteração no fluxo de aprovação, fora do escopo deste bloco.
+
+## Orçamentos e croqui (migração 007)
+
+Montados pela **igreja solicitante** depois da aprovação da CONBENS (DEC-013).
+
+### `orcamentos_obra`
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `id` | bigserial (PK) | |
+| `obra_id` | text → `obras (id)` | |
+| `categoria` | text | `material` ou `mao_de_obra` |
+| `numero` | smallint | 1 a 3 — é o que limita a três cotações por categoria |
+| `fornecedor_prestador` | text | |
+| `valor` | numeric(14,2) | |
+| `data_cotacao` / `validade` | date | |
+| `observacoes` | text | |
+| `status` | text | `Não recebido`, `Recebido` ou `Selecionado` |
+| `criado_por` | text | Quem lançou (rastreabilidade, RN-12) |
+| `criado_em` / `atualizado_em` | timestamptz | |
+
+Dois índices únicos guardam as regras no banco, não só na aplicação:
+- `orcamentos_obra_unico_idx (obra_id, categoria, numero)` — no máximo três cotações por categoria, sem número repetido;
+- `orcamentos_obra_selecionado_idx (obra_id, categoria) where status = 'Selecionado'` — uma única cotação selecionada por categoria.
+
+### `croquis_obra`
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `obra_id` | text (PK) → `obras (id)` | Um croqui por obra |
+| `descricao` | text | |
+| `arquivo_url` | text | Link. O **upload de arquivo** será implementado em etapa futura. |
+| `enviado_por` | text | |
+| `enviado_em` | timestamptz | |

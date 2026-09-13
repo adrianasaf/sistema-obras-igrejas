@@ -212,4 +212,42 @@ export const MIGRACOES: Migracao[] = [
         where nivel = 'Responsável COMBENS'`,
     ],
   },
+  {
+    id: "007",
+    titulo: "Orçamentos e croqui da obra",
+    descricao:
+      "Cotações de material e mão de obra (até 3 por categoria, uma selecionada por categoria) e o croqui da obra. Montados pela igreja solicitante após a aprovação da CONBENS (DEC-013).",
+    comandos: [
+      `create table if not exists orcamentos_obra (
+         id                    bigserial   primary key,
+         obra_id               text        not null references obras (id),
+         categoria             text        not null check (categoria in ('material', 'mao_de_obra')),
+         numero                smallint    not null check (numero between 1 and 3),
+         fornecedor_prestador  text,
+         valor                 numeric(14,2),
+         data_cotacao          date,
+         validade              date,
+         observacoes           text,
+         status                text        not null default 'Não recebido'
+                               check (status in ('Não recebido', 'Recebido', 'Selecionado')),
+         criado_por            text,
+         criado_em             timestamptz not null default now(),
+         atualizado_em         timestamptz not null default now()
+       )`,
+      // Garante no máximo três cotações por categoria (números 1, 2 e 3).
+      `create unique index if not exists orcamentos_obra_unico_idx
+         on orcamentos_obra (obra_id, categoria, numero)`,
+      // Garante uma única cotação selecionada por categoria.
+      `create unique index if not exists orcamentos_obra_selecionado_idx
+         on orcamentos_obra (obra_id, categoria)
+         where status = 'Selecionado'`,
+      `create table if not exists croquis_obra (
+         obra_id      text        primary key references obras (id),
+         descricao    text,
+         arquivo_url  text,
+         enviado_por  text,
+         enviado_em   timestamptz not null default now()
+       )`,
+    ],
+  },
 ];

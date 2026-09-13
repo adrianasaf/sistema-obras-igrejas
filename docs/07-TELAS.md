@@ -33,7 +33,7 @@
 | Dashboard | `/` | Interface: indicadores ainda sobre dados demonstrativos (será ligado ao banco na etapa seguinte) |
 | Obras (lista) | `/obras` | **Funcional (banco):** tabela/cartões, filtros por prioridade e situação, busca |
 | Nova solicitação | `/obras/nova` | **Funcional (banco):** grava a solicitação e abre o fluxo na etapa 1. "Salvar rascunho" segue indisponível; fotos não são enviadas |
-| Detalhes da obra | `/obras/[id]` | **Funcional (banco)** em Visão Geral e Aprovações; Orçamentos, Execução e Conclusão seguem demonstrativos |
+| Detalhes da obra | `/obras/[id]` | **Funcional (banco)** em Visão Geral, Aprovações e Orçamentos (cotações + croqui); Execução e Conclusão seguem demonstrativos |
 | Regiões | `/regioes` | **Funcional (banco):** lista, cadastro, visualização e edição |
 | Áreas | `/areas` | **Funcional (banco):** lista, cadastro, visualização e edição |
 | Polos | `/polos` | **Funcional (banco):** lista, cadastro, visualização e edição |
