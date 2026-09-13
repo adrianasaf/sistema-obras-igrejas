@@ -16,7 +16,8 @@ const TABELA_CONTROLE = `create table if not exists migracoes (
 )`;
 
 async function garantirControle() {
-  await sql()([TABELA_CONTROLE] as unknown as TemplateStringsArray);
+  // `query` é a forma correta de rodar SQL que não vem de template.
+  await sql().query(TABELA_CONTROLE, []);
 }
 
 export async function listarMigracoes(): Promise<EstadoMigracao[]> {
@@ -49,9 +50,7 @@ export async function aplicarMigracao(id: string): Promise<string> {
   }
 
   const banco = sql();
-  const comandos = migracao.comandos.map(
-    (comando) => banco([comando] as unknown as TemplateStringsArray),
-  );
+  const comandos = migracao.comandos.map((comando) => banco.query(comando, []));
   await banco.transaction([
     ...comandos,
     banco`insert into migracoes (id, titulo) values (${migracao.id}, ${migracao.titulo})
