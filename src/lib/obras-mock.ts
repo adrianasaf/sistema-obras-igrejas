@@ -1,21 +1,16 @@
-// Dados DEMONSTRATIVOS do módulo Obras. Serão substituídos pelo banco em etapa futura.
-// Nomes de igrejas e situações são fictícios.
+// Dados DEMONSTRATIVOS usados apenas pelos indicadores do Dashboard. As
+// telas de Obras (/obras e /obras/[id]) já leem do banco (src/lib/obras-db.ts);
+// o Dashboard será ligado ao banco na etapa seguinte.
 
-export const TIPOS_OBRA = [
-  "Reforma",
-  "Ampliação",
-  "Construção",
-  "Manutenção",
-] as const;
-export type TipoObra = (typeof TIPOS_OBRA)[number];
-
-export const PRIORIDADES = [
-  "Emergencial",
-  "Prioridade 1",
-  "Prioridade 2",
-  "Prioridade 3",
-] as const;
-export type Prioridade = (typeof PRIORIDADES)[number];
+export {
+  TIPOS_OBRA,
+  PRIORIDADES,
+  formatarData,
+  formatarValor,
+  type TipoObra,
+  type Prioridade,
+} from "@/lib/obras-tipos";
+import type { Prioridade, TipoObra } from "@/lib/obras-tipos";
 
 // Status provisórios. Os status oficiais dependem do fluxo de aprovação
 // (PENDENTE DE DEFINIÇÃO — ver docs/11-PENDENCIAS.md, PEN-004).
@@ -211,10 +206,7 @@ export function buscarObra(id: string): Obra | undefined {
   return OBRAS.find((o) => o.id === id);
 }
 
-export function formatarData(iso: string): string {
-  const [ano, mes, dia] = iso.split("-");
-  return `${dia}/${mes}/${ano}`;
-}
+
 
 // Valores DEMONSTRATIVOS de cada solicitação. Derivados do número da
 // solicitação apenas para a interface ter números estáveis; não há cálculo,
@@ -249,10 +241,4 @@ export function valoresDemonstrativos(obra: Obra): ValoresObra {
   };
 }
 
-export function formatarValor(valor: number): string {
-  return valor.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    maximumFractionDigits: 0,
-  });
-}
+

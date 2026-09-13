@@ -42,6 +42,7 @@ O SQL fica em `src/lib/migracoes.ts` (fonte única, versionada) e é aplicado pe
 | 002 | Estrutura administrativa (`regioes`, `areas`, `polos`, `igrejas`) |
 | 003 | Dados de teste da estrutura administrativa (4 regiões, 7 áreas, 12 polos, 16 igrejas) |
 | 004 | Fluxo com quatro etapas (DEC-013) e colunas do resultado do SGI |
+| 005 | Solicitações de obras (`obras`) |
 
 ## Tabelas do fluxo de aprovação (migração 001)
 
@@ -102,3 +103,24 @@ O SGI é o sistema externo oficial da Igreja Cristã Maranata. Depois da aprova�
 A tela desse registro será feita em etapa futura; nesta etapa existe apenas a estrutura de dados e a leitura.
 
 A migração 004 também **apaga os registros de teste** de `fluxo_aprovacao` e `decisoes_aprovacao`: a numeração das etapas mudou de significado (a antiga etapa 2 era o Coordenador do Polo; agora é a etapa 1), e manter as linhas antigas deixaria o histórico incorreto.
+
+## Solicitações de obras (migração 005)
+
+### `obras`
+| Coluna | Tipo | Observação |
+|---|---|---|
+| `id` | text (PK) | Número da solicitação, padrão `AAAA-NNNN`, sequencial por ano. Mesmo padrão de `fluxo_aprovacao.obra_id`. |
+| `igreja_id` | text → `igrejas (id)` | Igreja solicitante |
+| `tipo` | text | `Reforma`, `Ampliação`, `Construção` ou `Manutenção` |
+| `titulo` | text | |
+| `descricao` | text | |
+| `data_solicitacao` | date | Padrão: data de hoje |
+| `responsavel_solicitacao` | text | Quem registrou. O vínculo com o cadastro de usuários depende de PEN-025. |
+| `prioridade` | text, **aceita vazio** | `Emergencial`, `Prioridade 1`, `Prioridade 2` ou `Prioridade 3`. Vazia até o pastor responsável da COMBENS definir (DEC-013). |
+| `criado_em` | timestamptz | |
+
+Índices em `obras (igreja_id)` e `obras (data_solicitacao desc)`.
+
+**Não existe coluna de status:** o status da solicitação vem de `fluxo_aprovacao` (etapa atual e situação). Ao registrar uma solicitação, o sistema grava a obra e abre o fluxo na etapa 1 (Coordenador do Polo) na **mesma transação**.
+
+`fluxo_aprovacao.obra_id` ainda **não** tem chave estrangeira para `obras`: seria uma alteração no fluxo de aprovação, fora do escopo deste bloco.

@@ -177,4 +177,28 @@ export const MIGRACOES: Migracao[] = [
       `alter table fluxo_aprovacao add column if not exists sgi_registrado_em timestamptz`,
     ],
   },
+  {
+    id: "005",
+    titulo: "Solicitações de obras",
+    descricao:
+      "Tabela `obras` com a solicitação em si. O status não fica aqui: vem do fluxo de aprovação. A prioridade é definida depois pela COMBENS (DEC-013), por isso aceita vazio.",
+    comandos: [
+      `create table if not exists obras (
+         id                      text        primary key,
+         igreja_id               text        not null references igrejas (id),
+         tipo                    text        not null
+                                 check (tipo in ('Reforma', 'Ampliação', 'Construção', 'Manutenção')),
+         titulo                  text        not null,
+         descricao               text        not null,
+         data_solicitacao        date        not null default current_date,
+         responsavel_solicitacao text,
+         prioridade              text
+                                 check (prioridade in ('Emergencial', 'Prioridade 1',
+                                                       'Prioridade 2', 'Prioridade 3')),
+         criado_em               timestamptz not null default now()
+       )`,
+      `create index if not exists obras_igreja_idx on obras (igreja_id)`,
+      `create index if not exists obras_data_idx on obras (data_solicitacao desc)`,
+    ],
+  },
 ];

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { exigirAcesso } from "@/lib/sessao";
 import { notFound } from "next/navigation";
-import { BadgeCadastro, BadgePrioridade, BadgeStatus } from "@/components/badges";
+import {
+  BadgeAprovacao,
+  BadgeCadastro,
+  BadgePrioridade,
+} from "@/components/badges";
 import {
   AvisoDemonstrativo,
   CabecalhoDetalhe,
@@ -9,7 +13,8 @@ import {
 import Link from "next/link";
 import { buscarIgreja } from "@/lib/estrutura-db";
 import { statusFeminino } from "@/lib/estrutura-tipos";
-import { OBRAS, formatarData } from "@/lib/obras-mock";
+import { obrasDaIgreja } from "@/lib/obras-db";
+import { formatarData } from "@/lib/obras-tipos";
 import { cartao, tituloSecao } from "@/lib/ui";
 
 export async function generateMetadata({
@@ -28,11 +33,7 @@ export default async function IgrejaPage({
   const igreja = await buscarIgreja(id);
   if (!igreja) notFound();
 
-  // Obras demonstrativas desta igreja (ligação apenas pelo nome, nos dados de
-  // exemplo; não há relação em banco).
-  const obras = OBRAS.filter((o) => o.igreja === igreja.nome).sort((a, b) =>
-    b.data.localeCompare(a.data),
-  );
+  const obras = await obrasDaIgreja(igreja.id);
 
   return (
     <div className="space-y-6">
@@ -79,8 +80,8 @@ export default async function IgrejaPage({
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <BadgePrioridade valor={o.prioridade} />
-                    <BadgeStatus valor={o.status} />
+                    {o.prioridade && <BadgePrioridade valor={o.prioridade} />}
+                    <BadgeAprovacao valor={o.statusCor} rotulo={o.statusRotulo} />
                   </div>
                 </Link>
               </li>

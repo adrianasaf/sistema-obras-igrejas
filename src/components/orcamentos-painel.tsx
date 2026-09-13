@@ -7,7 +7,7 @@ import {
   type CategoriaOrcamento,
   type DetalheObra,
 } from "@/lib/obra-detalhe-mock";
-import { formatarData, formatarValor } from "@/lib/obras-mock";
+import { formatarData, formatarValor } from "@/lib/obras-tipos";
 import { botaoBase, cartao, tituloSecao } from "@/lib/ui";
 
 type Selecao = Record<CategoriaOrcamento, number | null>;
@@ -19,6 +19,7 @@ export function OrcamentosPainel({
   valorAprovado,
 }: {
   orcamentos: DetalheObra["orcamentos"];
+  // Virá do módulo de Orçamento / registro do SGI (etapas futuras).
   valorAprovado?: number;
 }) {
   const [selecao, setSelecao] = useState<Selecao>(() => ({

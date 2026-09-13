@@ -18,7 +18,7 @@ export default async function NovaSolicitacaoPage() {
         <LinkVoltar href="/obras">Voltar para Obras</LinkVoltar>
         <CabecalhoPagina
           titulo="Nova Solicitação"
-          descricao="Registre a necessidade da igreja. O envio será habilitado quando o banco de dados for configurado."
+          descricao="Registre a necessidade da igreja. Ao enviar, a solicitação entra no fluxo de aprovação na etapa 1 (Coordenador do Polo)."
         />
       </div>
       <FormularioSolicitacao igrejas={igrejas} />

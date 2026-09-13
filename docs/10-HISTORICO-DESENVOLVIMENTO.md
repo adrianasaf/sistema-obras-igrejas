@@ -268,3 +268,21 @@ Próximo passo:
 - **Decisões:** DEC-013; DEC-008 substituída.
 - **Pendências:** resolvidas PEN-003, PEN-004, PEN-007, PEN-008 e PEN-021. Abertas as novas PEN-027 (o perfil "Presbitério" deve ser removido ou virar só visualização?), PEN-028 (alçadas e prazos por etapa) e PEN-029 (grafia oficial: COMBENS ou CONBENS). Seguem abertas PEN-006 e PEN-009.
 - **Próximo passo:** aplicar a migração 004 pela tela Configurações → Banco de dados e refazer um teste do fluxo em produção.
+
+## Entrada 017
+- **Data:** 2026-09-13
+- **Etapa:** Solicitações de obras no banco e formulário de Nova Solicitação funcionando
+- **Versão:** 0.3.0
+- **Realizado:**
+  - **Migração 005** (a 004 já existia e estava publicada): tabela `obras` com id no padrão `AAAA-NNNN`, igreja solicitante (FK para `igrejas`), tipo, título, descrição, data, responsável pelo registro, prioridade **aceitando vazio** (DEC-013) e `criado_em`. **Sem coluna de status** — o status vem do fluxo de aprovação. Índices por igreja e por data.
+  - `src/lib/obras-db.ts`: consultas com join na igreja e no fluxo (situação, etapa e rótulo de status já resolvidos) e `criarObra`, que grava a obra e abre o fluxo na etapa 1 (Coordenador do Polo) **na mesma transação**, com numeração sequencial por ano e nova tentativa em caso de disputa pelo mesmo número.
+  - Server Action `src/app/(app)/obras/nova/acoes.ts`: confere `exigirAcesso("obras")`, valida os campos, grava e revalida `/obras`. O nome de quem registrou fica em texto (o vínculo com o cadastro de usuários depende de PEN-025).
+  - **Nova Solicitação** conectada: o aviso de "envio não habilitado" saiu e, ao enviar, aparece o número da solicitação com link para abri-la. "Salvar rascunho" segue indisponível (aviso próprio) e as fotos continuam só como prévia local.
+  - **/obras** e **/obras/[id]** passaram a ler do banco. O status exibido é o do fluxo ("Aguardando Coordenador da Área", "Aprovada pela COMBENS"...), o filtro de status passou a usar as situações do fluxo e o de prioridade ganhou a opção "Não definida". A coluna "Valor estimado" saiu da lista e os valores estimados saíram da Visão Geral: eram números de exemplo e passarão a vir do módulo de Orçamento.
+  - A lista de obras do cadastro da igreja (`/igrejas/[id]`) passou a usar as obras reais daquela igreja — troca de fonte de dados, sem mudança de desenho.
+  - `src/lib/obras-tipos.ts` concentra tipos e formatações; `src/lib/obras-mock.ts` ficou restrito aos indicadores do Dashboard, que **continuam demonstrativos** nesta etapa.
+  - Abas Orçamentos, Execução e Conclusão seguem demonstrativas, agora alimentadas apenas pelo básico da obra real. Não foram implementados orçamento, croqui, execução, estoque, financeiro, fotos, auditoria nem relatórios.
+- **Testes executados:** Postgres 16 local. Migrações 001→005 do zero; duas solicitações criadas pela mesma SQL da Server Action, com numeração `2026-0001` e `2026-0002` e fluxo aberto na etapa 1 em ambas; consulta da lista com join de igreja e fluxo; obras por igreja; restrições conferidas (igreja inexistente, tipo inválido, prioridade inválida e id duplicado rejeitados; prioridade vazia aceita); e o fluxo de quatro etapas percorrido sobre uma obra real até "Aprovada". `npm run testar`: fluxo e permissões, tudo passando. Build, tipos e lint limpos. **Não testado aqui:** o caminho pela interface em produção.
+- **Decisões:** nenhuma nova.
+- **Pendências:** nenhuma nova. O Dashboard ainda usa dados demonstrativos — é o próximo candidato natural.
+- **Próximo passo:** aplicar a migração 005 pela tela Configurações → Banco de dados e registrar uma solicitação real.

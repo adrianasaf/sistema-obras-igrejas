@@ -16,7 +16,8 @@ import type {
   SituacaoFase,
   SituacaoOrcamento,
 } from "@/lib/obra-detalhe-mock";
-import type { Prioridade, StatusObra } from "@/lib/obras-mock";
+import type { StatusObra } from "@/lib/obras-mock";
+import type { Prioridade } from "@/lib/obras-tipos";
 
 export type Paleta = {
   cracha: string; // crachá (borda + fundo + texto)

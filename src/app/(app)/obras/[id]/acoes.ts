@@ -9,7 +9,7 @@ import {
   registrarDecisao,
   reenviarAposCorrecao,
 } from "@/lib/fluxo-aprovacao";
-import { buscarObra } from "@/lib/obras-mock";
+import { buscarObra } from "@/lib/obras-db";
 
 export type Resultado = { ok: boolean; mensagem: string };
 
@@ -42,7 +42,8 @@ export async function registrarDecisaoAction(
   const comentario = String(dados.get("comentario") ?? "");
 
   try {
-    if (!buscarObra(obraId)) throw new ErroFluxo("Solicitação não encontrada.");
+    if (!(await buscarObra(obraId)))
+      throw new ErroFluxo("Solicitação não encontrada.");
     if (!DECISOES.includes(decisao)) throw new ErroFluxo("Decisão inválida.");
     if (!Number.isInteger(etapa)) throw new ErroFluxo("Etapa inválida.");
     if (decisao !== "Aprovado" && !comentario.trim()) {
@@ -75,7 +76,8 @@ export async function reenviarAction(
   const comentario = String(dados.get("comentario") ?? "");
 
   try {
-    if (!buscarObra(obraId)) throw new ErroFluxo("Solicitação não encontrada.");
+    if (!(await buscarObra(obraId)))
+      throw new ErroFluxo("Solicitação não encontrada.");
     const usuario = await autorizar();
     await reenviarAposCorrecao({ obraId, comentario, usuario });
 

@@ -18,7 +18,7 @@ O roadmap poderá ser refinado ao longo do projeto. Alterações relevantes deve
 - [x] Deploy — Vercel (https://sistema-obras-igrejas.vercel.app)
 
 ## Fase 2 — Solicitação de obras
-Igreja registra solicitações (reforma, ampliação, construção, manutenção) com prioridade Emergencial, P1, P2 ou P3.
+Igreja registra solicitações (reforma, ampliação, construção, manutenção). **Feito (banco):** tabela `obras` e formulário gravando, com abertura automática do fluxo de aprovação. A prioridade é definida depois pela COMBENS (DEC-013).
 
 ## Fase 3 — Fluxo de aprovações
 Aprovações hierárquicas pela estrutura Região → Área → Polo → Igreja.

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { TIPOS_OBRA } from "@/lib/obras-mock";
+import { useActionState, useEffect, useState } from "react";
+import { TIPOS_OBRA } from "@/lib/obras-tipos";
+import { criarSolicitacaoAction, type Resultado } from "./acoes";
 import {
   botaoContorno,
   botaoPrimario,
@@ -22,7 +23,11 @@ export function FormularioSolicitacao({
   igrejas: { id: string; nome: string; cidade: string }[];
 }) {
   const [fotos, setFotos] = useState<Preview[]>([]);
-  const [aviso, setAviso] = useState<"rascunho" | "envio" | null>(null);
+  const [rascunho, setRascunho] = useState(false);
+  const [resultado, enviar, pendente] = useActionState<Resultado | null, FormData>(
+    criarSolicitacaoAction,
+    null,
+  );
 
   // Libera as URLs temporárias das prévias ao trocar/desmontar.
   useEffect(() => {
@@ -43,11 +48,8 @@ export function FormularioSolicitacao({
 
   return (
     <form
+      action={enviar}
       className={`${cartao} space-y-6 p-5 sm:p-6`}
-      onSubmit={(e) => {
-        e.preventDefault();
-        setAviso("envio");
-      }}
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
@@ -163,7 +165,8 @@ export function FormularioSolicitacao({
           >
             <span className="font-medium text-brand">Selecionar fotos</span>
             <span className="mt-1 text-xs">
-              Imagens JPG ou PNG. As fotos ficam apenas nesta tela por enquanto.
+              Imagens JPG ou PNG. As fotos ainda não são enviadas: ficam apenas
+              nesta tela.
             </span>
             <input
               id="fotos"
@@ -205,14 +208,37 @@ export function FormularioSolicitacao({
         </div>
       </div>
 
-      {aviso && (
+      {rascunho && !resultado && (
         <p
           role="status"
           className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
         >
-          {aviso === "rascunho"
-            ? "Salvar rascunho é apenas visual nesta etapa: o banco de dados será configurado em uma etapa futura. Nenhum dado foi salvo."
-            : "O envio de solicitações ainda não está habilitado: o banco de dados será configurado em uma etapa futura. Nenhum dado foi salvo."}
+          Salvar rascunho ainda não está disponível: use &quot;Enviar
+          solicitação&quot; para registrar de verdade.
+        </p>
+      )}
+
+      {resultado && !pendente && (
+        <p
+          role="status"
+          className={`rounded-md border px-4 py-3 text-sm ${
+            resultado.ok
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+              : "border-red-200 bg-red-50 text-red-700"
+          }`}
+        >
+          {resultado.mensagem}
+          {resultado.ok && resultado.id && (
+            <>
+              {" "}
+              <Link
+                href={`/obras/${resultado.id}`}
+                className="font-medium underline"
+              >
+                Abrir a solicitação
+              </Link>
+            </>
+          )}
         </p>
       )}
 
@@ -225,16 +251,17 @@ export function FormularioSolicitacao({
         </Link>
         <button
           type="button"
-          onClick={() => setAviso("rascunho")}
+          onClick={() => setRascunho(true)}
           className={botaoContorno}
         >
           Salvar rascunho
         </button>
         <button
           type="submit"
-          className={botaoPrimario}
+          disabled={pendente}
+          className={`${botaoPrimario} disabled:opacity-60`}
         >
-          Enviar solicitação
+          {pendente ? "Enviando…" : "Enviar solicitação"}
         </button>
       </div>
     </form>

@@ -7,7 +7,33 @@
 // conteúdo das cinco fases de execução (PEN-009) e os critérios de conclusão
 // (PEN-010).
 
-import { valoresDemonstrativos, type Foto, type Obra } from "@/lib/obras-mock";
+import type { TipoObra } from "@/lib/obras-tipos";
+
+// O que as abas demonstrativas precisam saber da obra real.
+export type ObraBase = {
+  id: string;
+  tipo: TipoObra;
+  data: string;
+  aprovada: boolean; // fluxo aprovado pela COMBENS
+};
+
+export type Foto = { id: string; legenda: string };
+
+// Valores de exemplo, derivados do número da solicitação. Serão substituídos
+// pelo módulo de Orçamento (etapa futura).
+function valoresDemonstrativos(obra: ObraBase) {
+  const semente = Number(obra.id.slice(-4)) || 1;
+  const fator = { Construção: 6, Ampliação: 3, Reforma: 2, Manutenção: 1 }[obra.tipo];
+  const material = (8000 + semente * 350) * fator;
+  const maoDeObra = Math.round(material * 0.62);
+  const estimado = material + maoDeObra;
+  return {
+    material,
+    maoDeObra,
+    estimado,
+    aprovado: obra.aprovada ? Math.round(estimado * 0.95) : undefined,
+  };
+}
 
 export const CATEGORIAS_ORCAMENTO = ["Material", "Mão de obra"] as const;
 export type CategoriaOrcamento = (typeof CATEGORIAS_ORCAMENTO)[number];
@@ -53,12 +79,9 @@ export type DetalheObra = {
   conclusao: Conclusao;
 };
 
-function orcamentosDe(obra: Obra): Record<CategoriaOrcamento, Orcamento[]> {
+function orcamentosDe(obra: ObraBase): Record<CategoriaOrcamento, Orcamento[]> {
   // Só obras aprovadas ou adiante têm orçamentos de exemplo preenchidos.
-  const preenchido =
-    obra.status === "Aprovada" ||
-    obra.status === "Em execução" ||
-    obra.status === "Concluída";
+  const preenchido = obra.aprovada;
 
   const valores = valoresDemonstrativos(obra);
 
@@ -107,14 +130,11 @@ const FASES_EXEMPLO = [
   },
 ];
 
-function fasesDe(obra: Obra): Fase[] {
+function fasesDe(obra: ObraBase): Fase[] {
   // Percentuais de exemplo por situação da obra.
-  const percentuais: number[] =
-    obra.status === "Concluída"
-      ? [100, 100, 100, 100, 100]
-      : obra.status === "Em execução"
-        ? [100, 100, 45, 0, 0]
-        : [0, 0, 0, 0, 0];
+  const percentuais: number[] = obra.aprovada
+    ? [100, 100, 45, 0, 0]
+    : [0, 0, 0, 0, 0];
 
   const valores = valoresDemonstrativos(obra);
   // Distribuição de custo por fase, apenas para demonstrar a interface.
@@ -136,25 +156,15 @@ function fasesDe(obra: Obra): Fase[] {
   }));
 }
 
-function conclusaoDe(obra: Obra): Conclusao {
-  if (obra.status !== "Concluída") return { fotos: [] };
-
-  return {
-    resumo:
-      "Obra executada conforme a solicitação, com vistoria final realizada e termo de entrega assinado pela igreja.",
-    valorFinal: valoresDemonstrativos(obra).aprovado,
-    data: somarDias(obra.data, 120),
-    fotos: [
-      { id: "c1", legenda: "Vista geral após a conclusão" },
-      { id: "c2", legenda: "Detalhe do acabamento" },
-    ],
-  };
+function conclusaoDe(): Conclusao {
+  // A conclusão só será preenchida com o módulo de execução (etapa futura).
+  return { fotos: [] };
 }
 
-export function detalheDemonstrativo(obra: Obra): DetalheObra {
+export function detalheDemonstrativo(obra: ObraBase): DetalheObra {
   return {
     orcamentos: orcamentosDe(obra),
     fases: fasesDe(obra),
-    conclusao: conclusaoDe(obra),
+    conclusao: conclusaoDe(),
   };
 }

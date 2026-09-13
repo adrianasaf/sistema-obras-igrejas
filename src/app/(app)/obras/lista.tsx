@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { BadgePrioridade, BadgeStatus } from "@/components/badges";
+import { BadgeAprovacao, BadgePrioridade } from "@/components/badges";
 import {
   BarraFiltros,
   CampoBusca,
@@ -10,37 +10,42 @@ import {
   GrupoFiltro,
 } from "@/components/filtros";
 import { CartaoLista, ListaVazia, Tabela } from "@/components/tabela";
-import { CORES_PRIORIDADE, CORES_STATUS } from "@/lib/cores";
-import { botaoAcao } from "@/lib/ui";
+import {
+  SITUACOES_FLUXO,
+  type SituacaoFluxo,
+} from "@/lib/aprovacao";
+import { CORES_APROVACAO, CORES_PRIORIDADE } from "@/lib/cores";
+import type { Obra } from "@/lib/obras-db";
 import {
   PRIORIDADES,
-  STATUS_OBRA,
   formatarData,
-  formatarValor,
-  valoresDemonstrativos,
-  type Obra,
   type Prioridade,
-  type StatusObra,
-} from "@/lib/obras-mock";
+} from "@/lib/obras-tipos";
+import { botaoAcao } from "@/lib/ui";
 
-// Filtros e busca funcionam apenas sobre os dados demonstrativos carregados
-// na tela: não há consulta a banco de dados.
+// Filtros e busca funcionam sobre as solicitações já carregadas na tela (a
+// consulta ao banco é feita pela página). A prioridade pode estar vazia: quem
+// define é o pastor responsável da COMBENS (DEC-013).
 export function ListaObras({ obras }: { obras: Obra[] }) {
   const [busca, setBusca] = useState("");
-  const [prioridade, setPrioridade] = useState<Prioridade | "Todas">("Todas");
-  const [status, setStatus] = useState<StatusObra | "Todos">("Todos");
+  type FiltroPrioridade = Prioridade | "Todas" | "Não definida";
+  const [prioridade, setPrioridade] = useState<FiltroPrioridade>("Todas");
+  const [status, setStatus] = useState<SituacaoFluxo | "Todos">("Todos");
 
   const filtradas = useMemo(() => {
     const termo = busca.trim().toLowerCase();
     return obras.filter((o) => {
       const atendeBusca =
         termo === "" ||
-        [o.igreja, o.titulo, o.tipo, o.id].some((campo) =>
+        [o.igrejaNome, o.titulo, o.tipo, o.id].some((campo) =>
           campo.toLowerCase().includes(termo),
         );
       const atendePrioridade =
-        prioridade === "Todas" || o.prioridade === prioridade;
-      const atendeStatus = status === "Todos" || o.status === status;
+        prioridade === "Todas" ||
+        (prioridade === "Não definida"
+          ? o.prioridade === null
+          : o.prioridade === prioridade);
+      const atendeStatus = status === "Todos" || o.situacao === status;
       return atendeBusca && atendePrioridade && atendeStatus;
     });
   }, [obras, busca, prioridade, status]);
@@ -69,21 +74,33 @@ export function ListaObras({ obras }: { obras: Obra[] }) {
 
         <GrupoFiltro
           rotulo="Prioridade"
-          opcoes={["Todas", ...PRIORIDADES]}
+          opcoes={["Todas", ...PRIORIDADES, "Não definida"]}
           atual={prioridade}
-          aoEscolher={(v) => setPrioridade(v as Prioridade | "Todas")}
+          aoEscolher={(v) => setPrioridade(v as FiltroPrioridade)}
           cor={(v) =>
-            v === "Todas" ? undefined : CORES_PRIORIDADE[v as Prioridade].ponto
+            v === "Todas" || v === "Não definida"
+              ? undefined
+              : CORES_PRIORIDADE[v as Prioridade].ponto
           }
         />
 
         <GrupoFiltro
           rotulo="Status"
-          opcoes={["Todos", ...STATUS_OBRA]}
+          opcoes={["Todos", ...SITUACOES_FLUXO]}
           atual={status}
-          aoEscolher={(v) => setStatus(v as StatusObra | "Todos")}
+          aoEscolher={(v) => setStatus(v as SituacaoFluxo | "Todos")}
           cor={(v) =>
-            v === "Todos" ? undefined : CORES_STATUS[v as StatusObra].ponto
+            v === "Todos"
+              ? undefined
+              : CORES_APROVACAO[
+                  v === "Aprovada"
+                    ? "Aprovado"
+                    : v === "Reprovada"
+                      ? "Reprovado"
+                      : v === "Em correção"
+                        ? "Correção solicitada"
+                        : "Aguardando"
+                ].ponto
           }
         />
       </BarraFiltros>
@@ -96,39 +113,37 @@ export function ListaObras({ obras }: { obras: Obra[] }) {
       />
 
       {filtradas.length === 0 ? (
-        <ListaVazia>Nenhuma obra encontrada com os filtros aplicados.</ListaVazia>
+        <ListaVazia>
+          {obras.length === 0
+            ? "Nenhuma solicitação registrada ainda."
+            : "Nenhuma obra encontrada com os filtros aplicados."}
+        </ListaVazia>
       ) : (
         <>
           {/* Tabela (tablet e computador) */}
           <Tabela
             acoes
-            colunas={[
-              "Igreja",
-              "Tipo",
-              "Prioridade",
-              "Status",
-              "Data",
-              { rotulo: "Valor estimado", direita: true },
-            ]}
+            colunas={["Igreja", "Tipo", "Prioridade", "Status", "Data"]}
           >
             {filtradas.map((o) => (
               <tr key={o.id} className="hover:bg-background">
                 <td className="px-4 py-3">
-                  <p className="font-medium">{o.igreja}</p>
+                  <p className="font-medium">{o.igrejaNome}</p>
                   <p className="text-xs text-muted">{o.titulo}</p>
                 </td>
                 <td className="px-4 py-3">{o.tipo}</td>
                 <td className="px-4 py-3">
-                  <BadgePrioridade valor={o.prioridade} />
+                  {o.prioridade ? (
+                    <BadgePrioridade valor={o.prioridade} />
+                  ) : (
+                    <span className="text-xs text-muted">Não definida</span>
+                  )}
                 </td>
                 <td className="px-4 py-3">
-                  <BadgeStatus valor={o.status} />
+                  <BadgeAprovacao valor={o.statusCor} rotulo={o.statusRotulo} />
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   {formatarData(o.data)}
-                </td>
-                <td className="px-4 py-3 text-right whitespace-nowrap tabular-nums">
-                  {formatarValor(valoresDemonstrativos(o).estimado)}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <Link href={`/obras/${o.id}`} className={`${botaoAcao} text-brand`}>
@@ -145,19 +160,19 @@ export function ListaObras({ obras }: { obras: Obra[] }) {
               <CartaoLista
                 key={o.id}
                 titulo={o.titulo}
-                subtitulo={o.igreja}
+                subtitulo={o.igrejaNome}
                 cracha={
                   <>
-                    <BadgePrioridade valor={o.prioridade} />
-                    <BadgeStatus valor={o.status} />
+                    {o.prioridade && <BadgePrioridade valor={o.prioridade} />}
+                    <BadgeAprovacao valor={o.statusCor} rotulo={o.statusRotulo} />
                   </>
                 }
                 dados={[
                   { rotulo: "Tipo", valor: o.tipo },
                   { rotulo: "Data", valor: formatarData(o.data) },
                   {
-                    rotulo: "Valor estimado",
-                    valor: formatarValor(valoresDemonstrativos(o).estimado),
+                    rotulo: "Prioridade",
+                    valor: o.prioridade ?? "Não definida",
                   },
                 ]}
                 acoes={

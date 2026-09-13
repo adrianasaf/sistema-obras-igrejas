@@ -30,10 +30,10 @@
 |---|---|---|
 | Login | `/login` | Funcional (Clerk) |
 | Acesso não autorizado | `/sem-permissao` | Funcional: perfil sem acesso à área, ou usuário sem perfil definido |
-| Dashboard | `/` | Interface: cartões de resumo, valores estimado/aprovado e listas de obras |
-| Obras (lista) | `/obras` | Interface: tabela/cartões, filtros por prioridade e status, busca |
-| Nova solicitação | `/obras/nova` | Interface: formulário com valores estimados, "Salvar rascunho" e "Enviar solicitação" (não gravam) |
-| Detalhes da obra | `/obras/[id]` | Interface: abas Visão Geral, Aprovações, Orçamentos, Execução e Conclusão |
+| Dashboard | `/` | Interface: indicadores ainda sobre dados demonstrativos (será ligado ao banco na etapa seguinte) |
+| Obras (lista) | `/obras` | **Funcional (banco):** tabela/cartões, filtros por prioridade e situação, busca |
+| Nova solicitação | `/obras/nova` | **Funcional (banco):** grava a solicitação e abre o fluxo na etapa 1. "Salvar rascunho" segue indisponível; fotos não são enviadas |
+| Detalhes da obra | `/obras/[id]` | **Funcional (banco)** em Visão Geral e Aprovações; Orçamentos, Execução e Conclusão seguem demonstrativos |
 | Regiões | `/regioes` | **Funcional (banco):** lista, cadastro, visualização e edição |
 | Áreas | `/areas` | **Funcional (banco):** lista, cadastro, visualização e edição |
 | Polos | `/polos` | **Funcional (banco):** lista, cadastro, visualização e edição |

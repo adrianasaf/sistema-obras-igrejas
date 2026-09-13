@@ -13,7 +13,6 @@ import {
   BadgeAprovacao,
   BadgeFase,
   BadgePrioridade,
-  BadgeStatus,
 } from "@/components/badges";
 import { GaleriaFotos } from "@/components/galeria-fotos";
 import {
@@ -37,19 +36,14 @@ import {
   type DetalheObra,
   detalheDemonstrativo,
 } from "@/lib/obra-detalhe-mock";
-import {
-  buscarObra,
-  formatarData,
-  formatarValor,
-  valoresDemonstrativos,
-  type Obra,
-} from "@/lib/obras-mock";
+import { buscarObra, type Obra } from "@/lib/obras-db";
+import { formatarData, formatarValor } from "@/lib/obras-tipos";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/obras/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const obra = buscarObra(id);
+  const obra = await buscarObra(id);
   return { title: obra ? obra.titulo : "Solicitação" };
 }
 
@@ -58,11 +52,17 @@ export default async function DetalheObraPage({
 }: PageProps<"/obras/[id]">) {
   const sessao = await exigirAcesso("obras");
   const { id } = await params;
-  const obra = buscarObra(id);
+  const obra = await buscarObra(id);
   if (!obra) notFound();
 
-  const detalhe = detalheDemonstrativo(obra);
-  const valores = valoresDemonstrativos(obra);
+  // As abas de Orçamentos, Execução e Conclusão continuam demonstrativas até
+  // os respectivos módulos existirem; recebem apenas o básico da obra real.
+  const detalhe = detalheDemonstrativo({
+    id: obra.id,
+    tipo: obra.tipo,
+    data: obra.data,
+    aprovada: obra.situacao === "Aprovada",
+  });
 
   // Abas conforme o perfil: Orçamentos é do Presbitério (e do Administrador);
   // Execução e Conclusão, por ora, só do Administrador (PEN-026).
@@ -111,7 +111,7 @@ export default async function DetalheObraPage({
                   conteudo: (
                     <OrcamentosPainel
                       orcamentos={detalhe.orcamentos}
-                      valorAprovado={valores.aprovado}
+                      valorAprovado={aprovacoes?.fluxo.sgi.valorAprovado ?? undefined}
                     />
                   ),
                 },
@@ -152,7 +152,9 @@ function Cabecalho({ obra, fluxo }: { obra: Obra; fluxo?: Fluxo }) {
       <div className={`${cartao} mt-3 overflow-hidden`}>
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-muted">{obra.igreja}</p>
+            <p className="text-sm font-medium text-muted">
+              {obra.igrejaNome} · {obra.cidade}
+            </p>
             <h1 className="mt-1 text-xl font-semibold tracking-tight text-brand sm:text-2xl">
               {obra.titulo}
             </h1>
@@ -161,29 +163,38 @@ function Cabecalho({ obra, fluxo }: { obra: Obra; fluxo?: Fluxo }) {
             </p>
           </div>
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <BadgePrioridade valor={obra.prioridade} />
-            {fluxo ? (
-              <BadgeAprovacao
-                valor={situacaoComoAprovacao(fluxo.situacao)}
-                rotulo={rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)}
-              />
+            {obra.prioridade ? (
+              <BadgePrioridade valor={obra.prioridade} />
             ) : (
-              <BadgeStatus valor={obra.status} />
+              <span className="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted">
+                Prioridade não definida
+              </span>
             )}
+            <BadgeAprovacao
+              valor={fluxo ? situacaoComoAprovacao(fluxo.situacao) : obra.statusCor}
+              rotulo={
+                fluxo
+                  ? rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)
+                  : obra.statusRotulo
+              }
+            />
           </div>
         </div>
 
         <dl className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-3 lg:grid-cols-6">
-          <Campo rotulo="Igreja" valor={obra.igreja} />
+          <Campo rotulo="Igreja" valor={obra.igrejaNome} />
           <Campo rotulo="Obra" valor={obra.titulo} />
           <Campo rotulo="Tipo" valor={obra.tipo} />
-          <Campo rotulo="Prioridade" valor={obra.prioridade} />
+          <Campo
+            rotulo="Prioridade"
+            valor={obra.prioridade ?? "Não definida"}
+          />
           <Campo
             rotulo="Status atual"
             valor={
               fluxo
                 ? rotuloSituacao(fluxo.situacao, fluxo.etapaAtual)
-                : obra.status
+                : obra.statusRotulo
             }
           />
           <Campo rotulo="Data da solicitação" valor={formatarData(obra.data)} />
@@ -207,8 +218,6 @@ function Campo({ rotulo, valor }: { rotulo: string; valor: string }) {
 /* -------------------------------------------------------------- visão geral */
 
 function VisaoGeral({ obra }: { obra: Obra }) {
-  const valores = valoresDemonstrativos(obra);
-
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="space-y-6 lg:col-span-2">
@@ -220,10 +229,10 @@ function VisaoGeral({ obra }: { obra: Obra }) {
 
         <Cartao
           titulo="Fotos da situação atual"
-          descricao="Enviadas junto com a solicitação."
+          descricao="O envio de fotos será implementado em etapa futura."
         >
           <GaleriaFotos
-            fotos={obra.fotos}
+            fotos={[]}
             vazio="Nenhuma foto anexada a esta solicitação."
           />
         </Cartao>
@@ -231,30 +240,19 @@ function VisaoGeral({ obra }: { obra: Obra }) {
 
       <Cartao titulo="Informações da solicitação">
         <dl className="space-y-3">
-          <Linha rotulo="Igreja solicitante" valor={obra.igreja} />
+          <Linha rotulo="Igreja solicitante" valor={obra.igrejaNome} />
+          <Linha rotulo="Cidade" valor={obra.cidade} />
+          <Linha rotulo="Polo / Área / Região" valor="Ver cadastro da igreja" />
           <Linha rotulo="Tipo da obra" valor={obra.tipo} />
-          <Linha rotulo="Prioridade" valor={obra.prioridade} />
+          <Linha
+            rotulo="Prioridade"
+            valor={obra.prioridade ?? "Não definida"}
+          />
           <Linha rotulo="Data da solicitação" valor={formatarData(obra.data)} />
-          <Linha rotulo="Status atual" valor={obra.status} />
+          <Linha rotulo="Status atual" valor={obra.statusRotulo} />
           <Linha
-            rotulo="Estimado — material"
-            valor={formatarValor(valores.material)}
-          />
-          <Linha
-            rotulo="Estimado — mão de obra"
-            valor={formatarValor(valores.maoDeObra)}
-          />
-          <Linha
-            rotulo="Total estimado"
-            valor={formatarValor(valores.estimado)}
-          />
-          <Linha
-            rotulo="Valor aprovado"
-            valor={
-              valores.aprovado !== undefined
-                ? formatarValor(valores.aprovado)
-                : "—"
-            }
+            rotulo="Registrada por"
+            valor={obra.responsavel ?? "—"}
           />
           <Linha rotulo="Número da solicitação" valor={obra.id} />
         </dl>

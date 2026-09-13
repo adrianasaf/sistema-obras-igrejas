@@ -21,7 +21,8 @@ import type {
   SituacaoFase,
   SituacaoOrcamento,
 } from "@/lib/obra-detalhe-mock";
-import type { Prioridade, StatusObra } from "@/lib/obras-mock";
+import type { StatusObra } from "@/lib/obras-mock";
+import type { Prioridade } from "@/lib/obras-tipos";
 
 const base =
   "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap";

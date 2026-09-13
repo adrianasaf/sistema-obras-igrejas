@@ -1,4 +1,4 @@
-import type { Foto } from "@/lib/obras-mock";
+import type { Foto } from "@/lib/obra-detalhe-mock";
 
 // Espaço reservado para as fotos: as imagens reais dependem do armazenamento
 // de arquivos, ainda não implementado (PEN-013).
