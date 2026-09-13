@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { listarAreas } from "@/lib/estrutura-db";
 import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
@@ -10,6 +11,7 @@ export const metadata: Metadata = { title: "Novo Polo" };
 
 export default async function NovoPoloPage() {
   await exigirAcesso("estrutura");
+  const areas = await listarAreas();
   return (
     <div className="space-y-6">
       <div className="space-y-3">
@@ -19,7 +21,7 @@ export default async function NovoPoloPage() {
           descricao="Formulário visual: o cadastro será gravado quando o banco de dados for configurado."
         />
       </div>
-      <FormularioPolo />
+      <FormularioPolo areas={areas} />
     </div>
   );
 }

@@ -9,13 +9,13 @@ import {
 import { CartaoLista, Tabela } from "@/components/tabela";
 import { botaoPrimario } from "@/lib/ui";
 import Link from "next/link";
-import { AREAS, buscarRegiao, polosDaArea } from "@/lib/estrutura-mock";
+import { listarAreas } from "@/lib/estrutura-db";
 
 export const metadata: Metadata = { title: "Áreas" };
 
 export default async function AreasPage() {
   await exigirAcesso("estrutura");
-  const areas = [...AREAS].sort((a, b) => a.codigo.localeCompare(b.codigo));
+  const areas = await listarAreas();
 
   return (
     <div className="space-y-6">
@@ -40,8 +40,8 @@ export default async function AreasPage() {
               <p className="font-medium">{a.nome}</p>
               <p className="text-xs text-muted">{a.responsavel}</p>
             </td>
-            <td className="px-4 py-3">{buscarRegiao(a.regiaoId)?.nome ?? "—"}</td>
-            <td className="px-4 py-3 tabular-nums">{polosDaArea(a.id).length}</td>
+            <td className="px-4 py-3">{a.regiaoNome}</td>
+            <td className="px-4 py-3 tabular-nums">{a.totalPolos}</td>
             <td className="px-4 py-3">
               <BadgeCadastro valor={a.status} feminino />
             </td>
@@ -64,8 +64,8 @@ export default async function AreasPage() {
             subtitulo={`Código ${a.codigo}`}
             cracha={<BadgeCadastro valor={a.status} feminino />}
             dados={[
-              { rotulo: "Região", valor: buscarRegiao(a.regiaoId)?.nome ?? "—" },
-              { rotulo: "Polos", valor: String(polosDaArea(a.id).length) },
+              { rotulo: "Região", valor: a.regiaoNome },
+              { rotulo: "Polos", valor: String(a.totalPolos) },
               { rotulo: "Coordenador", valor: a.responsavel },
             ]}
             acoes={

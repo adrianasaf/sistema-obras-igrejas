@@ -7,18 +7,14 @@ import {
   CabecalhoDetalhe,
   ListaVinculada,
 } from "@/components/estrutura/comuns";
-import {
-  areasDaRegiao,
-  buscarRegiao,
-  polosDaArea,
-  statusFeminino,
-} from "@/lib/estrutura-mock";
+import { buscarRegiao, listarAreas } from "@/lib/estrutura-db";
+import { statusFeminino } from "@/lib/estrutura-tipos";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/regioes/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const regiao = buscarRegiao(id);
+  const regiao = await buscarRegiao(id);
   return { title: regiao ? regiao.nome : "Região" };
 }
 
@@ -27,10 +23,10 @@ export default async function RegiaoPage({
 }: PageProps<"/regioes/[id]">) {
   await exigirAcesso("estrutura");
   const { id } = await params;
-  const regiao = buscarRegiao(id);
+  const regiao = await buscarRegiao(id);
   if (!regiao) notFound();
 
-  const areas = areasDaRegiao(regiao.id);
+  const areas = (await listarAreas()).filter((a) => a.regiaoId === regiao.id);
 
   return (
     <div className="space-y-6">
@@ -44,7 +40,7 @@ export default async function RegiaoPage({
         campos={[
           { rotulo: "Código", valor: regiao.codigo },
           { rotulo: "Coordenador da Região", valor: regiao.responsavel },
-          { rotulo: "Áreas vinculadas", valor: String(areas.length) },
+          { rotulo: "Áreas vinculadas", valor: String(regiao.totalAreas) },
           { rotulo: "Status", valor: statusFeminino(regiao.status) },
         ]}
       />
@@ -55,7 +51,7 @@ export default async function RegiaoPage({
           id: a.id,
           href: `/areas/${a.id}`,
           nome: a.nome,
-          detalhe: `${a.codigo} · ${polosDaArea(a.id).length} polo(s) · ${a.responsavel}`,
+          detalhe: `${a.codigo} · ${a.totalPolos} polo(s) · ${a.responsavel}`,
           cracha: <BadgeCadastro valor={a.status} feminino />,
         }))}
         vazio="Nenhuma área vinculada a esta região."

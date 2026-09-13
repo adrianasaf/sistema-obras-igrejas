@@ -6,7 +6,7 @@ import {
 } from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import { FormularioArea } from "@/components/estrutura/formularios";
-import { buscarArea } from "@/lib/estrutura-mock";
+import { buscarArea , listarRegioes } from "@/lib/estrutura-db";
 
 export const metadata: Metadata = { title: "Editar Área" };
 
@@ -15,8 +15,10 @@ export default async function EditarAreaPage({
 }: PageProps<"/areas/[id]/editar">) {
   await exigirAcesso("estrutura");
   const { id } = await params;
-  const area = buscarArea(id);
+  const area = await buscarArea(id);
   if (!area) notFound();
+
+  const regioes = await listarRegioes();
 
   return (
     <div className="space-y-6">
@@ -27,7 +29,7 @@ export default async function EditarAreaPage({
           descricao="Formulário visual: as alterações não são gravadas."
         />
       </div>
-      <FormularioArea area={area} />
+      <FormularioArea area={area} regioes={regioes} />
     </div>
   );
 }

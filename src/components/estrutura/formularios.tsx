@@ -3,19 +3,17 @@ import {
   FormularioCadastro,
   classeCampo,
 } from "@/components/formulario-cadastro";
-import {
-  AREAS,
-  POLOS,
-  REGIOES,
-  type Area,
-  type Igreja,
-  type Polo,
-  type Regiao,
-} from "@/lib/estrutura-mock";
+import type {
+  Area,
+  Igreja,
+  Polo,
+  Regiao,
+} from "@/lib/estrutura-tipos";
 
-// Formulários visuais dos quatro cadastros da estrutura administrativa.
-// Quando um registro é passado, os campos vêm preenchidos (modo edição).
-// Nada é gravado em nenhum dos casos.
+// Formulários dos quatro cadastros da estrutura administrativa. Quando um
+// registro é passado, os campos vêm preenchidos (modo edição). A gravação é
+// feita pela Server Action em acoes.ts. As opções do nível superior vêm do
+// banco, pela página.
 
 function SelectStatus({ valor }: { valor?: string }) {
   return (
@@ -34,6 +32,8 @@ function SelectStatus({ valor }: { valor?: string }) {
 export function FormularioRegiao({ regiao }: { regiao?: Regiao }) {
   return (
     <FormularioCadastro
+      nivel="regiao"
+      id={regiao?.id}
       voltarHref={regiao ? `/regioes/${regiao.id}` : "/regioes"}
       rotuloSalvar={regiao ? "Salvar alterações" : "Salvar região"}
     >
@@ -71,7 +71,7 @@ export function FormularioRegiao({ regiao }: { regiao?: Regiao }) {
         id="responsavel"
         rotulo="Coordenador da Região"
         largura="inteira"
-        ajuda="Vínculo com usuários do sistema será feito em etapa futura."
+        ajuda="O vínculo com usuários do sistema será feito em etapa futura."
       >
         <input
           id="responsavel"
@@ -87,9 +87,17 @@ export function FormularioRegiao({ regiao }: { regiao?: Regiao }) {
   );
 }
 
-export function FormularioArea({ area }: { area?: Area }) {
+export function FormularioArea({
+  area,
+  regioes,
+}: {
+  area?: Area;
+  regioes: Regiao[];
+}) {
   return (
     <FormularioCadastro
+      nivel="area"
+      id={area?.id}
       voltarHref={area ? `/areas/${area.id}` : "/areas"}
       rotuloSalvar={area ? "Salvar alterações" : "Salvar área"}
     >
@@ -104,7 +112,7 @@ export function FormularioArea({ area }: { area?: Area }) {
           <option value="" disabled>
             Selecione a região
           </option>
-          {REGIOES.map((r) => (
+          {regioes.map((r) => (
             <option key={r.id} value={r.id}>
               {r.codigo} · {r.nome}
             </option>
@@ -146,7 +154,7 @@ export function FormularioArea({ area }: { area?: Area }) {
         id="responsavel"
         rotulo="Coordenador da Área"
         largura="inteira"
-        ajuda="Vínculo com usuários do sistema será feito em etapa futura."
+        ajuda="O vínculo com usuários do sistema será feito em etapa futura."
       >
         <input
           id="responsavel"
@@ -162,9 +170,17 @@ export function FormularioArea({ area }: { area?: Area }) {
   );
 }
 
-export function FormularioPolo({ polo }: { polo?: Polo }) {
+export function FormularioPolo({
+  polo,
+  areas,
+}: {
+  polo?: Polo;
+  areas: Area[];
+}) {
   return (
     <FormularioCadastro
+      nivel="polo"
+      id={polo?.id}
       voltarHref={polo ? `/polos/${polo.id}` : "/polos"}
       rotuloSalvar={polo ? "Salvar alterações" : "Salvar polo"}
     >
@@ -184,7 +200,7 @@ export function FormularioPolo({ polo }: { polo?: Polo }) {
           <option value="" disabled>
             Selecione a área
           </option>
-          {AREAS.map((a) => (
+          {areas.map((a) => (
             <option key={a.id} value={a.id}>
               {a.codigo} · {a.nome}
             </option>
@@ -226,7 +242,7 @@ export function FormularioPolo({ polo }: { polo?: Polo }) {
         id="responsavel"
         rotulo="Coordenador do Polo"
         largura="inteira"
-        ajuda="Vínculo com usuários do sistema será feito em etapa futura."
+        ajuda="O vínculo com usuários do sistema será feito em etapa futura."
       >
         <input
           id="responsavel"
@@ -242,9 +258,17 @@ export function FormularioPolo({ polo }: { polo?: Polo }) {
   );
 }
 
-export function FormularioIgreja({ igreja }: { igreja?: Igreja }) {
+export function FormularioIgreja({
+  igreja,
+  polos,
+}: {
+  igreja?: Igreja;
+  polos: Polo[];
+}) {
   return (
     <FormularioCadastro
+      nivel="igreja"
+      id={igreja?.id}
       voltarHref={igreja ? `/igrejas/${igreja.id}` : "/igrejas"}
       rotuloSalvar={igreja ? "Salvar alterações" : "Salvar igreja"}
     >
@@ -264,7 +288,7 @@ export function FormularioIgreja({ igreja }: { igreja?: Igreja }) {
           <option value="" disabled>
             Selecione o polo
           </option>
-          {POLOS.map((p) => (
+          {polos.map((p) => (
             <option key={p.id} value={p.id}>
               {p.codigo} · {p.nome}
             </option>

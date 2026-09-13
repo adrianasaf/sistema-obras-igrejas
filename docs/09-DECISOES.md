@@ -127,3 +127,12 @@ Status: (Ativa | Substituída por DEC-NNN | Cancelada)
 - **Motivo:** Regras iniciais informadas pelo responsável do projeto.
 - **Impacto:** A proteção é feita no servidor em três camadas: cada página interna chama `exigirAcesso(area)`; o proxy (`src/proxy.ts`) confere a área quando o perfil está publicado no token da sessão; e as Server Actions do fluxo de aprovação conferem perfil e etapa antes de gravar. Esconder itens de menu é apenas consequência, não a proteção. **PENDENTE DE DEFINIÇÃO:** vínculo por Região/Área/Polo/Igreja (PEN-025) — nesta etapa, um Coordenador de Polo pode decidir a etapa 2 de **qualquer** solicitação; e quem acessa Execução/Conclusão, Estoque, Histórico e Configurações além do Administrador (PEN-026). PEN-023 fica parcialmente resolvida (perfil ↔ etapa).
 - **Status:** Ativa
+
+## DEC-012
+- **Data:** 2026-09-13
+- **Título:** Estrutura administrativa no banco e migrações aplicadas pelo sistema
+- **Contexto:** Início da migração dos dados de demonstração para o banco (Neon).
+- **Decisão:** Regiões, áreas, polos e igrejas passam a viver no banco (migração 002), com chave estrangeira entre os níveis e código único por nível. As telas de Regiões, Áreas, Polos e Igrejas passam a ler e gravar de verdade. Os dados fictícios usados até agora foram carregados como **migração 003**, separada, para poderem ser removidos com um comando quando os dados reais entrarem. As migrações ficam versionadas em `src/lib/migracoes.ts` e são aplicadas pela tela **Configurações → Banco de dados** (só Administrador), com registro na tabela `migracoes` para não rodarem duas vezes.
+- **Motivo:** Solicitado pelo responsável ("vamos deixar tudo organizado"), que confirmou que os dados atuais são de teste.
+- **Impacto:** O id de cada registro é derivado do código (ex.: código `R01` → id `r-r01`), para as URLs continuarem legíveis. As obras continuam em dados de demonstração no código — a migração das obras é o passo seguinte, e só então o `fluxo_aprovacao` ganha chave estrangeira para a obra. A tela de Usuários continua com usuários fictícios, mas o vínculo administrativo já usa os registros reais do banco.
+- **Status:** Ativa

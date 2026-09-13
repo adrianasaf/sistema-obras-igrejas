@@ -234,3 +234,20 @@ Próximo passo:
 - **Decisões:** DEC-011. PEN-023 passa a **Parcial**.
 - **Pendências:** novas PEN-025 (vínculo por Região/Área/Polo/Igreja) e PEN-026 (quais perfis acessam Execução/Conclusão, Estoque, Histórico, Configurações e se o Dashboard fica visível a todos).
 - **Próximo passo:** definir os perfis dos usuários no Clerk Dashboard e validar em produção.
+
+## Entrada 015
+- **Data:** 2026-09-13
+- **Etapa:** Estrutura administrativa no banco e tela de migrações
+- **Versão:** 0.3.0
+- **Realizado:**
+  - **Migração 001 aplicada no Neon** pelo responsável (console do Neon); fluxo de aprovação validado em produção: decisão gravada, histórico com usuário, data e hora, etapas na ordem.
+  - **Migrações versionadas** em `src/lib/migracoes.ts` (fonte única) e aplicador em `src/lib/migrador.ts`, com a tabela de controle `migracoes` (cada migração roda uma vez só, em transação).
+  - Nova tela **Configurações → Banco de dados** (`/configuracoes/banco`, só Administrador): lista as migrações, mostra o que está aplicado ou pendente e aplica com um clique — não é mais necessário usar o console do Neon.
+  - **Migração 002:** tabelas `regioes`, `areas`, `polos` e `igrejas`, com chave estrangeira entre os níveis, código único e índices. **Migração 003:** carga dos dados de teste (4 regiões, 7 áreas, 12 polos, 16 igrejas), separada para poder ser descartada.
+  - **Telas de Regiões, Áreas, Polos e Igrejas passaram a funcionar de verdade:** listas, visualização, cadastro e edição gravando no banco (`src/lib/estrutura-db.ts` + Server Action em `src/components/estrutura/acoes.ts`, que também confere a permissão). As contagens ("3 polos", "2 igrejas") vêm de consultas, não de arrays.
+  - O formulário de Nova Solicitação e o vínculo dos usuários passaram a usar as igrejas/polos/áreas/regiões reais do banco. `src/lib/estrutura-mock.ts` foi removido; os tipos ficaram em `src/lib/estrutura-tipos.ts`.
+  - Nenhum desenho de tela alterado.
+- **Testes executados:** Postgres 16 local (a rede desta sessão não alcança o Neon). Migrações 001+002+003 aplicadas do zero; contagens conferidas (4/7/12/16); consultas das telas validadas, inclusive os joins até a região e as contagens por nível; reaplicação da carga sem duplicar; chave estrangeira barrando área sem região; código duplicado barrado; inserção e edição pelas mesmas instruções das telas; e o comando de limpeza (`truncate ... cascade`) esvaziando e permitindo recarregar. Build, tipos e lint limpos. **Não testado aqui:** o caminho pela interface em produção.
+- **Decisões:** DEC-012.
+- **Pendências:** nenhuma nova. Próximos: obras no banco (com FK para igreja e para o fluxo) e o vínculo do usuário com a estrutura (PEN-025).
+- **Próximo passo:** aplicar as migrações 002 e 003 pela tela de migrações e conferir os cadastros em produção.

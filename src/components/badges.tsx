@@ -13,7 +13,7 @@ import type { StatusMaterial } from "@/lib/estoque-mock";
 import {
   statusFeminino,
   type StatusCadastro,
-} from "@/lib/estrutura-mock";
+} from "@/lib/estrutura-tipos";
 import type { TipoAlteracao } from "@/lib/historico-mock";
 import type { Perfil } from "@/lib/usuarios-mock";
 import type { SituacaoAprovacao } from "@/lib/aprovacao";

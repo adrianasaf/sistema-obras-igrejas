@@ -7,11 +7,8 @@ import {
   CabecalhoDetalhe,
 } from "@/components/estrutura/comuns";
 import Link from "next/link";
-import {
-  buscarIgreja,
-  caminhoDaIgreja,
-  statusFeminino,
-} from "@/lib/estrutura-mock";
+import { buscarIgreja } from "@/lib/estrutura-db";
+import { statusFeminino } from "@/lib/estrutura-tipos";
 import { OBRAS, formatarData } from "@/lib/obras-mock";
 import { cartao, tituloSecao } from "@/lib/ui";
 
@@ -19,7 +16,7 @@ export async function generateMetadata({
   params,
 }: PageProps<"/igrejas/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const igreja = buscarIgreja(id);
+  const igreja = await buscarIgreja(id);
   return { title: igreja ? igreja.nome : "Igreja" };
 }
 
@@ -28,10 +25,9 @@ export default async function IgrejaPage({
 }: PageProps<"/igrejas/[id]">) {
   await exigirAcesso("estrutura");
   const { id } = await params;
-  const igreja = buscarIgreja(id);
+  const igreja = await buscarIgreja(id);
   if (!igreja) notFound();
 
-  const { polo, area, regiao } = caminhoDaIgreja(igreja);
   // Obras demonstrativas desta igreja (ligação apenas pelo nome, nos dados de
   // exemplo; não há relação em banco).
   const obras = OBRAS.filter((o) => o.igreja === igreja.nome).sort((a, b) =>
@@ -44,14 +40,14 @@ export default async function IgrejaPage({
         voltarHref="/igrejas"
         voltarRotulo="Voltar para Igrejas"
         titulo={igreja.nome}
-        subtitulo={polo ? `Igreja · ${polo.nome}` : "Igreja"}
+        subtitulo={`Igreja · ${igreja.poloNome}`}
         cracha={<BadgeCadastro valor={igreja.status} feminino />}
         editarHref={`/igrejas/${igreja.id}/editar`}
         campos={[
           { rotulo: "Código", valor: igreja.codigo },
-          { rotulo: "Polo", valor: polo?.nome ?? "—" },
-          { rotulo: "Área", valor: area?.nome ?? "—" },
-          { rotulo: "Região", valor: regiao?.nome ?? "—" },
+          { rotulo: "Polo", valor: igreja.poloNome },
+          { rotulo: "Área", valor: igreja.areaNome },
+          { rotulo: "Região", valor: igreja.regiaoNome },
           { rotulo: "Cidade", valor: igreja.cidade },
           { rotulo: "Status", valor: statusFeminino(igreja.status) },
         ]}

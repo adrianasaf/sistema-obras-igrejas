@@ -6,7 +6,7 @@ import {
 } from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import { FormularioRegiao } from "@/components/estrutura/formularios";
-import { buscarRegiao } from "@/lib/estrutura-mock";
+import { buscarRegiao } from "@/lib/estrutura-db";
 
 export const metadata: Metadata = { title: "Editar Região" };
 
@@ -15,7 +15,7 @@ export default async function EditarRegiaoPage({
 }: PageProps<"/regioes/[id]/editar">) {
   await exigirAcesso("estrutura");
   const { id } = await params;
-  const regiao = buscarRegiao(id);
+  const regiao = await buscarRegiao(id);
   if (!regiao) notFound();
 
   return (

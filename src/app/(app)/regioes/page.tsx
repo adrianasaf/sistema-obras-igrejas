@@ -9,13 +9,13 @@ import {
 import { CartaoLista, Tabela } from "@/components/tabela";
 import { botaoPrimario } from "@/lib/ui";
 import Link from "next/link";
-import { REGIOES, areasDaRegiao } from "@/lib/estrutura-mock";
+import { listarRegioes } from "@/lib/estrutura-db";
 
 export const metadata: Metadata = { title: "Regiões" };
 
 export default async function RegioesPage() {
   await exigirAcesso("estrutura");
-  const regioes = [...REGIOES].sort((a, b) => a.codigo.localeCompare(b.codigo));
+  const regioes = await listarRegioes();
 
   return (
     <div className="space-y-6">
@@ -39,7 +39,7 @@ export default async function RegioesPage() {
             <td className="px-4 py-3 font-medium">{r.nome}</td>
             <td className="px-4 py-3">{r.responsavel}</td>
             <td className="px-4 py-3 tabular-nums">
-              {areasDaRegiao(r.id).length}
+              {r.totalAreas}
             </td>
             <td className="px-4 py-3">
               <BadgeCadastro valor={r.status} feminino />
@@ -64,7 +64,7 @@ export default async function RegioesPage() {
             cracha={<BadgeCadastro valor={r.status} feminino />}
             dados={[
               { rotulo: "Coordenador", valor: r.responsavel },
-              { rotulo: "Áreas", valor: String(areasDaRegiao(r.id).length) },
+              { rotulo: "Áreas", valor: String(r.totalAreas) },
             ]}
             acoes={
               <AcoesRegistro

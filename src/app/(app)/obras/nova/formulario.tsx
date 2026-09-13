@@ -12,19 +12,14 @@ import {
   classeRotulo,
 } from "@/lib/ui";
 
-// Lista demonstrativa. O cadastro real de igrejas virá com a estrutura
-// Região → Área → Polo → Igreja (Fase 1 do roadmap).
-const IGREJAS_EXEMPLO = [
-  "Igreja Exemplo Centro",
-  "Igreja Exemplo Bairro Norte",
-  "Igreja Exemplo Litoral",
-  "Igreja Exemplo Sertão",
-  "Igreja Exemplo Vale",
-];
-
 type Preview = { nome: string; url: string };
 
-export function FormularioSolicitacao() {
+// As igrejas vêm do cadastro real (banco), pela página.
+export function FormularioSolicitacao({
+  igrejas,
+}: {
+  igrejas: { id: string; nome: string; cidade: string }[];
+}) {
   const [fotos, setFotos] = useState<Preview[]>([]);
   const [aviso, setAviso] = useState<"rascunho" | "envio" | null>(null);
 
@@ -62,9 +57,9 @@ export function FormularioSolicitacao() {
             <option value="" disabled>
               Selecione a igreja
             </option>
-            {IGREJAS_EXEMPLO.map((i) => (
-              <option key={i} value={i}>
-                {i}
+            {igrejas.map((i) => (
+              <option key={i.id} value={i.id}>
+                {i.nome} · {i.cidade}
               </option>
             ))}
           </select>

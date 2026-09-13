@@ -32,7 +32,17 @@ PENDENTE DE DEFINIÇÃO (será decidida na Fase 1 e registrada em `09-DECISOES.m
 ## Modelo físico (tabelas, colunas, chaves)
 PENDENTE DE DEFINIÇÃO — será detalhado quando o banco for escolhido.
 
-## Tabelas existentes (migração 001)
+## Migrações
+
+O SQL fica em `src/lib/migracoes.ts` (fonte única, versionada) e é aplicado pela tela **Configurações → Banco de dados** (só Administrador). A tabela `migracoes` registra o que já foi aplicado.
+
+| Migração | Conteúdo |
+|---|---|
+| 001 | Fluxo de aprovação (`fluxo_aprovacao`, `decisoes_aprovacao`) |
+| 002 | Estrutura administrativa (`regioes`, `areas`, `polos`, `igrejas`) |
+| 003 | Dados de teste da estrutura administrativa (4 regiões, 7 áreas, 12 polos, 16 igrejas) |
+
+## Tabelas do fluxo de aprovação (migração 001)
 
 Criadas por `scripts/001-fluxo-aprovacao.sql` (idempotente). São as primeiras tabelas do sistema; o restante continua com dados demonstrativos no código.
 
@@ -57,3 +67,21 @@ Criadas por `scripts/001-fluxo-aprovacao.sql` (idempotente). São as primeiras t
 | `criado_em` | timestamptz | Data e hora da decisão |
 
 O avanço de etapa e a gravação da decisão acontecem na mesma transação, e as duas instruções checam a etapa e a situação esperadas — é isso que impede pular etapas ou decidir em um fluxo já encerrado, mesmo com dois acessos simultâneos.
+
+## Estrutura administrativa (migração 002)
+
+Quatro tabelas, uma por nível, ligadas por chave estrangeira: `regioes` ← `areas` ← `polos` ← `igrejas`.
+
+Colunas comuns: `id` (text, derivado do código — `R01` → `r-r01`), `codigo` (único), `nome`, `status` (`Ativo`/`Inativo`), `criado_em`, `atualizado_em`. Além delas: `responsavel` em regiões, áreas e polos; `cidade` em igrejas; e o vínculo com o nível acima (`regiao_id`, `area_id`, `polo_id`).
+
+Índices em `areas (regiao_id)`, `polos (area_id)` e `igrejas (polo_id)`.
+
+### Limpar os dados de teste
+
+Quando os dados reais forem cadastrados, os fictícios da migração 003 saem com um comando só (no SQL Editor do Neon):
+
+```sql
+truncate igrejas, polos, areas, regioes cascade
+```
+
+Isso apaga **toda** a estrutura administrativa, inclusive o que tiver sido cadastrado pelas telas — use antes de começar o cadastro real. O registro da migração 003 permanece na tabela `migracoes`; para permitir recarregar os dados de teste depois, apague a linha: `delete from migracoes where id = '003'`.

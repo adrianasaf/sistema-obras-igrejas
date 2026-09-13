@@ -9,13 +9,13 @@ import {
 import { CartaoLista, Tabela } from "@/components/tabela";
 import { botaoPrimario } from "@/lib/ui";
 import Link from "next/link";
-import { POLOS, caminhoDoPolo, igrejasDoPolo } from "@/lib/estrutura-mock";
+import { listarPolos } from "@/lib/estrutura-db";
 
 export const metadata: Metadata = { title: "Polos" };
 
 export default async function PolosPage() {
   await exigirAcesso("estrutura");
-  const polos = [...POLOS].sort((a, b) => a.codigo.localeCompare(b.codigo));
+  const polos = await listarPolos();
 
   return (
     <div className="space-y-6">
@@ -41,7 +41,6 @@ export default async function PolosPage() {
         ]}
       >
         {polos.map((p) => {
-          const { area, regiao } = caminhoDoPolo(p);
           return (
             <tr key={p.id} className="hover:bg-background">
               <td className="px-4 py-3 font-mono text-xs">{p.codigo}</td>
@@ -49,10 +48,10 @@ export default async function PolosPage() {
                 <p className="font-medium">{p.nome}</p>
                 <p className="text-xs text-muted">{p.responsavel}</p>
               </td>
-              <td className="px-4 py-3">{area?.nome ?? "—"}</td>
-              <td className="px-4 py-3">{regiao?.nome ?? "—"}</td>
+              <td className="px-4 py-3">{p.areaNome}</td>
+              <td className="px-4 py-3">{p.regiaoNome}</td>
               <td className="px-4 py-3 tabular-nums">
-                {igrejasDoPolo(p.id).length}
+                {p.totalIgrejas}
               </td>
               <td className="px-4 py-3">
                 <BadgeCadastro valor={p.status} />
@@ -71,7 +70,6 @@ export default async function PolosPage() {
 
       <ul className="space-y-3 md:hidden">
         {polos.map((p) => {
-          const { area, regiao } = caminhoDoPolo(p);
           return (
             <CartaoLista
               key={p.id}
@@ -79,11 +77,11 @@ export default async function PolosPage() {
               subtitulo={`Código ${p.codigo}`}
               cracha={<BadgeCadastro valor={p.status} />}
               dados={[
-                { rotulo: "Área", valor: area?.nome ?? "—" },
-                { rotulo: "Região", valor: regiao?.nome ?? "—" },
+                { rotulo: "Área", valor: p.areaNome },
+                { rotulo: "Região", valor: p.regiaoNome },
                 {
                   rotulo: "Igrejas",
-                  valor: String(igrejasDoPolo(p.id).length),
+                  valor: String(p.totalIgrejas),
                 },
                 { rotulo: "Coordenador", valor: p.responsavel },
               ]}

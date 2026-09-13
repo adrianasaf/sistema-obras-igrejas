@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { listarIgrejas } from "@/lib/estrutura-db";
 import { exigirAcesso } from "@/lib/sessao";
 import {
   CabecalhoPagina,
@@ -10,6 +11,7 @@ export const metadata: Metadata = { title: "Nova Solicitação" };
 
 export default async function NovaSolicitacaoPage() {
   await exigirAcesso("obras");
+  const igrejas = await listarIgrejas();
   return (
     <div className="space-y-6">
       <div className="space-y-3">
@@ -19,7 +21,7 @@ export default async function NovaSolicitacaoPage() {
           descricao="Registre a necessidade da igreja. O envio será habilitado quando o banco de dados for configurado."
         />
       </div>
-      <FormularioSolicitacao />
+      <FormularioSolicitacao igrejas={igrejas} />
     </div>
   );
 }

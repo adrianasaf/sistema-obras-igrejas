@@ -7,28 +7,23 @@ import {
   CabecalhoDetalhe,
   ListaVinculada,
 } from "@/components/estrutura/comuns";
-import {
-  buscarPolo,
-  caminhoDoPolo,
-  igrejasDoPolo,
-} from "@/lib/estrutura-mock";
+import { buscarPolo, listarIgrejas } from "@/lib/estrutura-db";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/polos/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const polo = buscarPolo(id);
+  const polo = await buscarPolo(id);
   return { title: polo ? polo.nome : "Polo" };
 }
 
 export default async function PoloPage({ params }: PageProps<"/polos/[id]">) {
   await exigirAcesso("estrutura");
   const { id } = await params;
-  const polo = buscarPolo(id);
+  const polo = await buscarPolo(id);
   if (!polo) notFound();
 
-  const { area, regiao } = caminhoDoPolo(polo);
-  const igrejas = igrejasDoPolo(polo.id);
+  const igrejas = (await listarIgrejas()).filter((i) => i.poloId === polo.id);
 
   return (
     <div className="space-y-6">
@@ -36,13 +31,13 @@ export default async function PoloPage({ params }: PageProps<"/polos/[id]">) {
         voltarHref="/polos"
         voltarRotulo="Voltar para Polos"
         titulo={polo.nome}
-        subtitulo={area ? `Polo · ${area.nome}` : "Polo"}
+        subtitulo={`Polo · ${polo.areaNome}`}
         cracha={<BadgeCadastro valor={polo.status} />}
         editarHref={`/polos/${polo.id}/editar`}
         campos={[
           { rotulo: "Código", valor: polo.codigo },
-          { rotulo: "Área vinculada", valor: area?.nome ?? "—" },
-          { rotulo: "Região", valor: regiao?.nome ?? "—" },
+          { rotulo: "Área vinculada", valor: polo.areaNome },
+          { rotulo: "Região", valor: polo.regiaoNome },
           { rotulo: "Coordenador do Polo", valor: polo.responsavel },
           { rotulo: "Igrejas vinculadas", valor: String(igrejas.length) },
           { rotulo: "Status", valor: polo.status },

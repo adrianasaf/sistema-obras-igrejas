@@ -34,12 +34,13 @@
 | Obras (lista) | `/obras` | Interface: tabela/cartões, filtros por prioridade e status, busca |
 | Nova solicitação | `/obras/nova` | Interface: formulário com valores estimados, "Salvar rascunho" e "Enviar solicitação" (não gravam) |
 | Detalhes da obra | `/obras/[id]` | Interface: abas Visão Geral, Aprovações, Orçamentos, Execução e Conclusão |
-| Regiões | `/regioes` | Interface: lista, cadastro, visualização e edição |
-| Áreas | `/areas` | Interface: lista, cadastro, visualização e edição |
-| Polos | `/polos` | Interface: lista, cadastro, visualização e edição |
-| Igrejas | `/igrejas` | Interface: lista, cadastro, visualização e edição |
+| Regiões | `/regioes` | **Funcional (banco):** lista, cadastro, visualização e edição |
+| Áreas | `/areas` | **Funcional (banco):** lista, cadastro, visualização e edição |
+| Polos | `/polos` | **Funcional (banco):** lista, cadastro, visualização e edição |
+| Igrejas | `/igrejas` | **Funcional (banco):** lista, cadastro, visualização e edição |
 | Usuários e perfis | `/usuarios` | Interface: lista, filtros, busca, cadastro/edição em modal e ativar/desativar (sem permissões reais) |
 | Estoque | `/estoque` | Interface: materiais, saldos e botões Entrada/Saída/Novo material (não movimentam) |
+| Banco de dados | `/configuracoes/banco` | Funcional: aplica as migrações pendentes (só Administrador) |
 | Configurações | `/configuracoes` | Interface: dados do sistema, preferências de interface e informações institucionais (nada é salvo) |
 | Histórico de Desenvolvimento | `/historico` | Interface: linha do tempo de versões (demonstrativa) + documento real `docs/10-...` |
 

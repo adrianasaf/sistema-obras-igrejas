@@ -10,13 +10,7 @@ import {
 } from "@/components/filtros";
 import { CartaoLista, ListaVazia, Tabela } from "@/components/tabela";
 import { CORES_PERFIL } from "@/lib/cores";
-import {
-  AREAS,
-  IGREJAS,
-  POLOS,
-  REGIOES,
-  type StatusCadastro,
-} from "@/lib/estrutura-mock";
+import type { StatusCadastro } from "@/lib/estrutura-tipos";
 import {
   PERFIS,
   ROTULO_VINCULO,
@@ -40,9 +34,21 @@ import {
 
 type Modal = { modo: "novo" } | { modo: "editar"; usuario: Usuario } | null;
 
+// Registros da estrutura administrativa, por nível, vindos do banco.
+export type Estrutura = Record<
+  "regiao" | "area" | "polo" | "igreja",
+  { id: string; codigo: string; nome: string }[]
+>;
+
 // Filtros, busca e ativar/desativar funcionam apenas nesta tela, sobre os
 // dados demonstrativos: nada é gravado e nenhuma permissão é aplicada.
-export function PainelUsuarios({ usuarios }: { usuarios: Usuario[] }) {
+export function PainelUsuarios({
+  usuarios,
+  estrutura,
+}: {
+  usuarios: Usuario[];
+  estrutura: Estrutura;
+}) {
   const [lista, setLista] = useState(usuarios);
   const [busca, setBusca] = useState("");
   const [perfil, setPerfil] = useState<Perfil | "Todos">("Todos");
@@ -171,7 +177,7 @@ export function PainelUsuarios({ usuarios }: { usuarios: Usuario[] }) {
                 <td className="px-4 py-3">
                   <BadgePerfil valor={u.perfil} />
                 </td>
-                <td className="px-4 py-3">{descreverVinculo(u)}</td>
+                <td className="px-4 py-3">{descreverVinculo(u, opcoesDoNivel(VINCULO_DO_PERFIL[u.perfil], estrutura))}</td>
                 <td className="px-4 py-3">
                   <BadgeCadastro valor={u.status} />
                 </td>
@@ -203,7 +209,7 @@ export function PainelUsuarios({ usuarios }: { usuarios: Usuario[] }) {
                   </>
                 }
                 dados={[
-                  { rotulo: "Vínculo", valor: descreverVinculo(u) },
+                  { rotulo: "Vínculo", valor: descreverVinculo(u, opcoesDoNivel(VINCULO_DO_PERFIL[u.perfil], estrutura)) },
                   {
                     rotulo: "Último acesso",
                     valor: formatarUltimoAcesso(u.ultimoAcesso),
@@ -224,6 +230,7 @@ export function PainelUsuarios({ usuarios }: { usuarios: Usuario[] }) {
 
       {modal && (
         <ModalUsuario
+          estrutura={estrutura}
           usuario={modal.modo === "editar" ? modal.usuario : undefined}
           aoFechar={() => setModal(null)}
           aoSalvar={(nome) => {
@@ -274,21 +281,19 @@ function Acoes({
   );
 }
 
-function opcoesDoNivel(nivel: NivelVinculo) {
-  if (nivel === "regiao") return REGIOES;
-  if (nivel === "area") return AREAS;
-  if (nivel === "polo") return POLOS;
-  if (nivel === "igreja") return IGREJAS;
-  return [];
+function opcoesDoNivel(nivel: NivelVinculo, estrutura: Estrutura) {
+  return nivel === "nenhum" ? [] : estrutura[nivel];
 }
 
 // Modal de cadastro/edição. O vínculo exibido acompanha o perfil escolhido.
 function ModalUsuario({
   usuario,
+  estrutura,
   aoFechar,
   aoSalvar,
 }: {
   usuario?: Usuario;
+  estrutura: Estrutura;
   aoFechar: () => void;
   aoSalvar: (nome: string) => void;
 }) {
@@ -297,7 +302,7 @@ function ModalUsuario({
   const [vinculoId, setVinculoId] = useState(usuario?.vinculoId ?? "");
 
   const nivel = VINCULO_DO_PERFIL[perfil];
-  const opcoes = opcoesDoNivel(nivel);
+  const opcoes = opcoesDoNivel(nivel, estrutura);
 
   return (
     <div

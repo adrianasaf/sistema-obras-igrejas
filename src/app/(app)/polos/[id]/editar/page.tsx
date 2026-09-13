@@ -6,7 +6,7 @@ import {
 } from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import { FormularioPolo } from "@/components/estrutura/formularios";
-import { buscarPolo } from "@/lib/estrutura-mock";
+import { buscarPolo , listarAreas } from "@/lib/estrutura-db";
 
 export const metadata: Metadata = { title: "Editar Polo" };
 
@@ -15,8 +15,10 @@ export default async function EditarPoloPage({
 }: PageProps<"/polos/[id]/editar">) {
   await exigirAcesso("estrutura");
   const { id } = await params;
-  const polo = buscarPolo(id);
+  const polo = await buscarPolo(id);
   if (!polo) notFound();
+
+  const areas = await listarAreas();
 
   return (
     <div className="space-y-6">
@@ -27,7 +29,7 @@ export default async function EditarPoloPage({
           descricao="Formulário visual: as alterações não são gravadas."
         />
       </div>
-      <FormularioPolo polo={polo} />
+      <FormularioPolo polo={polo} areas={areas} />
     </div>
   );
 }

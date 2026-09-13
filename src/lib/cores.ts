@@ -8,7 +8,7 @@
 // para que a mesma prioridade tenha sempre a mesma cor em qualquer tela.
 
 import type { StatusMaterial } from "@/lib/estoque-mock";
-import type { StatusCadastro } from "@/lib/estrutura-mock";
+import type { StatusCadastro } from "@/lib/estrutura-tipos";
 import type { TipoAlteracao } from "@/lib/historico-mock";
 import type { Perfil } from "@/lib/usuarios-mock";
 import type { SituacaoAprovacao } from "@/lib/aprovacao";

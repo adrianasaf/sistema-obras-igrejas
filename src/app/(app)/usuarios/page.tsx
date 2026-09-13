@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { exigirAcesso } from "@/lib/sessao";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
+import {
+  listarAreas,
+  listarIgrejas,
+  listarPolos,
+  listarRegioes,
+} from "@/lib/estrutura-db";
 import { USUARIOS } from "@/lib/usuarios-mock";
 import { PainelUsuarios } from "./painel";
 
@@ -12,6 +18,16 @@ export default async function UsuariosPage() {
     a.nome.localeCompare(b.nome, "pt-BR"),
   );
 
+  // Registros da estrutura administrativa (banco) para exibir e escolher o
+  // vínculo de cada usuário.
+  const [regioes, areas, polos, igrejas] = await Promise.all([
+    listarRegioes(),
+    listarAreas(),
+    listarPolos(),
+    listarIgrejas(),
+  ]);
+  const estrutura = { regiao: regioes, area: areas, polo: polos, igreja: igrejas };
+
   return (
     <div className="space-y-6">
       <CabecalhoPagina
@@ -19,7 +35,7 @@ export default async function UsuariosPage() {
         descricao="Acessos ao sistema e vínculo com a estrutura administrativa. Dados demonstrativos."
       />
 
-      <PainelUsuarios usuarios={usuarios} />
+      <PainelUsuarios usuarios={usuarios} estrutura={estrutura} />
 
       <p className="text-xs text-muted">
         Tela demonstrativa: nenhuma permissão é aplicada e nenhum cadastro é

@@ -7,30 +7,24 @@ import {
   CabecalhoDetalhe,
   ListaVinculada,
 } from "@/components/estrutura/comuns";
-import {
-  buscarArea,
-  buscarRegiao,
-  igrejasDoPolo,
-  polosDaArea,
-  statusFeminino,
-} from "@/lib/estrutura-mock";
+import { buscarArea, listarPolos } from "@/lib/estrutura-db";
+import { statusFeminino } from "@/lib/estrutura-tipos";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/areas/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const area = buscarArea(id);
+  const area = await buscarArea(id);
   return { title: area ? area.nome : "Área" };
 }
 
 export default async function AreaPage({ params }: PageProps<"/areas/[id]">) {
   await exigirAcesso("estrutura");
   const { id } = await params;
-  const area = buscarArea(id);
+  const area = await buscarArea(id);
   if (!area) notFound();
 
-  const regiao = buscarRegiao(area.regiaoId);
-  const polos = polosDaArea(area.id);
+  const polos = (await listarPolos()).filter((p) => p.areaId === area.id);
 
   return (
     <div className="space-y-6">
@@ -38,12 +32,12 @@ export default async function AreaPage({ params }: PageProps<"/areas/[id]">) {
         voltarHref="/areas"
         voltarRotulo="Voltar para Áreas"
         titulo={area.nome}
-        subtitulo={regiao ? `Área · ${regiao.nome}` : "Área"}
+        subtitulo={`Área · ${area.regiaoNome}`}
         cracha={<BadgeCadastro valor={area.status} feminino />}
         editarHref={`/areas/${area.id}/editar`}
         campos={[
           { rotulo: "Código", valor: area.codigo },
-          { rotulo: "Região vinculada", valor: regiao?.nome ?? "—" },
+          { rotulo: "Região vinculada", valor: area.regiaoNome },
           { rotulo: "Coordenador da Área", valor: area.responsavel },
           { rotulo: "Polos vinculados", valor: String(polos.length) },
           { rotulo: "Status", valor: statusFeminino(area.status) },
@@ -56,7 +50,7 @@ export default async function AreaPage({ params }: PageProps<"/areas/[id]">) {
           id: p.id,
           href: `/polos/${p.id}`,
           nome: p.nome,
-          detalhe: `${p.codigo} · ${igrejasDoPolo(p.id).length} igreja(s) · ${p.responsavel}`,
+          detalhe: `${p.codigo} · ${p.totalIgrejas} igreja(s) · ${p.responsavel}`,
           cracha: <BadgeCadastro valor={p.status} />,
         }))}
         vazio="Nenhum polo vinculado a esta área."

@@ -9,15 +9,13 @@ import {
 import { CartaoLista, Tabela } from "@/components/tabela";
 import { botaoPrimario } from "@/lib/ui";
 import Link from "next/link";
-import { IGREJAS, caminhoDaIgreja } from "@/lib/estrutura-mock";
+import { listarIgrejas } from "@/lib/estrutura-db";
 
 export const metadata: Metadata = { title: "Igrejas" };
 
 export default async function IgrejasPage() {
   await exigirAcesso("estrutura");
-  const igrejas = [...IGREJAS].sort((a, b) =>
-    a.nome.localeCompare(b.nome, "pt-BR"),
-  );
+  const igrejas = await listarIgrejas();
 
   return (
     <div className="space-y-6">
@@ -36,14 +34,13 @@ export default async function IgrejasPage() {
         colunas={["Código", "Nome", "Polo", "Área", "Região", "Cidade", "Status"]}
       >
         {igrejas.map((i) => {
-          const { polo, area, regiao } = caminhoDaIgreja(i);
           return (
             <tr key={i.id} className="hover:bg-background">
               <td className="px-4 py-3 font-mono text-xs">{i.codigo}</td>
               <td className="px-4 py-3 font-medium">{i.nome}</td>
-              <td className="px-4 py-3">{polo?.nome ?? "—"}</td>
-              <td className="px-4 py-3">{area?.nome ?? "—"}</td>
-              <td className="px-4 py-3">{regiao?.nome ?? "—"}</td>
+              <td className="px-4 py-3">{i.poloNome}</td>
+              <td className="px-4 py-3">{i.areaNome}</td>
+              <td className="px-4 py-3">{i.regiaoNome}</td>
               <td className="px-4 py-3">{i.cidade}</td>
               <td className="px-4 py-3">
                 <BadgeCadastro valor={i.status} feminino />
@@ -62,7 +59,6 @@ export default async function IgrejasPage() {
 
       <ul className="space-y-3 md:hidden">
         {igrejas.map((i) => {
-          const { polo, area, regiao } = caminhoDaIgreja(i);
           return (
             <CartaoLista
               key={i.id}
@@ -70,9 +66,9 @@ export default async function IgrejasPage() {
               subtitulo={`Código ${i.codigo} · ${i.cidade}`}
               cracha={<BadgeCadastro valor={i.status} feminino />}
               dados={[
-                { rotulo: "Polo", valor: polo?.nome ?? "—" },
-                { rotulo: "Área", valor: area?.nome ?? "—" },
-                { rotulo: "Região", valor: regiao?.nome ?? "—" },
+                { rotulo: "Polo", valor: i.poloNome },
+                { rotulo: "Área", valor: i.areaNome },
+                { rotulo: "Região", valor: i.regiaoNome },
                 { rotulo: "Cidade", valor: i.cidade },
               ]}
               acoes={

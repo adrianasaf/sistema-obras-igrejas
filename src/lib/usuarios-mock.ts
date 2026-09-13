@@ -5,13 +5,7 @@
 // atribuições de cada cargo (PEN-002) e o papel do Responsável COMBENS
 // (PEN-021). Os nomes dos perfis seguem os níveis registrados em DEC-008.
 
-import {
-  AREAS,
-  IGREJAS,
-  POLOS,
-  REGIOES,
-  type StatusCadastro,
-} from "@/lib/estrutura-mock";
+import type { StatusCadastro } from "@/lib/estrutura-tipos";
 
 // Os perfis são definidos na estrutura central de permissões.
 export { PERFIS, type Perfil } from "@/lib/permissoes";
@@ -65,22 +59,16 @@ export const USUARIOS: Usuario[] = [
   { id: "u13", nome: "Carlos Exemplo Pinto", email: "carlos.exemplo@exemplo.org.br", perfil: "Administrador", status: "Ativo", ultimoAcesso: "2026-09-03T17:55" },
 ];
 
-// Nome do registro vinculado, conforme o perfil do usuário.
-export function descreverVinculo(usuario: Usuario): string {
+// Rótulo do vínculo, a partir dos registros da estrutura (vindos do banco,
+// pela página). Perfis de abrangência geral não têm vínculo.
+export function descreverVinculo(
+  usuario: Usuario,
+  registros: { id: string; nome: string }[],
+): string {
   const nivel = VINCULO_DO_PERFIL[usuario.perfil];
   if (nivel === "nenhum") return "Abrangência geral";
   if (!usuario.vinculoId) return "—";
-
-  const lista =
-    nivel === "regiao"
-      ? REGIOES
-      : nivel === "area"
-        ? AREAS
-        : nivel === "polo"
-          ? POLOS
-          : IGREJAS;
-
-  const registro = lista.find((r) => r.id === usuario.vinculoId);
+  const registro = registros.find((r) => r.id === usuario.vinculoId);
   return registro ? `${ROTULO_VINCULO[nivel]}: ${registro.nome}` : "—";
 }
 

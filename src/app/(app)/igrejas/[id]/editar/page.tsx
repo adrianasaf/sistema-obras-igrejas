@@ -6,7 +6,7 @@ import {
 } from "@/components/cabecalho-pagina";
 import { notFound } from "next/navigation";
 import { FormularioIgreja } from "@/components/estrutura/formularios";
-import { buscarIgreja } from "@/lib/estrutura-mock";
+import { buscarIgreja , listarPolos } from "@/lib/estrutura-db";
 
 export const metadata: Metadata = { title: "Editar Igreja" };
 
@@ -15,8 +15,10 @@ export default async function EditarIgrejaPage({
 }: PageProps<"/igrejas/[id]/editar">) {
   await exigirAcesso("estrutura");
   const { id } = await params;
-  const igreja = buscarIgreja(id);
+  const igreja = await buscarIgreja(id);
   if (!igreja) notFound();
+
+  const polos = await listarPolos();
 
   return (
     <div className="space-y-6">
@@ -27,7 +29,7 @@ export default async function EditarIgrejaPage({
           descricao="Formulário visual: as alterações não são gravadas."
         />
       </div>
-      <FormularioIgreja igreja={igreja} />
+      <FormularioIgreja igreja={igreja} polos={polos} />
     </div>
   );
 }

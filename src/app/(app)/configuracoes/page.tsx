@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { exigirAcesso } from "@/lib/sessao";
+import Link from "next/link";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { APP_NAME, APP_SUBTITLE, APP_VERSION } from "@/lib/app";
 import { cartao, tituloSecao } from "@/lib/ui";
@@ -45,6 +46,20 @@ export default async function ConfiguracoesPage() {
           O nome do sistema é provisório e a identidade visual oficial ainda não
           foi definida.
         </p>
+      </section>
+
+      {/* Banco de dados */}
+      <section className={`${cartao} p-5 sm:p-6`}>
+        <h2 className={tituloSecao}>Banco de dados</h2>
+        <p className="mt-1 text-sm text-muted">
+          Aplicação das migrações do sistema (só Administrador).
+        </p>
+        <Link
+          href="/configuracoes/banco"
+          className="mt-4 inline-flex text-sm font-medium text-brand hover:underline"
+        >
+          Abrir migrações →
+        </Link>
       </section>
 
       <Preferencias />

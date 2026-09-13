@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useActionState, type ReactNode } from "react";
+import {
+  salvarCadastroAction,
+  type Resultado,
+} from "@/components/estrutura/acoes";
 import {
   botaoPrimario,
   botaoSecundario,
@@ -10,54 +14,66 @@ import {
   classeRotulo,
 } from "@/lib/ui";
 
-// Reexportado para os formulários que já importavam daqui.
 export { classeCampo };
 
-// Formulário visual de cadastro: nada é gravado. Os campos oficiais de cada
-// cadastro ainda não estão definidos (PEN-002, PEN-011).
+// Formulário de cadastro da estrutura administrativa. Grava no banco pela
+// Server Action, que também confere a permissão.
 export function FormularioCadastro({
+  nivel,
+  id,
   voltarHref,
   rotuloSalvar,
   children,
 }: {
+  nivel: "regiao" | "area" | "polo" | "igreja";
+  id?: string;
   voltarHref: string;
   rotuloSalvar: string;
   children: ReactNode;
 }) {
-  const [enviado, setEnviado] = useState(false);
+  const [resultado, enviar, pendente] = useActionState<Resultado | null, FormData>(
+    salvarCadastroAction,
+    null,
+  );
 
   return (
-    <form
-      className={`${cartao} space-y-6 p-5 sm:p-6`}
-      onSubmit={(e) => {
-        e.preventDefault();
-        setEnviado(true);
-      }}
-    >
+    <form action={enviar} className={`${cartao} space-y-6 p-5 sm:p-6`}>
+      <input type="hidden" name="nivel" value={nivel} />
+      {id && <input type="hidden" name="id" value={id} />}
+
       <div className="grid gap-5 sm:grid-cols-2">{children}</div>
 
-      {enviado && (
+      {resultado && !pendente && (
         <p
           role="status"
-          className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+          className={`rounded-md border px-4 py-3 text-sm ${
+            resultado.ok
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+              : "border-red-200 bg-red-50 text-red-700"
+          }`}
         >
-          O cadastro ainda não é gravado: o banco de dados será configurado em
-          uma etapa futura. Nenhum dado foi salvo.
+          {resultado.mensagem}
+          {resultado.ok && (
+            <>
+              {" "}
+              <Link href={voltarHref} className="font-medium underline">
+                Ver a lista
+              </Link>
+            </>
+          )}
         </p>
       )}
 
       <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
-        <Link
-          href={voltarHref}
-          className={botaoSecundario}
-        >
-          Cancelar
+        <Link href={voltarHref} className={botaoSecundario}>
+          {resultado?.ok ? "Voltar" : "Cancelar"}
         </Link>
         <button
           type="submit"
-          className={botaoPrimario}
+          disabled={pendente}
+          className={`${botaoPrimario} disabled:opacity-60`}
         >
-          {rotuloSalvar}
+          {pendente ? "Salvando…" : rotuloSalvar}
         </button>
       </div>
     </form>
